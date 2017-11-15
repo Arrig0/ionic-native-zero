@@ -20,18 +20,11 @@
     "url": "https://github.com/Arrig0/ionic-native-zero/issues"
   },
   "homepage": "https://github.com/Arrig0/ionic-native-zero#readme",
-  "peerDependencies": {
-    "@ionic-native/media": "*",
-    "@ionic-native/core": "^3.6.0 || >=4.0.0",
-    "@angular/core": "*",
-    "rxjs": "^5.0.1"
-  },
-  "devDependencies": {
-    "@ionic-native/media": "^4.1.0"
-  },
   "dependencies": {
-    "@angular/core": "^4.3.3",
-    "@ionic-native/core": "^4.1.0",
-    "rxjs": "^5.4.2"
+    "@ionic-native/media": "*",
+    "@angular/core": "^5.0.1",
+    "@ionic-native/core": "^4.4.0",
+    "rxjs": "^5.5.2",
+    "zone.js": "^0.8.4"
   }
 }
