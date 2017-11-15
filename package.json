@@ -2,7 +2,7 @@
   "name": "@ionic-native/zero",
   "version": "1.0.0",
   "description": "cordova-plugin-zero Typescript wrapper.",
-  "main": "index.ts",
+  "main": "index.js",
   "scope": "@ionic-native",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
