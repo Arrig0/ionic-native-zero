@@ -1,8 +1,9 @@
 {
-  "name": "test-ionic-native",
+  "name": "@ionic-native/test-ionic-native",
   "version": "1.0.0",
   "description": "Just a test",
   "main": "index.js",
+  "scope": "@ionic-native",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
