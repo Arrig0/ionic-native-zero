@@ -239,7 +239,7 @@ export class ZeroClass {
 
         setPassword: function(key: string, login: string, password: string){
             return new Promise<void>((resolve, reject) => {
-                return ZeroPlugin.signup(key, login, password).then(resolve).catch(reject);
+                return ZeroPlugin.setPassword(key, login, password).then(resolve).catch(reject);
             });
         },
         

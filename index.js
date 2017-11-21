@@ -110,7 +110,7 @@ var ZeroClass = (function () {
             },
             setPassword: function (key, login, password) {
                 return new Promise(function (resolve, reject) {
-                    return ZeroPlugin.signup(key, login, password).then(resolve)["catch"](reject);
+                    return ZeroPlugin.setPassword(key, login, password).then(resolve)["catch"](reject);
                 });
             },
             isLogged: function () {
