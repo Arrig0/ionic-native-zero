@@ -103,6 +103,16 @@ var ZeroClass = (function () {
             }
         };
         this.user = {
+            create: function (first_name, last_name, email) {
+                return new Promise(function (resolve, reject) {
+                    return ZeroPlugin.signup(first_name, last_name, email).then(resolve)["catch"](reject);
+                });
+            },
+            setPassword: function (key, login, password) {
+                return new Promise(function (resolve, reject) {
+                    return ZeroPlugin.signup(key, login, password).then(resolve)["catch"](reject);
+                });
+            },
             isLogged: function () {
                 return new Promise(function (resolve, reject) {
                     return ZeroPlugin.checkLogin().then(resolve)["catch"](reject);

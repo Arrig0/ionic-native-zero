@@ -230,6 +230,18 @@ export class ZeroClass {
     }
 
     user = {
+
+        create: function(first_name: string, last_name: string, email: string){
+            return new Promise<void>((resolve, reject) => {
+                return ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch(reject);
+            });
+        },
+
+        setPassword: function(key: string, login: string, password: string){
+            return new Promise<void>((resolve, reject) => {
+                return ZeroPlugin.signup(key, login, password).then(resolve).catch(reject);
+            });
+        },
         
         isLogged: function(): Promise<void> {
             return new Promise<void>((resolve, reject) => {
