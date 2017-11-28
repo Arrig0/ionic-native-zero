@@ -169,7 +169,7 @@ var ZeroClass = (function () {
             },
             disconnectFromFacebook: function () {
                 return new Promise(function (resolve, reject) {
-                    ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE').then(function (data) {
+                    ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then(function (data) {
                         resolve();
                     })["catch"](function (error) {
                         reject(error);

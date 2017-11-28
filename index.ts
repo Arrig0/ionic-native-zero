@@ -305,7 +305,7 @@ export class ZeroClass {
 
         disconnectFromFacebook: function(): Promise<void> {
             return new Promise<void>(function(resolve, reject) {
-                ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE').then(function(data) {
+                ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then(function(data) {
                     resolve();
                 }).catch(function(error) {
                     reject(error);
