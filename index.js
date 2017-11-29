@@ -2,6 +2,36 @@
 exports.__esModule = true;
 var media_1 = require("@ionic-native/media");
 var BASE_API_PATH = "http://192.168.60.113/api/v2/";
+var EventManager = (function () {
+    function EventManager(perPage, city, date, coords) {
+        if (perPage === void 0) { perPage = 30; }
+        if (city === void 0) { city = "null"; }
+        if (date === void 0) { date = new Date(); }
+        if (coords === void 0) { coords = null; }
+        this.page = 0;
+        this.perPage = perPage;
+        this.city = city;
+        this.date = date;
+        this.coords = coords;
+    }
+    EventManager.prototype.next = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var dates = _this.date.getFullYear().toString() + "-" + _this.date.getMonth().toString() + "-" + _this.date.getDay().toString();
+            _this.page++;
+            //todo: come cazzo si mettono le coords!!
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc")
+                .then(function (data) {
+                resolve(data);
+            })["catch"](reject);
+        });
+    };
+    EventManager.prototype.reset = function () {
+        this.page = 0;
+    };
+    return EventManager;
+}());
+exports.EventManager = EventManager;
 var Track = (function () {
     function Track(url) {
         this.isPlaying = false;
@@ -185,25 +215,6 @@ var ZeroClass = (function () {
             }
         };
         this.events = {
-            manager: function (perPage, city, date, coords) {
-                if (perPage === void 0) { perPage = 30; }
-                if (city === void 0) { city = "null"; }
-                if (date === void 0) { date = new Date(); }
-                if (coords === void 0) { coords = null; }
-                var page = 0;
-                var next = function () {
-                    return new Promise(function (resolve, reject) {
-                        var dates = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDay().toString();
-                        page++;
-                        //todo: come cazzo si mettono le coords!!
-                        ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + page + "&per_page=" + perPage + "&start_date=" + dates + "&metro_area=" + city + "&order=asc")
-                            .then(function (data) {
-                            resolve(data);
-                        })["catch"](reject);
-                    });
-                };
-                return this;
-            },
             all: function (page, city, startDate) {
                 if (page === void 0) { page = 1; }
                 if (city === void 0) { city = "milano"; }

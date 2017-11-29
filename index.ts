@@ -103,6 +103,39 @@ export interface Artist extends ZeroEntity {
     topTrack: Track;
 }
 
+export class EventManager {
+    private page: number;
+    readonly perPage: number;
+    readonly city: string;
+    readonly date: Date;
+    readonly coords: {lat: number, lng: number} | null;
+
+    constructor(perPage: number = 30, city: string = "null", date: Date = new Date(), coords: {lat: number, lng: number} | null = null) {
+        this.page = 0;
+        this.perPage = perPage;
+        this.city = city;
+        this.date = date;
+        this.coords = coords;
+    }
+
+    next(): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let dates = this.date.getFullYear().toString()+"-"+this.date.getMonth().toString()+"-"+this.date.getDay().toString();
+            this.page ++;
+            //todo: come cazzo si mettono le coords!!
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+this.page+"&per_page="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc")
+            .then((data)=>{
+                resolve(data);
+            }).catch(reject);
+        });
+    }
+
+    reset() {
+        this.page = 0;
+    }
+}
+
+
 export class Track {
     url: string;
     isPlaying: boolean = false;
@@ -323,22 +356,6 @@ export class ZeroClass {
     }
     
     events = {
-
-        manager: function (perPage: number = 30, city: string = "null", date: Date = new Date(), coords: {lat: number, lng: number} | null = null) {
-            var page = 0;
-            var next = function () {
-                return new Promise<any>(function(resolve, reject) {
-                    let dates = date.getFullYear().toString()+"-"+date.getMonth().toString()+"-"+date.getDay().toString();
-                    page ++;
-                    //todo: come cazzo si mettono le coords!!
-                    ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+page+"&per_page="+perPage+"&start_date="+dates+"&metro_area="+city+"&order=asc")
-                        .then((data)=>{
-                            resolve(data);
-                        }).catch(reject);
-                });
-            };
-            return this;
-        },
 
         all: function(page: number = 1, city: string = "milano", startDate: Date = new Date()): Promise<any> {
             return new Promise<any>(function(resolve, reject) {
