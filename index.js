@@ -185,11 +185,32 @@ var ZeroClass = (function () {
             }
         };
         this.events = {
-            all: function (page, city) {
-                if (page === void 0) { page = 0; }
+            manager: function (perPage, city, date, coords) {
+                if (perPage === void 0) { perPage = 30; }
+                if (city === void 0) { city = "null"; }
+                if (date === void 0) { date = new Date(); }
+                if (coords === void 0) { coords = null; }
+                var page = 0;
+                var next = function () {
+                    return new Promise(function (resolve, reject) {
+                        var dates = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDay().toString();
+                        page++;
+                        //todo: come cazzo si mettono le coords!!
+                        ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + page + "&per_page=" + perPage + "&start_date=" + dates + "&metro_area=" + city + "&order=asc")
+                            .then(function (data) {
+                            resolve(data);
+                        })["catch"](reject);
+                    });
+                };
+                return this;
+            },
+            all: function (page, city, startDate) {
+                if (page === void 0) { page = 1; }
                 if (city === void 0) { city = "milano"; }
+                if (startDate === void 0) { startDate = new Date(); }
                 return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "events/?city=" + city + "&page=" + page)
+                    var dateString = startDate.getFullYear().toString() + "-" + startDate.getMonth().toString() + "-" + startDate.getDay().toString();
+                    ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=1&per_page=30&start_date=2017-05-29&metro_area=milano&coords=lat%3A23%2Clng%3A45&order=asc")
                         .then(function (data) {
                         resolve(data);
                     })["catch"](reject);
