@@ -1,4 +1,6 @@
-import { Media, MediaObject } from '@ionic-native/media'; 
+import { Media, MediaObject } from '@ionic-native/media';
+import {isArray} from "rxjs/util/isArray";
+import {stringify} from "@angular/core/src/util";
 
 declare var ZeroPlugin: any;
 declare var BraintreePlugin;
@@ -103,27 +105,269 @@ export interface Artist extends ZeroEntity {
     topTrack: Track;
 }
 
+export class EZEvent {
+    private id: number;
+    private name: string;
+    private isRegular: boolean = false;
+    private startDate: Date;
+    private endDate: Date;
+    private startTime: Date | null;
+    private endTime: Date | null;
+    private price: EZPrice | null;
+    private excerpt: string | null;
+    private category: string[];
+    private featured_image: EZImage | null;
+    private gallery: EZImage[];
+    private artists: EZArtist[];
+    private venue: EZVenue | null;
+
+    constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, isRegular: boolean = false, price: EZPrice | null, excerpt: string, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = []) {
+        this.id = id;
+        this.name = name;
+        this.isRegular = isRegular;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.price = price;
+        this.excerpt = excerpt;
+        this.category = category;
+        this.featured_image = featured_image;
+        this.gallery = gallery;
+        this.artists = artists;
+        this.venue = venue;
+    }
+
+    static json(jsonEvent: any): EZEvent | null {
+        let id = jsonEvent.id;
+        let name = jsonEvent.name.plain;
+        let isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
+        let startDate = jsonEvent.start_date ? new Date(jsonEvent.start_date) : null;
+        let endDate = jsonEvent.end_date ? new Date(jsonEvent.end_date) : null;
+        let startTime = jsonEvent.start_time ? new Date(jsonEvent.start_time) : null;
+        let endTime = jsonEvent.end_time ? new Date(jsonEvent.end_date) : null;
+        let price = EZPrice.json(jsonEvent.price);
+        let excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
+        let category = isArray(jsonEvent.category) ? jsonEvent.category : [];
+        let featured_image = EZImage.json(jsonEvent.featured_image);
+        let gallery = EZImage.array(jsonEvent.gallery);
+        let artists = EZArtist.array(jsonEvent.artists);
+        let venue = EZVenue.json(jsonEvent.venue);
+
+        if( !id || !name || !startDate || !venue ) return null;
+
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists);
+    }
+}
+
+export class EZVenue {
+    private id: number;
+    private name: string;
+    private featured_image: EZImage | null;
+    private gallery: EZImage[] = [];
+    private phone: string | null;
+    private website: string | null
+    private rate: number | null;
+    private address: string | null;
+    private coords: { lat: number, lng: number } | null;
+    private category: string[] = [];
+    private excerpt: string | null;
+    private openingHours: EZDictionary[] | null;
+    private priceLevel: number | null;
+
+    constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], phone: string | null, website: string | null, rate: number | null, address: string | null, coords: { lat: number, lng: number } | null, category: string[] = [], excerpt: string | null, openingHours: EZDictionary[] | null, priceLevel: number | null) {
+        this.id = id;
+        this.name = name;
+        this.featured_image = featured_image;
+        this.gallery = gallery;
+        this.phone = phone;
+        this.website = website;
+        this.rate = rate;
+        this.address = address;
+        this.coords = coords;
+        this.excerpt = excerpt;
+        this.category = category;
+        this.openingHours = openingHours;
+        this.priceLevel = priceLevel;
+
+        if( !id || !name ) return null;
+    }
+
+    static json(): EZVenue | null {
+        //todo:: finire il json!!
+        return null;
+    }
+
+    //todo:: make function static array();
+
+}
+
+export class EZImage {
+    private thumb: string | null;
+    private standard: string | null;
+    private large: string | null;
+
+    constructor(thumb: string | null, standard: string | null, large: string | null) {
+        if(thumb || standard || large) {
+            this.thumb = thumb;
+            this.standard = standard;
+            this.large = large;
+        } else {
+            return null;
+        }
+    }
+
+    static json(jsonImage: any): EZImage | null {
+        let thumb = jsonImage.thumbnail;
+        let standard = jsonImage.standard;
+        let large = jsonImage.large;
+        if(thumb || standard || large) {
+            return new EZImage(thumb, standard, large);
+        }
+        return null;
+    }
+
+    static array(jsonArray: any[]): EZImage[] {
+        let ret = [];
+        if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
+        for(let i = 0; i < jsonArray.length; i++) {
+            let img = EZImage.json(jsonArray[0]);
+            if(img) ret.push(img);
+        }
+        return ret;
+    }
+
+    private fallBack(startFrom: string = 'large'): string | null {
+        switch (startFrom) {
+            case 'large':
+                return this.getStandard();
+            case 'standard':
+                return this.getThumb();
+            case 'thumb':
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    public getLarge(): string | null {
+        return this.large ? this.large : this.fallBack('large');
+    }
+
+    public getStandard(): string | null {
+        return this.standard ? this.standard : this.fallBack('standard');
+    }
+
+    public getThumb(): string | null {
+        return this.thumb ? this.thumb : this.fallBack('thumb');
+    }
+}
+
+export class EZArtist {
+    private id: number;
+    private name: string;
+    private featured_image: EZImage | null;
+    private gallery: EZImage[];
+    private preview: EZSoundTrack | null;
+    private category: string[];
+    private excerpt: string | null;
+
+    constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], preview: EZSoundTrack | null, category: string[] = [], excerpt: string | null) {
+        this.id = id;
+        this.name = name;
+        this.featured_image = featured_image;
+        this.gallery = gallery;
+        this.preview = preview;
+        this.category = category;
+        this.excerpt = excerpt;
+    }
+
+    static json(jsonArtist: any): EZArtist | null {
+        let id = jsonArtist.id;
+        let name = jsonArtist.name;
+        let featured_image = EZImage.json(jsonArtist.featured_image);
+        let gallery = EZImage.array(jsonArtist.gallery);
+        let preview = new EZSoundTrack(jsonArtist.preview_url);
+        let category = isArray(jsonArtist.category) ? jsonArtist.category: [];
+        let excerpt = jsonArtist.excerpt && jsonArtist.excerpt.hasOwnProperty("plain") ? jsonArtist.excerpt.plain : null;
+
+        if( !id || !name ) return null;
+        return new EZArtist(id, name, featured_image, gallery, preview, category, excerpt);
+    }
+
+    static array(jsonArray: any[]): EZArtist[] {
+        let ret = [];
+        if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
+        for(let i = 0; i < jsonArray.length; i++) {
+            let img = EZArtist.json(jsonArray[0]);
+            if(img) ret.push(img);
+        }
+        return ret;
+    }
+
+}
+
+export class EZSoundTrack {
+
+    private url: string;
+    private isPlaying: boolean = false;
+
+    constructor(url: string) {
+        if(!url) return null;
+        this.url = url;
+    }
+    // todo:: play and stop;
+}
+
+export class EZPrice {
+    private display: string;
+
+    constructor(display: string) {
+        this.display = display;
+    }
+
+    static json(jsonPrice: any): EZPrice | null {
+        let display = "";
+        if(typeof jsonPrice == "string") {
+            display = jsonPrice;
+        } else if(jsonPrice.hasOwnProperty("price")) {
+            display = jsonPrice.price;
+        } else {
+            return null;
+        }
+        return new EZPrice(display);
+    }
+}
+
+export interface EZDictionary {
+    name: string;
+    value: any;
+}
+
 export class EventManager {
     private page: number;
     readonly perPage: number;
     readonly city: string;
+    readonly category: string[];
     readonly date: Date;
     readonly coords: {lat: number, lng: number} | null;
 
-    constructor(perPage: number = 30, city: string = "null", date: Date = new Date(), coords: {lat: number, lng: number} | null = null) {
+    constructor(perPage: number = 30, city: string = "null", date: Date = new Date(), coords: {lat: number, lng: number} | null = null, category: string[]) {
         this.page = 0;
         this.perPage = perPage;
         this.city = city;
         this.date = date;
         this.coords = coords;
+        this.category = category;
     }
 
     next(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let dates = this.date.getFullYear().toString()+"-"+this.date.getMonth().toString()+"-"+this.date.getDay().toString();
+            let categories = this.category && this.category.length > 0 ? "&category=" + this.category.join("|") : "";
+            let coords = this.coords ? "&coords[lat]="+this.coords.lat+"&coords[lng]="+this.coords.lng : "";
             this.page ++;
-            //todo: come cazzo si mettono le coords!!
-            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+this.page+"&per_page="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc")
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+this.page+"&per_page="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc"+coords+categories)
             .then((data)=>{
                 resolve(data);
             }).catch(reject);

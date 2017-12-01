@@ -1,9 +1,207 @@
 "use strict";
 exports.__esModule = true;
 var media_1 = require("@ionic-native/media");
+var isArray_1 = require("rxjs/util/isArray");
 var BASE_API_PATH = "http://192.168.60.113/api/v2/";
+var EZEvent = (function () {
+    function EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists) {
+        if (isRegular === void 0) { isRegular = false; }
+        if (category === void 0) { category = []; }
+        if (gallery === void 0) { gallery = []; }
+        if (artists === void 0) { artists = []; }
+        this.isRegular = false;
+        this.id = id;
+        this.name = name;
+        this.isRegular = isRegular;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.price = price;
+        this.excerpt = excerpt;
+        this.category = category;
+        this.featured_image = featured_image;
+        this.gallery = gallery;
+        this.artists = artists;
+        this.venue = venue;
+    }
+    EZEvent.json = function (jsonEvent) {
+        var id = jsonEvent.id;
+        var name = jsonEvent.name.plain;
+        var isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
+        var startDate = jsonEvent.start_date ? new Date(jsonEvent.start_date) : null;
+        var endDate = jsonEvent.end_date ? new Date(jsonEvent.end_date) : null;
+        var startTime = jsonEvent.start_time ? new Date(jsonEvent.start_time) : null;
+        var endTime = jsonEvent.end_time ? new Date(jsonEvent.end_date) : null;
+        var price = EZPrice.json(jsonEvent.price);
+        var excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
+        var category = isArray_1.isArray(jsonEvent.category) ? jsonEvent.category : [];
+        var featured_image = EZImage.json(jsonEvent.featured_image);
+        var gallery = EZImage.array(jsonEvent.gallery);
+        var artists = EZArtist.array(jsonEvent.artists);
+        var venue = EZVenue.json(jsonEvent.venue);
+        if (!id || !name || !startDate || !venue)
+            return null;
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists);
+    };
+    return EZEvent;
+}());
+exports.EZEvent = EZEvent;
+var EZVenue = (function () {
+    function EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel) {
+        if (gallery === void 0) { gallery = []; }
+        if (category === void 0) { category = []; }
+        this.gallery = [];
+        this.category = [];
+        this.id = id;
+        this.name = name;
+        this.featured_image = featured_image;
+        this.gallery = gallery;
+        this.phone = phone;
+        this.website = website;
+        this.rate = rate;
+        this.address = address;
+        this.coords = coords;
+        this.excerpt = excerpt;
+        this.category = category;
+        this.openingHours = openingHours;
+        this.priceLevel = priceLevel;
+        if (!id || !name)
+            return null;
+    }
+    EZVenue.json = function () {
+        //todo:: finire il json!!
+        return null;
+    };
+    return EZVenue;
+}());
+exports.EZVenue = EZVenue;
+var EZImage = (function () {
+    function EZImage(thumb, standard, large) {
+        if (thumb || standard || large) {
+            this.thumb = thumb;
+            this.standard = standard;
+            this.large = large;
+        }
+        else {
+            return null;
+        }
+    }
+    EZImage.json = function (jsonImage) {
+        var thumb = jsonImage.thumbnail;
+        var standard = jsonImage.standard;
+        var large = jsonImage.large;
+        if (thumb || standard || large) {
+            return new EZImage(thumb, standard, large);
+        }
+        return null;
+    };
+    EZImage.array = function (jsonArray) {
+        var ret = [];
+        if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
+            return ret;
+        for (var i = 0; i < jsonArray.length; i++) {
+            var img = EZImage.json(jsonArray[0]);
+            if (img)
+                ret.push(img);
+        }
+        return ret;
+    };
+    EZImage.prototype.fallBack = function (startFrom) {
+        if (startFrom === void 0) { startFrom = 'large'; }
+        switch (startFrom) {
+            case 'large':
+                return this.getStandard();
+            case 'standard':
+                return this.getThumb();
+            case 'thumb':
+                return null;
+            default:
+                return null;
+        }
+    };
+    EZImage.prototype.getLarge = function () {
+        return this.large ? this.large : this.fallBack('large');
+    };
+    EZImage.prototype.getStandard = function () {
+        return this.standard ? this.standard : this.fallBack('standard');
+    };
+    EZImage.prototype.getThumb = function () {
+        return this.thumb ? this.thumb : this.fallBack('thumb');
+    };
+    return EZImage;
+}());
+exports.EZImage = EZImage;
+var EZArtist = (function () {
+    function EZArtist(id, name, featured_image, gallery, preview, category, excerpt) {
+        if (gallery === void 0) { gallery = []; }
+        if (category === void 0) { category = []; }
+        this.id = id;
+        this.name = name;
+        this.featured_image = featured_image;
+        this.gallery = gallery;
+        this.preview = preview;
+        this.category = category;
+        this.excerpt = excerpt;
+    }
+    EZArtist.json = function (jsonArtist) {
+        var id = jsonArtist.id;
+        var name = jsonArtist.name;
+        var featured_image = EZImage.json(jsonArtist.featured_image);
+        var gallery = EZImage.array(jsonArtist.gallery);
+        var preview = new EZSoundTrack(jsonArtist.preview_url);
+        var category = isArray_1.isArray(jsonArtist.category) ? jsonArtist.category : [];
+        var excerpt = jsonArtist.excerpt && jsonArtist.excerpt.hasOwnProperty("plain") ? jsonArtist.excerpt.plain : null;
+        if (!id || !name)
+            return null;
+        return new EZArtist(id, name, featured_image, gallery, preview, category, excerpt);
+    };
+    EZArtist.array = function (jsonArray) {
+        var ret = [];
+        if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
+            return ret;
+        for (var i = 0; i < jsonArray.length; i++) {
+            var img = EZArtist.json(jsonArray[0]);
+            if (img)
+                ret.push(img);
+        }
+        return ret;
+    };
+    return EZArtist;
+}());
+exports.EZArtist = EZArtist;
+var EZSoundTrack = (function () {
+    function EZSoundTrack(url) {
+        this.isPlaying = false;
+        if (!url)
+            return null;
+        this.url = url;
+    }
+    return EZSoundTrack;
+}());
+exports.EZSoundTrack = EZSoundTrack;
+var EZPrice = (function () {
+    function EZPrice(display) {
+        this.display = display;
+    }
+    EZPrice.json = function (jsonPrice) {
+        var display = "";
+        if (typeof jsonPrice == "string") {
+            display = jsonPrice;
+        }
+        else if (jsonPrice.hasOwnProperty("price")) {
+            display = jsonPrice.price;
+        }
+        else {
+            return null;
+        }
+        return new EZPrice(display);
+    };
+    return EZPrice;
+}());
+exports.EZPrice = EZPrice;
 var EventManager = (function () {
-    function EventManager(perPage, city, date, coords) {
+    function EventManager(perPage, city, date, coords, category) {
         if (perPage === void 0) { perPage = 30; }
         if (city === void 0) { city = "null"; }
         if (date === void 0) { date = new Date(); }
@@ -13,14 +211,16 @@ var EventManager = (function () {
         this.city = city;
         this.date = date;
         this.coords = coords;
+        this.category = category;
     }
     EventManager.prototype.next = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             var dates = _this.date.getFullYear().toString() + "-" + _this.date.getMonth().toString() + "-" + _this.date.getDay().toString();
+            var categories = _this.category && _this.category.length > 0 ? "&category=" + _this.category.join("|") : "";
+            var coords = _this.coords ? "&coords[lat]=" + _this.coords.lat + "&coords[lng]=" + _this.coords.lng : "";
             _this.page++;
-            //todo: come cazzo si mettono le coords!!
-            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc")
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
                 resolve(data);
             })["catch"](reject);
