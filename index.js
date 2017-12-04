@@ -3,6 +3,103 @@ exports.__esModule = true;
 var media_1 = require("@ionic-native/media");
 var isArray_1 = require("rxjs/util/isArray");
 var BASE_API_PATH = "http://192.168.60.113/api/v2/";
+//const BASE_API_PATH: string = "https://dev.zero.eu/API/v1/";
+/*export interface ZeroEntity {}
+
+export interface Activity extends ZeroEntity {
+    type: string;
+    subtype?: string;
+    target?: ElementSummary;
+}
+
+export interface ElementSummary {
+    id: number;
+    title?: string;
+    image?: string;
+}
+
+export interface UserInfo {
+    id: string;
+    name: string;
+    lastname: string;
+    email: string;
+    image: string;
+    enablePushNotifications?: boolean,
+    enableNewsletter?: boolean,
+    isConnectedToFacebook?: boolean
+}
+
+export interface EventInterface extends ZeroEntity{
+    id: string;
+    title: string;
+    image: string;
+    venue: Venue;
+    info: EventInfo;
+    isOnSale: boolean;
+}
+
+export interface EventInfo {
+    startTime: Date;
+    endTime: Date;
+    days?: number;
+}
+
+export interface Venue extends ZeroEntity{
+    id: string;
+    name: string;
+    position: Geoposition;
+    image: string;
+    url?: string;
+}
+
+export interface Geoposition {
+    coords: {
+        lat: number;
+        lng: number;
+    }
+    address: string;
+}
+
+export interface Sector {
+    id: string;
+    description: string;
+    prices: Price[];
+}
+
+export interface Price {
+    id: string;
+    description: string;
+    availability: number;
+    net: number;
+    presale?: number;
+    commission?: number;
+}
+
+export interface SearchResult {
+    events?: SearchElement[];
+    venues?: SearchElement[];
+    artists?: SearchElement[];
+}
+
+export interface SearchElement {
+    id: number,
+    category: string,
+    title: string,
+    subtitle: string,
+    image: string
+}
+
+export interface Ticket extends ZeroEntity{
+    title: string;
+    price: string;
+}
+
+export interface Artist extends ZeroEntity {
+    id: string;
+    name: string;
+    image: string;
+    topTrack: Track;
+}*/
 var EZEvent = (function () {
     function EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists) {
         if (isRegular === void 0) { isRegular = false; }
@@ -38,11 +135,22 @@ var EZEvent = (function () {
         var category = isArray_1.isArray(jsonEvent.category) ? jsonEvent.category : [];
         var featured_image = EZImage.json(jsonEvent.featured_image);
         var gallery = EZImage.array(jsonEvent.gallery);
-        var artists = EZArtist.array(jsonEvent.artists);
-        var venue = EZVenue.json(jsonEvent.venue);
+        var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
+        var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : null;
         if (!id || !name || !startDate || !venue)
             return null;
         return new EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists);
+    };
+    EZEvent.array = function (arr) {
+        var ret = [];
+        if (!isArray_1.isArray(arr) || arr.length == 0)
+            return ret;
+        for (var i = 0; i < arr.length; i++) {
+            var ev = EZEvent.json(arr[0]);
+            if (ev)
+                ret.push(ev);
+        }
+        return ret;
     };
     return EZEvent;
 }());
@@ -69,9 +177,32 @@ var EZVenue = (function () {
         if (!id || !name)
             return null;
     }
-    EZVenue.json = function () {
-        //todo:: finire il json!!
-        return null;
+    EZVenue.json = function (json) {
+        var id = json.id;
+        var name = json.name;
+        var featured_image = EZImage.json(json.featured_image);
+        var gallery = isArray_1.isArray(json.gallery) ? EZImage.array(json.gallery) : null;
+        var phone = json.phone;
+        var website = json.website;
+        var rate = (typeof json.rate == 'number') ? json.rate : null;
+        var address = json.address;
+        var coords = json.coordinate && json.coordinate.hasOwnProperty('lat') && json.coordinate.hasOwnProperty('lng') ? json.coordinate : null;
+        var excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
+        var category = json.category;
+        var openingHours = EZTable.json(json.openingHours);
+        var priceLevel = (typeof json.price_level == 'number') ? json.price_level : null;
+        return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);
+    };
+    EZVenue.array = function (arr) {
+        var ret = [];
+        if (!isArray_1.isArray(arr) || arr.length == 0)
+            return ret;
+        for (var i = 0; i < arr.length; i++) {
+            var venue = EZVenue.json(arr[0]);
+            if (venue)
+                ret.push(venue);
+        }
+        return ret;
     };
     return EZVenue;
 }());
@@ -173,10 +304,53 @@ exports.EZArtist = EZArtist;
 var EZSoundTrack = (function () {
     function EZSoundTrack(url) {
         this.isPlaying = false;
+        this.media = null;
+        this.hasError = null;
+        this.disable = false;
         if (!url)
             return null;
+        var that = this;
         this.url = url;
+        this.media = (new media_1.Media()).create(this.url);
+        this.media.onStatusUpdate.subscribe(function (status) {
+            that.disable = false;
+            if (status == 1 || status == 2) {
+                that.isPlaying = true;
+            }
+            else if (status == 3 || status == 4) {
+                that.isPlaying = false;
+            }
+        });
+        this.media.onError.subscribe(function (error) {
+            that.isPlaying = false;
+            that.disable = false;
+            if (that.hasError != null)
+                that.hasError(error);
+        });
     }
+    EZSoundTrack.prototype.onError = function (handler) {
+        this.hasError = handler;
+    };
+    EZSoundTrack.prototype.play = function () {
+        if (this.disable)
+            return;
+        this.disable = true;
+        this.media.play();
+    };
+    EZSoundTrack.prototype.stop = function () {
+        if (this.disable)
+            return;
+        this.disable = true;
+        this.media.stop();
+    };
+    EZSoundTrack.prototype.toggle = function () {
+        if (this.isPlaying) {
+            this.stop();
+        }
+        else {
+            this.play();
+        }
+    };
     return EZSoundTrack;
 }());
 exports.EZSoundTrack = EZSoundTrack;
@@ -200,6 +374,29 @@ var EZPrice = (function () {
     return EZPrice;
 }());
 exports.EZPrice = EZPrice;
+var EZTable = (function () {
+    function EZTable(dict) {
+        this.dict = dict;
+    }
+    EZTable.json = function (json) {
+        if (!isArray_1.isArray(json))
+            return null;
+        var dict = [];
+        for (var i = 0; i < json.length; i++) {
+            var el = json[i];
+            var name_1 = el.name;
+            var value = el.value;
+            if (name_1 && value) {
+                dict.push({ name: name_1, value: value });
+            }
+        }
+        if (dict.length == 0)
+            return null;
+        return new EZTable(dict);
+    };
+    return EZTable;
+}());
+exports.EZTable = EZTable;
 var EventManager = (function () {
     function EventManager(perPage, city, date, coords, category) {
         if (perPage === void 0) { perPage = 30; }
@@ -222,16 +419,96 @@ var EventManager = (function () {
             _this.page++;
             ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
-                resolve(data);
+                resolve(EZEvent.array(data));
             })["catch"](reject);
         });
     };
     EventManager.prototype.reset = function () {
         this.page = 0;
     };
+    EventManager.get = function (id) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + "events/" + id + "&_embed=1")
+                .then(function (data) {
+                resolve(EZEvent.json(data));
+            })["catch"](reject);
+        });
+    };
     return EventManager;
 }());
 exports.EventManager = EventManager;
+var VenueManager = (function () {
+    function VenueManager(perPage, city, date, coords, category) {
+        if (perPage === void 0) { perPage = 30; }
+        if (city === void 0) { city = "null"; }
+        if (date === void 0) { date = new Date(); }
+        if (coords === void 0) { coords = null; }
+        this.page = 0;
+        this.perPage = perPage;
+        this.city = city;
+        this.date = date;
+        this.coords = coords;
+        this.category = category;
+    }
+    VenueManager.prototype.next = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var dates = _this.date.getFullYear().toString() + "-" + _this.date.getMonth().toString() + "-" + _this.date.getDay().toString();
+            var categories = _this.category && _this.category.length > 0 ? "&category=" + _this.category.join("|") : "";
+            var coords = _this.coords ? "&coords[lat]=" + _this.coords.lat + "&coords[lng]=" + _this.coords.lng : "";
+            _this.page++;
+            ZeroPlugin.get(BASE_API_PATH + "locations?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
+                .then(function (data) {
+                resolve(EZVenue.array(data));
+            })["catch"](reject);
+        });
+    };
+    VenueManager.prototype.reset = function () {
+        this.page = 0;
+    };
+    VenueManager.get = function (id) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + "locations/" + id + "&_embed=1")
+                .then(function (data) {
+                resolve(EZVenue.json(data));
+            })["catch"](reject);
+        });
+    };
+    return VenueManager;
+}());
+exports.VenueManager = VenueManager;
+var ArtistManager = (function () {
+    function ArtistManager(perPage, category) {
+        if (perPage === void 0) { perPage = 30; }
+        this.page = 0;
+        this.perPage = perPage;
+        this.category = category;
+    }
+    ArtistManager.prototype.next = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var categories = _this.category && _this.category.length > 0 ? "&category=" + _this.category.join("|") : "";
+            _this.page++;
+            ZeroPlugin.get(BASE_API_PATH + "artists?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&order=asc" + categories)
+                .then(function (data) {
+                resolve(EZArtist.array(data));
+            })["catch"](reject);
+        });
+    };
+    ArtistManager.prototype.reset = function () {
+        this.page = 0;
+    };
+    ArtistManager.get = function (id) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + "artists/" + id + "&_embed=1")
+                .then(function (data) {
+                resolve(EZArtist.json(data));
+            })["catch"](reject);
+        });
+    };
+    return ArtistManager;
+}());
+exports.ArtistManager = ArtistManager;
 var Track = (function () {
     function Track(url) {
         this.isPlaying = false;
