@@ -100,6 +100,88 @@ export interface Artist extends ZeroEntity {
     image: string;
     topTrack: Track;
 }*/
+var EZUser = (function () {
+    function EZUser(id, first_name, last_name, email, profile_image, enable_push_notifications, enable_email_notifications, enable_newsletter, is_connected_to_facebook) {
+        if (enable_push_notifications === void 0) { enable_push_notifications = false; }
+        if (enable_email_notifications === void 0) { enable_email_notifications = false; }
+        if (enable_newsletter === void 0) { enable_newsletter = false; }
+        if (is_connected_to_facebook === void 0) { is_connected_to_facebook = false; }
+        this.enable_push_notifications = false;
+        this.enable_email_notifications = false;
+        this.enable_newsletter = false;
+        this.is_connected_to_facebook = false;
+        if (!id || !first_name || !last_name || !email)
+            return null;
+        this.id = id;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.email = email;
+        this.profile_image = profile_image;
+        this.enable_push_notifications = enable_push_notifications;
+        this.enable_email_notifications = enable_email_notifications;
+        this.enable_newsletter = enable_newsletter;
+        this.is_connected_to_facebook = is_connected_to_facebook;
+    }
+    EZUser.json = function (json) {
+        return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
+    };
+    EZUser.prototype.preferences = function () {
+        return { enable_push_notifications: this.enable_push_notifications, enable_email_notifications: this.enable_email_notifications, enable_newsletter: this.enable_newsletter, is_connected_to_facebook: this.is_connected_to_facebook };
+    };
+    EZUser.prototype.info = function () {
+        return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
+    };
+    EZUser.prototype.firstName = function (name) {
+        if (name === void 0) { name = null; }
+        if (name == null)
+            return this.first_name;
+        this.first_name = name;
+    };
+    EZUser.prototype.lastName = function (name) {
+        if (name === void 0) { name = null; }
+        if (name == null)
+            return this.last_name;
+        this.last_name = name;
+    };
+    EZUser.prototype.mail = function (email) {
+        if (email === void 0) { email = null; }
+        if (email == null)
+            return this.email;
+        this.email = email;
+    };
+    EZUser.prototype.image = function (image) {
+        if (image === void 0) { image = null; }
+        if (image == null)
+            return this.profile_image;
+        this.profile_image = image;
+    };
+    EZUser.prototype.enablePushNotifications = function (enable) {
+        if (enable === void 0) { enable = null; }
+        if (enable == null)
+            return this.enable_push_notifications;
+        this.enable_push_notifications = enable;
+    };
+    EZUser.prototype.enableEmailNotifications = function (enable) {
+        if (enable === void 0) { enable = null; }
+        if (enable == null)
+            return this.enable_email_notifications;
+        this.enable_email_notifications = enable;
+    };
+    EZUser.prototype.enableNewsletter = function (enable) {
+        if (enable === void 0) { enable = null; }
+        if (enable == null)
+            return this.enable_newsletter;
+        this.enable_newsletter = enable;
+    };
+    EZUser.prototype.isConnectedToFacebook = function (isConnected) {
+        if (isConnected === void 0) { isConnected = null; }
+        if (isConnected == null)
+            return this.is_connected_to_facebook;
+        this.is_connected_to_facebook = isConnected;
+    };
+    return EZUser;
+}());
+exports.EZUser = EZUser;
 var EZEvent = (function () {
     function EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists) {
         if (isRegular === void 0) { isRegular = false; }
@@ -219,9 +301,11 @@ var EZImage = (function () {
         }
     }
     EZImage.json = function (jsonImage) {
-        var thumb = jsonImage.thumbnail;
-        var standard = jsonImage.standard;
-        var large = jsonImage.large;
+        if (typeof jsonImage == "string")
+            return new EZImage(null, jsonImage, null);
+        var thumb = jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
+        var standard = jsonImage.sizes.medium ? jsonImage.sizes.medium.file : null;
+        var large = jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
         if (thumb || standard || large) {
             return new EZImage(thumb, standard, large);
         }
@@ -509,55 +593,168 @@ var ArtistManager = (function () {
     return ArtistManager;
 }());
 exports.ArtistManager = ArtistManager;
-var Track = (function () {
-    function Track(url) {
-        this.isPlaying = false;
-        this.play = function () {
-            var o = this;
-            this.media = new media_1.Media().create(this.url);
-            return new Promise(function (resolve, reject) {
-                o.media.onStatusUpdate.subscribe(function (status) {
-                    if (status == 2)
-                        resolve();
-                });
-                o.media.onError.subscribe(function (error) {
-                    o.media.release();
-                    reject(error);
-                });
-                o.media.play();
-                o.isPlaying = true;
-            });
-        };
-        this.stop = function () {
-            var o = this;
-            return new Promise(function (resolve, reject) {
-                o.media.onStatusUpdate.subscribe(function (status) {
-                    if (status == 4) {
-                        o.media.release();
-                        o.isPlaying = false;
-                        resolve();
-                    }
-                });
-                o.media.onError.subscribe(function (error) {
-                    reject(error);
-                });
-                o.media.stop();
-                o.isPlaying = false;
-            });
-        };
-        this.toggle = function () {
-            if (this.isPlaying) {
-                return this.stop();
+var AccountManager = (function () {
+    function AccountManager(user) {
+        this.user = user;
+    }
+    AccountManager.current = function () {
+        return new Promise(function (resolve, reject) {
+            if (AccountManager.instance) {
+                resolve(AccountManager.instance);
             }
             else {
-                return this.play();
+                ZeroPlugin.userInfo().then(function (user) {
+                    var u = EZUser.json(user);
+                    if (u) {
+                        AccountManager.instance = new AccountManager(u);
+                        resolve(AccountManager.instance);
+                    }
+                    else {
+                        reject(new Error("Not users found."));
+                    }
+                })["catch"](reject);
             }
-        };
+        });
+    };
+    AccountManager.login = function (grant, credentials) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.login(grant, credentials).then(function (result) {
+                if (result) {
+                    AccountManager.current().then(resolve)["catch"](reject);
+                }
+                else {
+                    reject(new Error("Login Failed."));
+                }
+            })["catch"](function (error) {
+                reject(error);
+            });
+        });
+    };
+    AccountManager.signup = function (first_name, last_name, email) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.signup(first_name, last_name, email).then(resolve)["catch"](reject);
+        });
+    };
+    AccountManager.setPassword = function (key, login, password) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.setPassword(key, login, password).then(resolve)["catch"](reject);
+        });
+    };
+    AccountManager.prototype.currentUser = function () {
+        return this.user;
+    };
+    AccountManager.prototype.edit = function (user) {
+        this.user = user;
+        return this;
+    };
+    AccountManager.prototype.commit = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.updateUser(_this.user).then(resolve)["catch"](reject);
+        });
+    };
+    //todo:: isLogged missing;
+    AccountManager.prototype.editImage = function (base64) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.post(BASE_API_PATH + 'users/me/profileImage', { data: base64 }).then(function (res) {
+                var img = EZImage.json(res);
+                if (!img)
+                    reject(new Error("Unexpected Response."));
+                that.user.image(img);
+                resolve(img);
+            })["catch"](reject);
+        });
+    };
+    AccountManager.prototype.connectToFacebook = function (token) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook', { token: token }).then(function (data) {
+                that.user.isConnectedToFacebook(true);
+                resolve();
+            })["catch"](function (error) {
+                reject(error);
+            });
+        });
+    };
+    AccountManager.prototype.disconnectFromFacebook = function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then(function (data) {
+                that.user.isConnectedToFacebook(false);
+                resolve();
+            })["catch"](function (error) {
+                reject(error);
+            });
+        });
+    };
+    AccountManager.prototype.logout = function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.logout().then(function () {
+                AccountManager.instance = null;
+                that.user = null;
+                resolve();
+            })["catch"](function (error) {
+                reject(error);
+            });
+        });
+    };
+    return AccountManager;
+}());
+exports.AccountManager = AccountManager;
+/*
+export class Track {
+    url: string;
+    isPlaying: boolean = false;
+    media: MediaObject;
+    constructor(url: string) {
         this.url = url;
     }
-    return Track;
-}());
-exports.Track = Track;
+
+    play = function(): Promise<void> {
+        let o = this;
+        this.media = new Media().create(this.url);
+        return new Promise<void>((resolve, reject) => {
+            o.media.onStatusUpdate.subscribe((status) => {
+                if(status == 2) resolve();
+            });
+            o.media.onError.subscribe((error) => {
+                o.media.release();
+                reject(error);
+            });
+            o.media.play();
+            o.isPlaying = true;
+        });
+    }
+
+    stop = function(): Promise<void> {
+        let o = this;
+        return new Promise<void>((resolve, reject) => {
+            o.media.onStatusUpdate.subscribe((status) => {
+                if(status == 4) {
+                    o.media.release();
+                    o.isPlaying = false;
+                    resolve();
+                }
+            });
+            o.media.onError.subscribe((error) => {
+                reject(error);
+            });
+            o.media.stop();
+            o.isPlaying = false;
+        });
+    }
+
+    toggle = function(): Promise<void> {
+        if(this.isPlaying) {
+            return this.stop();
+        } else {
+            return this.play();
+        }
+    }
+}
+*/
 var ZeroClass = (function () {
     function ZeroClass() {
         this.init = function (clientID, clientSecret) {

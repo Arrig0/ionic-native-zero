@@ -104,6 +104,87 @@ export interface Artist extends ZeroEntity {
     topTrack: Track;
 }*/
 
+export class EZUser {
+    private id: number;
+    private first_name: string;
+    private last_name: string;
+    private email: string;
+    private profile_image: EZImage | null;
+    private enable_push_notifications: boolean = false;
+    private enable_email_notifications: boolean = false;
+    private enable_newsletter: boolean = false;
+    private is_connected_to_facebook: boolean = false;
+
+    constructor(id: number, first_name: string, last_name: string, email: string, profile_image: EZImage | null, enable_push_notifications: boolean = false, enable_email_notifications: boolean = false, enable_newsletter: boolean = false, is_connected_to_facebook: boolean = false) {
+
+        if( !id || !first_name || !last_name || !email )
+            return null;
+
+        this.id = id;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.email = email;
+        this.profile_image = profile_image;
+        this.enable_push_notifications = enable_push_notifications;
+        this.enable_email_notifications = enable_email_notifications;
+        this.enable_newsletter = enable_newsletter;
+        this.is_connected_to_facebook = is_connected_to_facebook;
+    }
+
+    public static json(json: any): EZUser | null {
+        return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
+    }
+
+    public preferences() : { enable_push_notifications: boolean, enable_email_notifications: boolean, enable_newsletter: boolean, is_connected_to_facebook: boolean } {
+        return { enable_push_notifications: this.enable_push_notifications, enable_email_notifications: this.enable_email_notifications, enable_newsletter: this.enable_newsletter, is_connected_to_facebook: this.is_connected_to_facebook };
+    }
+
+    public info(): { id: number, first_name: string, last_name: string, email: string } {
+        return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
+    }
+
+    public firstName(name: string = null): string | void {
+        if(name == null) return this.first_name;
+        this.first_name = name;
+    }
+
+    public lastName(name: string = null): string | void {
+        if(name == null) return this.last_name;
+        this.last_name = name;
+    }
+
+    public mail(email: string = null): string | void {
+        if(email == null) return this.email;
+        this.email = email;
+    }
+
+    public image(image: EZImage = null): EZImage | void {
+        if(image == null) return this.profile_image;
+        this.profile_image = image;
+    }
+
+    public enablePushNotifications(enable: boolean = null): boolean | void {
+        if(enable == null) return this.enable_push_notifications;
+        this.enable_push_notifications = enable;
+    }
+
+    public enableEmailNotifications(enable: boolean = null): boolean | void {
+        if(enable == null) return this.enable_email_notifications;
+        this.enable_email_notifications = enable;
+    }
+
+    public enableNewsletter(enable: boolean = null): boolean | void {
+        if(enable == null) return this.enable_newsletter;
+        this.enable_newsletter = enable;
+    }
+
+    public isConnectedToFacebook(isConnected: boolean = null): boolean | void {
+        if(isConnected == null) return this.is_connected_to_facebook;
+        this.is_connected_to_facebook = isConnected;
+    }
+
+}
+
 export class EZEvent {
     private id: number;
     private name: string;
@@ -248,9 +329,12 @@ export class EZImage {
     }
 
     static json(jsonImage: any): EZImage | null {
-        let thumb = jsonImage.thumbnail;
-        let standard = jsonImage.standard;
-        let large = jsonImage.large;
+
+        if(typeof jsonImage == "string") return new EZImage(null, jsonImage, null);
+
+        let thumb = jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
+        let standard = jsonImage.sizes.medium ? jsonImage.sizes.medium.file: null;
+        let large = jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
         if(thumb || standard || large) {
             return new EZImage(thumb, standard, large);
         }
@@ -562,6 +646,131 @@ export class ArtistManager {
     }
 }
 
+export class AccountManager {
+
+    private static instance: AccountManager;
+
+    public static current(): Promise<AccountManager> {
+        return new Promise<AccountManager>((resolve, reject) => {
+            if(AccountManager.instance){
+                resolve(AccountManager.instance);
+            } else {
+                ZeroPlugin.userInfo().then((user) => {
+                    let u = EZUser.json(user);
+                    if(u) {
+                        AccountManager.instance = new AccountManager(u);
+                        resolve(AccountManager.instance);
+                    } else {
+                        reject(new Error("Not users found."));
+                    }
+                }).catch(reject);
+            }
+        })
+    }
+
+    public static login(grant: string, credentials: string): Promise<AccountManager> {
+        return new Promise<AccountManager>((resolve, reject) => {
+            ZeroPlugin.login(grant, credentials).then((result: boolean) => {
+                if(result) {
+                    AccountManager.current().then(resolve).catch(reject);
+                } else {
+                    reject(new Error("Login Failed."));
+                }
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
+    public static signup(first_name: string, last_name: string, email: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch(reject);
+        });
+    }
+
+    public static setPassword(key: string, login: string, password: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            ZeroPlugin.setPassword(key, login, password).then(resolve).catch(reject);
+        });
+    }
+
+    private user: EZUser;
+
+    constructor(user: EZUser) {
+        this.user = user;
+    }
+
+    public currentUser(): EZUser {
+        return this.user;
+    }
+
+    public edit(user: EZUser): AccountManager {
+        this.user = user;
+        return this;
+    }
+
+    public commit(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            ZeroPlugin.updateUser(this.user).then(resolve).catch(reject);
+        });
+    }
+
+    //todo:: isLogged missing;
+
+    public editImage(base64: string): Promise<EZImage> {
+        let that = this;
+        return new Promise<EZImage>((resolve, reject) => {
+            ZeroPlugin.post(BASE_API_PATH + 'users/me/profileImage', { data: base64 }).then((res) => {
+                let img = EZImage.json(res);
+                if(!img)
+                    reject(new Error("Unexpected Response."));
+                that.user.image(img);
+                resolve(img);
+            }).catch(reject);
+        });
+    }
+
+    public connectToFacebook(token): Promise<void> {
+        let that = this;
+        return new Promise<void>(function(resolve, reject) {
+            ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook', { token: token }).then(function(data) {
+                that.user.isConnectedToFacebook(true);
+                resolve();
+            }).catch(function(error) {
+                reject(error);
+            });
+        });
+    }
+
+    public disconnectFromFacebook(): Promise<void> {
+        let that = this;
+        return new Promise<void>(function(resolve, reject) {
+            ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then((data) => {
+                that.user.isConnectedToFacebook(false);
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
+
+    public logout(): Promise<void> {
+        let that = this;
+        return new Promise<void>((resolve, reject) => {
+            ZeroPlugin.logout().then(() => {
+                AccountManager.instance = null;
+                that.user = null;
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
+}
+
+/*
 export class Track {
     url: string;
     isPlaying: boolean = false;
@@ -612,6 +821,7 @@ export class Track {
         }
     }
 }
+*/
 
 
 export class ZeroClass {
