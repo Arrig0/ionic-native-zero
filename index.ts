@@ -522,6 +522,11 @@ export interface EZDictionary {
     value: any;
 }
 
+export class EZTrigger<T> {
+    id: string;
+    trigger: (param?: T) => {};
+}
+
 export class EventManager {
     private page: number;
     readonly perPage: number;
@@ -715,7 +720,11 @@ export class AccountManager {
         });
     }
 
-    //todo:: isLogged missing;
+    public isLogged(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            return ZeroPlugin.checkLogin().then(resolve).catch(reject);
+        });
+    },
 
     public editImage(base64: string): Promise<EZImage> {
         let that = this;
@@ -765,6 +774,75 @@ export class AccountManager {
             }).catch((error) => {
                 reject(error);
             });
+        });
+    }
+
+}
+
+export class TriggerManager {
+
+    private static instance: TriggerManager =  null;
+
+    public static current(): TriggerManager {
+        if( !TriggerManager.instance )
+            TriggerManager.instance = new TriggerManager();
+        return TriggerManager.instance;
+    }
+
+    private errorTrigger: EZTrigger<Error>[];
+    private loginTrigger: EZTrigger<AccountManager>[];
+    private logoutTrigger: EZTrigger<void>[];
+
+    private constructor() {}
+
+    each( trigger: EZTrigger<Error> );
+    each( trigger: EZTrigger<AccountManager> );
+    each( trigger: EZTrigger<void> );
+    each( trigger: EZTrigger<any> ) {
+        if( trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof Error ) {
+            this.errorTrigger.push(trigger);
+        } else if( trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof AccountManager ) {
+            this.loginTrigger.push(trigger);
+        } else {
+            this.logoutTrigger.push(trigger);
+        }
+    }
+
+    remove(id: string) {
+        this.errorTrigger = this.errorTrigger.filter((t) => {
+            return t.id != id;
+        });
+
+        this.loginTrigger = this.loginTrigger.filter((t) => {
+            return t.id != id;
+        });
+
+        this.logoutTrigger = this.logoutTrigger.filter((t) => {
+            return t.id != id;
+        });
+    }
+
+    clean() {
+        this.errorTrigger = [];
+        this.loginTrigger = [];
+        this.logoutTrigger = [];
+    }
+
+    catchError(error: Error) {
+        this.errorTrigger.forEach((trigger) => {
+            trigger.trigger(error);
+        });
+    }
+
+    performLogin(am: AccountManager) {
+        this.loginTrigger.forEach((trigger) => {
+            trigger.trigger(am);
+        });
+    }
+
+    performLogout() {
+        this.logoutTrigger.forEach((trigger) => {
+            trigger.trigger();
         });
     }
 
@@ -828,13 +906,15 @@ export class ZeroClass {
 
     private static instance: ZeroClass = null;
 
-    private onLogoutAction;
+
+    //TRIGGER
+    /*private onLogoutAction;
 
     private onFirstAccessAction;
 
     private onLoginAction;
 
-    private onErrorAction;
+    private onErrorAction;*/
 
     static shared() {
         if(ZeroClass.instance == null) {
@@ -847,7 +927,8 @@ export class ZeroClass {
         return ZeroPlugin.init(clientID, clientSecret);
     }
 
-    search = function(q: string): Promise<SearchResult> {
+    //SEARCH
+    /*search = function(q: string): Promise<SearchResult> {
         return new Promise<SearchResult>((resolve, reject) => {
             ZeroPlugin.get(BASE_API_PATH + "search/?q=" + encodeURIComponent(q))
             .then((data) => {
@@ -864,9 +945,10 @@ export class ZeroClass {
                 });
             }).catch(reject);
         });
-    }
+    }*/
 
-    config = {
+    //CONFIG
+    /*config = {
         onLogout: function(action) {
             this.onLogoutAction = action;
             ZeroPlugin.onLogoutAction = action;
@@ -896,9 +978,10 @@ export class ZeroClass {
                 ZeroPlugin.onErrorAction(code, message);
             }
         }
-    }
+    }*/
 
-    user = {
+    //USER
+    /*user = {
 
         create: function(first_name: string, last_name: string, email: string){
             return new Promise<void>((resolve, reject) => {
@@ -981,17 +1064,19 @@ export class ZeroClass {
                 });
             });
         }
-    }
+    }*/
 
-    support = {
+    //SUPPORT
+    /*support = {
         send: function(subject, message) {
             return new Promise<void>((resolve, reject) => {
                 ZeroPlugin.post(BASE_API_PATH + "support/", { subject: subject, message: message }).then(resolve).catch(reject);
             });
         }
-    }
-    
-    events = {
+    }*/
+
+    //EVENTS
+    /*events = {
 
         all: function(page: number = 1, city: string = "milano", startDate: Date = new Date()): Promise<any> {
             return new Promise<any>(function(resolve, reject) {
@@ -1089,9 +1174,10 @@ export class ZeroClass {
             });
         }
         
-    }
+    }*/
 
-    venues = {
+    //VENUE
+    /*venues = {
         
         all: function(page: number): Promise<Venue[]> {
             return new Promise<Venue[]>((resolve, reject)=>{
@@ -1125,10 +1211,10 @@ export class ZeroClass {
         }
 
 
-    }
+    }*/
 
-
-    tickets = {
+    //TICKET
+    /*tickets = {
         all: function(): Promise<Ticket[]> {
             return new Promise<Ticket[]>((resolve, reject) => {
                 ZeroPlugin.get(BASE_API_PATH + "tickets/").then((data) => {
@@ -1138,9 +1224,10 @@ export class ZeroClass {
                 }).catch(reject);
             });
         }
-    }
+    }*/
 
-    artists = {
+    //ARTIST
+    /*artists = {
         search: function(q: string): Promise<Artist[]> {
             return new Promise<Artist[]>((resolve, reject) => {
                 ZeroPlugin.get(BASE_API_PATH + "artists/?q="+encodeURIComponent(q)).then((data) => {
@@ -1158,10 +1245,10 @@ export class ZeroClass {
                 }).catch(reject);
             });
         }
-    }
+    }*/
 
-
-    activity = {
+    //ACTIVITY
+    /*activity = {
         all: function(): Promise<Activity[]> {
             return new Promise<Activity[]>(function(resolve, reject) {
                 ZeroPlugin.get(BASE_API_PATH + "activity/").then(function(data: any) {
@@ -1195,54 +1282,7 @@ export class ZeroClass {
                 }).catch(reject);
             });
         }
-    };
-
-    static parseEvent(el): EventInterface{
-        return {
-            id: el["id"],
-            title: el["title"],
-            image: el["image"],
-            venue: ZeroClass.parseVenue(el["venue"]),
-            info: {
-                startTime: new Date(el["info"]["startDate"]),
-                endTime: new Date(el["info"]["endDate"]),
-                days: el["info"]["days"],
-            } as EventInfo,
-            isOnSale: el["isOnSale"]
-        } as EventInterface;
-    }
-
-    static parseVenue(el): Venue{
-        return {
-            id: el["id"],
-            name: el["name"],
-            position: {
-                coords: {
-                    lat: el["position"]["coords"]["lat"],
-                    lng: el["position"]["coords"]["lng"]
-                }
-            } as Geoposition,
-            image: el["image"],
-            url: el["url"]
-        } as Venue;
-    }
-
-    static parseArtist(data): Artist{
-        return {
-            id: data["id"],
-            name: data["name"],
-            image: data["image"],
-            topTrack: new Track(data["topTrack"]) // #ALEWARNING: settare le callback;
-        };
-    }
-
-    static parseTicket(data): Ticket {
-        // #ALEWARNING: qui ovviamente va mappato il tiket di risposta;
-        return {
-            title: data["title"],
-            price: data["prezzo"]
-        };
-    }
+    };*/
 
 }
 

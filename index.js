@@ -481,6 +481,12 @@ var EZTable = (function () {
     return EZTable;
 }());
 exports.EZTable = EZTable;
+var EZTrigger = (function () {
+    function EZTrigger() {
+    }
+    return EZTrigger;
+}());
+exports.EZTrigger = EZTrigger;
 var EventManager = (function () {
     function EventManager(perPage, city, date, coords, category) {
         if (perPage === void 0) { perPage = 30; }
@@ -653,7 +659,11 @@ var AccountManager = (function () {
             ZeroPlugin.updateUser(_this.user).then(resolve)["catch"](reject);
         });
     };
-    //todo:: isLogged missing;
+    AccountManager.prototype.isLogged = function () {
+        return new Promise(function (resolve, reject) {
+            return ZeroPlugin.checkLogin().then(resolve)["catch"](reject);
+        });
+    };
     AccountManager.prototype.editImage = function (base64) {
         var that = this;
         return new Promise(function (resolve, reject) {
@@ -703,6 +713,60 @@ var AccountManager = (function () {
     return AccountManager;
 }());
 exports.AccountManager = AccountManager;
+var TriggerManager = (function () {
+    function TriggerManager() {
+    }
+    TriggerManager.current = function () {
+        if (!TriggerManager.instance)
+            TriggerManager.instance = new TriggerManager();
+        return TriggerManager.instance;
+    };
+    TriggerManager.prototype.each = function (trigger) {
+        if (trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof Error) {
+            this.errorTrigger.push(trigger);
+        }
+        else if (trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof AccountManager) {
+            this.loginTrigger.push(trigger);
+        }
+        else {
+            this.logoutTrigger.push(trigger);
+        }
+    };
+    TriggerManager.prototype.remove = function (id) {
+        this.errorTrigger = this.errorTrigger.filter(function (t) {
+            return t.id != id;
+        });
+        this.loginTrigger = this.loginTrigger.filter(function (t) {
+            return t.id != id;
+        });
+        this.logoutTrigger = this.logoutTrigger.filter(function (t) {
+            return t.id != id;
+        });
+    };
+    TriggerManager.prototype.clean = function () {
+        this.errorTrigger = [];
+        this.loginTrigger = [];
+        this.logoutTrigger = [];
+    };
+    TriggerManager.prototype.catchError = function (error) {
+        this.errorTrigger.forEach(function (trigger) {
+            trigger.trigger(error);
+        });
+    };
+    TriggerManager.prototype.performLogin = function (am) {
+        this.loginTrigger.forEach(function (trigger) {
+            trigger.trigger(am);
+        });
+    };
+    TriggerManager.prototype.performLogout = function () {
+        this.logoutTrigger.forEach(function (trigger) {
+            trigger.trigger();
+        });
+    };
+    TriggerManager.instance = null;
+    return TriggerManager;
+}());
+exports.TriggerManager = TriggerManager;
 /*
 export class Track {
     url: string;
@@ -760,174 +824,192 @@ var ZeroClass = (function () {
         this.init = function (clientID, clientSecret) {
             return ZeroPlugin.init(clientID, clientSecret);
         };
-        this.search = function (q) {
-            return new Promise(function (resolve, reject) {
+        //SEARCH
+        /*search = function(q: string): Promise<SearchResult> {
+            return new Promise<SearchResult>((resolve, reject) => {
                 ZeroPlugin.get(BASE_API_PATH + "search/?q=" + encodeURIComponent(q))
-                    .then(function (data) {
+                .then((data) => {
                     resolve({
-                        events: data["events"].map(function (el, index) {
-                            return ZeroClass.parseEvent(el);
-                        }),
-                        venues: data["venues"].map(function (el, index) {
-                            return ZeroClass.parseVenue(el);
-                        }),
-                        artists: data["artists"].map(function (el, index) {
-                            return ZeroClass.parseArtist(el);
-                        })
+                        events: data["events"].map((el, index) => {
+                                return ZeroClass.parseEvent(el);
+                            }),
+                        venues: data["venues"].map((el, index) => {
+                                return ZeroClass.parseVenue(el);
+                            }),
+                        artists: data["artists"].map((el, index) => {
+                                return ZeroClass.parseArtist(el);
+                            })
                     });
-                })["catch"](reject);
+                }).catch(reject);
             });
-        };
-        this.config = {
-            onLogout: function (action) {
+        }*/
+        //CONFIG
+        /*config = {
+            onLogout: function(action) {
                 this.onLogoutAction = action;
                 ZeroPlugin.onLogoutAction = action;
             },
-            onLogin: function (action) {
+    
+            onLogin: function(action) {
                 this.onLoginAction = action;
                 ZeroPlugin.onLoginAction = action;
             },
-            onFirstAccess: function (action) {
+    
+            onFirstAccess: function(action) {
                 this.onFirstAccessAction = action;
                 ZeroPlugin.onFirstAccessAction = action;
             },
-            onError: function (action) {
+    
+            onError: function(action) {
                 this.onErrorAction = action;
                 ZeroPlugin.onErrorAction = action;
             }
-        };
-        this.call = {
-            onError: function (code, message) {
-                if (this.onErrorAction) {
+        }
+    
+        call = {
+            onError: function(code, message) {
+                if(this.onErrorAction) {
                     this.onErrorAction(code, message);
-                }
-                else if (ZeroPlugin.onErrorAction) {
+                } else if(ZeroPlugin.onErrorAction) {
                     ZeroPlugin.onErrorAction(code, message);
                 }
             }
-        };
-        this.user = {
-            create: function (first_name, last_name, email) {
-                return new Promise(function (resolve, reject) {
-                    return ZeroPlugin.signup(first_name, last_name, email).then(resolve)["catch"](reject);
+        }*/
+        //USER
+        /*user = {
+    
+            create: function(first_name: string, last_name: string, email: string){
+                return new Promise<void>((resolve, reject) => {
+                    return ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch(reject);
                 });
             },
-            setPassword: function (key, login, password) {
-                return new Promise(function (resolve, reject) {
-                    return ZeroPlugin.setPassword(key, login, password).then(resolve)["catch"](reject);
+    
+            setPassword: function(key: string, login: string, password: string){
+                return new Promise<void>((resolve, reject) => {
+                    return ZeroPlugin.setPassword(key, login, password).then(resolve).catch(reject);
                 });
             },
-            isLogged: function () {
-                return new Promise(function (resolve, reject) {
-                    return ZeroPlugin.checkLogin().then(resolve)["catch"](reject);
+            
+            isLogged: function(): Promise<void> {
+                return new Promise<void>((resolve, reject) => {
+                    return ZeroPlugin.checkLogin().then(resolve).catch(reject);
                 });
             },
-            info: function () {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.userInfo().then(resolve)["catch"](reject);
+    
+            info: function(): Promise<UserInfo> {
+                return new Promise<UserInfo>(function(resolve, reject) {
+                    ZeroPlugin.userInfo().then(resolve).catch(reject);
                 });
             },
-            update: function (user) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.updateUser(user).then(resolve)["catch"](reject);
+    
+            update: function(user: UserInfo): Promise<void> {
+                return new Promise<void>(function(resolve, reject) {
+                    ZeroPlugin.updateUser(user).then(resolve).catch(reject);
                 });
             },
-            setProfileImage: function (base64) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.post(BASE_API_PATH + 'users/me/profileImage', { data: base64 }).then(function (res) {
+    
+            setProfileImage: function(base64): Promise<string> {
+                return new Promise<string>((resolve, reject) => {
+                    ZeroPlugin.post(BASE_API_PATH + 'users/me/profileImage', { data: base64 }).then(function(res) {
                         resolve(res.file);
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             },
-            login: function (grant, credential) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.login(grant, credential).then(function (result) {
-                        if (result) {
+    
+            login: function(grant: string, credential: string): Promise<boolean> {
+                return new Promise<boolean>(function(resolve, reject) {
+                    ZeroPlugin.login(grant, credential).then(function(result: boolean) {
+                        if(result) {
                             resolve(true);
-                        }
-                        else {
+                        } else {
                             reject("Error");
                         }
-                    })["catch"](function (error) {
+                    }).catch(function(error) {
                         reject(error);
                     });
                 });
             },
-            logout: function () {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.logout().then(function () {
+    
+            logout: function(): Promise<void> {
+                return new Promise<void>(function(resolve, reject) {
+                    ZeroPlugin.logout().then(function() {
                         resolve();
-                    })["catch"](function (error) {
+                    }).catch(function(error) {
                         reject(error);
                     });
                 });
             },
-            connectToFacebook: function (token) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook', { token: token }).then(function (data) {
+    
+            connectToFacebook: function(token): Promise<void> {
+                return new Promise<void>(function(resolve, reject) {
+                    ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook', { token: token }).then(function(data) {
                         resolve();
-                    })["catch"](function (error) {
+                    }).catch(function(error) {
                         reject(error);
                     });
                 });
             },
-            disconnectFromFacebook: function () {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then(function (data) {
+    
+            disconnectFromFacebook: function(): Promise<void> {
+                return new Promise<void>(function(resolve, reject) {
+                    ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then(function(data) {
                         resolve();
-                    })["catch"](function (error) {
+                    }).catch(function(error) {
                         reject(error);
                     });
                 });
             }
-        };
-        this.support = {
-            send: function (subject, message) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.post(BASE_API_PATH + "support/", { subject: subject, message: message }).then(resolve)["catch"](reject);
+        }*/
+        //SUPPORT
+        /*support = {
+            send: function(subject, message) {
+                return new Promise<void>((resolve, reject) => {
+                    ZeroPlugin.post(BASE_API_PATH + "support/", { subject: subject, message: message }).then(resolve).catch(reject);
                 });
             }
-        };
-        this.events = {
-            all: function (page, city, startDate) {
-                if (page === void 0) { page = 1; }
-                if (city === void 0) { city = "milano"; }
-                if (startDate === void 0) { startDate = new Date(); }
-                return new Promise(function (resolve, reject) {
-                    var dateString = startDate.getFullYear().toString() + "-" + startDate.getMonth().toString() + "-" + startDate.getDay().toString();
+        }*/
+        //EVENTS
+        /*events = {
+    
+            all: function(page: number = 1, city: string = "milano", startDate: Date = new Date()): Promise<any> {
+                return new Promise<any>(function(resolve, reject) {
+                    let dateString = startDate.getFullYear().toString()+"-"+startDate.getMonth().toString()+"-"+startDate.getDay().toString();
                     ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=1&per_page=30&start_date=2017-05-29&metro_area=milano&coords=lat%3A23%2Clng%3A45&order=asc")
-                        .then(function (data) {
+                    .then((data)=>{
                         resolve(data);
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             },
-            byId: function (id) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "events/" + id)
-                        .then(function (el) {
+    
+            byId: function(id: string): Promise<EventInterface> {
+                return new Promise<EventInterface>((resolve, reject)=>{
+                    ZeroPlugin.get(BASE_API_PATH + "events/"+id)
+                    .then((el)=>{
                         resolve(ZeroClass.parseEvent(el));
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             },
-            search: function (q) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "events/search/?q=" + encodeURIComponent(q))
-                        .then(function (data) {
-                        resolve(data.map(function (el, index) {
+    
+            search: function(q: string): Promise<EventInterface[]> {
+                return new Promise<EventInterface[]>((resolve, reject)=>{
+                    ZeroPlugin.get(BASE_API_PATH + "events/search/?q="+encodeURIComponent(q))
+                    .then((data)=>{
+                        resolve(data.map((el, index)=>{
                             return ZeroClass.parseEvent(el);
                         }));
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             },
-            prices: function (e) {
-                return new Promise(function (resolve, reject) {
+    
+            prices: function(e: EventInterface): Promise<Sector[]> {
+                return new Promise<Sector[]>((resolve, reject) => {
                     ZeroPlugin.get(BASE_API_PATH + "events/" + e.id + "/prices")
-                        .then(function (data) {
-                        return data.map(function (el, index) {
+                    .then((data) => {
+                        return data.map((el, index) => {
                             return {
                                 id: el["id"],
                                 description: el["description"],
-                                prices: el["rates"].map(function (p, index) {
+                                prices: el["rates"].map((p, index) => {
                                     return {
                                         id: p["id"],
                                         description: p["description"],
@@ -935,116 +1017,131 @@ var ZeroClass = (function () {
                                         net: p["price"],
                                         presale: p["presale"],
                                         commission: p["commission"]
-                                    };
-                                })
-                            };
-                        });
-                    })["catch"](reject);
+                                    }
+                                }) as Price[]
+                            }
+                        }) as Sector[];
+                    }).catch(reject);
                 });
             },
-            purchase: function (e, sector, price, quantity) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "payments/token").then(function (data) {
-                        var token = data["token"];
-                        if (token != null && token != "") {
-                            BraintreePlugin.initialize(token, function () {
-                                var options = {
-                                    amount: quantity * (price.net + price.presale + price.commission),
-                                    primaryDescription: e.title + " @ " + e.venue.name + " - " + e.info.startTime.toDateString
-                                };
-                                BraintreePlugin.presentDropInPaymentUI(options, function (result) {
-                                    if (result.userCancelled) {
-                                        reject(new Error("User cancel payment"));
-                                    }
-                                    else if (result.nonce != null && result.nonce != "") {
-                                        ZeroPlugin.post(BASE_API_PATH + "payments/checkout", { event: e.id, sector: sector.id, price: price.id, quantity: quantity, payment_nonce: result.nonce, amount: options.amount })
-                                            .then(function (response) {
-                                            alert(JSON.stringify(response));
-                                            var status = response["isSuccess"];
-                                            if (status) {
-                                                resolve(response["tickets"].map(function (t, index) {
-                                                    return ZeroClass.parseTicket(t);
-                                                }));
-                                            }
-                                            else {
-                                                reject(new Error(response["error"]));
-                                            }
-                                        })["catch"](reject);
-                                    }
-                                });
-                            }, reject);
-                        }
-                        else {
+    
+            purchase: function(e: EventInterface, sector: Sector, price: Price, quantity: number): Promise<Ticket[]> {
+                return new Promise<Ticket[]>((resolve, reject) => {
+                    ZeroPlugin.get(BASE_API_PATH + "payments/token").then((data) => {
+                        let token = data["token"];
+                        if(token != null && token != "") {
+                            BraintreePlugin.initialize(
+                                token,
+                                () => {
+                                    var options = {
+                                        amount: quantity * (price.net + price.presale + price.commission),
+                                        primaryDescription: e.title + " @ " + e.venue.name + " - " + e.info.startTime.toDateString
+                                    };
+                                    BraintreePlugin.presentDropInPaymentUI(options, function (result) {
+                                        if (result.userCancelled) {
+                                            reject(new Error("User cancel payment"));
+                                        }
+                                        else if(result.nonce != null && result.nonce != "") {
+                                            ZeroPlugin.post(BASE_API_PATH + "payments/checkout", { event: e.id, sector: sector.id, price: price.id, quantity: quantity, payment_nonce: result.nonce, amount: options.amount })
+                                            .then((response) => {
+                                                alert(JSON.stringify(response));
+                                                let status = response["isSuccess"];
+                                                if(status) {
+                                                    resolve(response["tickets"].map((t, index) => {
+                                                        return ZeroClass.parseTicket(t);
+                                                    }) as Ticket[]);
+    
+                                                } else {
+                                                    reject(new Error(response["error"]));
+                                                }
+                                            }).catch(reject);
+                                        }
+                                    });
+                                },
+                                reject
+                            );
+                        } else {
                             reject(new Error("ERROR: invalid token for payment"));
                         }
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             }
-        };
-        this.venues = {
-            all: function (page) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "venues/?page=" + page)
-                        .then(function (data) {
-                        resolve(data.map(function (el, index) {
+            
+        }*/
+        //VENUE
+        /*venues = {
+            
+            all: function(page: number): Promise<Venue[]> {
+                return new Promise<Venue[]>((resolve, reject)=>{
+                    ZeroPlugin.get(BASE_API_PATH + "venues/?page="+page)
+                    .then((data)=>{
+                        resolve(data.map((el, index)=>{
                             return ZeroClass.parseVenue(el);
                         }));
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             },
-            byId: function (id) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "venues/" + id)
-                        .then(function (el) {
+    
+            byId: function(id: string): Promise<Venue> {
+                return new Promise<Venue>((resolve, reject)=>{
+                    ZeroPlugin.get(BASE_API_PATH + "venues/"+id)
+                    .then((el)=>{
                         resolve(ZeroClass.parseVenue(el));
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             },
-            search: function (q) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "venues/?q=" + q)
-                        .then(function (data) {
-                        resolve(data.map(function (el, index) {
+    
+            search: function(q: string): Promise<Venue[]> {
+                return new Promise<Venue[]>((resolve, reject)=>{
+                    ZeroPlugin.get(BASE_API_PATH + "venues/?q="+q)
+                    .then((data)=>{
+                        resolve(data.map((el, index)=>{
                             return ZeroClass.parseVenue(el);
                         }));
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             }
-        };
-        this.tickets = {
-            all: function () {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "tickets/").then(function (data) {
-                        resolve(data.map(function (el, index) {
+    
+    
+        }*/
+        //TICKET
+        /*tickets = {
+            all: function(): Promise<Ticket[]> {
+                return new Promise<Ticket[]>((resolve, reject) => {
+                    ZeroPlugin.get(BASE_API_PATH + "tickets/").then((data) => {
+                        resolve(data.map((el, index) => {
                             return ZeroClass.parseTicket(el);
-                        }));
-                    })["catch"](reject);
+                        }) as Ticket[]);
+                    }).catch(reject);
                 });
             }
-        };
-        this.artists = {
-            search: function (q) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "artists/?q=" + encodeURIComponent(q)).then(function (data) {
-                        resolve(data.map(function (el, index) {
+        }*/
+        //ARTIST
+        /*artists = {
+            search: function(q: string): Promise<Artist[]> {
+                return new Promise<Artist[]>((resolve, reject) => {
+                    ZeroPlugin.get(BASE_API_PATH + "artists/?q="+encodeURIComponent(q)).then((data) => {
+                        resolve(data.map((el, index) => {
                             return ZeroClass.parseArtist(el);
-                        }));
-                    })["catch"](reject);
+                        }) as Artist[]);
+                    }).catch(reject);
                 });
             },
-            byId: function (id) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "artists/" + id).then(function (el) {
+    
+            byId: function(id: string): Promise<Artist> {
+                return new Promise<Artist>((resolve, reject) => {
+                    ZeroPlugin.get(BASE_API_PATH + "artists/" + id).then((el) => {
                         resolve(ZeroClass.parseArtist(el));
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             }
-        };
-        this.activity = {
-            all: function () {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.get(BASE_API_PATH + "activity/").then(function (data) {
-                        resolve(data.map(function (el, index) {
+        }*/
+        //ACTIVITY
+        /*activity = {
+            all: function(): Promise<Activity[]> {
+                return new Promise<Activity[]>(function(resolve, reject) {
+                    ZeroPlugin.get(BASE_API_PATH + "activity/").then(function(data: any) {
+                        resolve(data.map(function(el, index) {
                             return {
                                 type: el["type"],
                                 subtype: el["subtype"],
@@ -1052,77 +1149,43 @@ var ZeroClass = (function () {
                                     id: el["targetID"],
                                     title: el["targetTitle"],
                                     image: el["targetImage"]
-                                }
-                            };
+                                } as ElementSummary
+                            } as Activity;
                         }));
-                    })["catch"](function (error) {
+                    }).catch((error)=>{
                         reject(error);
-                    });
+                    }
+                    );
                 });
             },
-            insert: function (el) {
-                return new Promise(function (resolve, reject) {
-                    ZeroPlugin.post(BASE_API_PATH + "activity/", { type: el.type, subtype: el.subtype, targetID: el.target.id }).then(function (result) {
+    
+            insert: function(el: Activity): Promise<any> {
+                return new Promise<any>(function(resolve, reject) {
+                    ZeroPlugin.post(BASE_API_PATH + "activity/", {type: el.type, subtype: el.subtype, targetID: el.target.id}).then(function(result: any[]) {
                         alert(JSON.stringify(result));
-                        if (result["success"]) {
+                        if(result["success"] as boolean) {
                             resolve(null);
-                        }
-                        else {
+                        } else {
                             reject("An error has occurred");
                         }
-                    })["catch"](reject);
+                    }).catch(reject);
                 });
             }
-        };
+        };*/
     }
+    //TRIGGER
+    /*private onLogoutAction;
+
+    private onFirstAccessAction;
+
+    private onLoginAction;
+
+    private onErrorAction;*/
     ZeroClass.shared = function () {
         if (ZeroClass.instance == null) {
             ZeroClass.instance = new ZeroClass();
         }
         return ZeroClass.instance;
-    };
-    ZeroClass.parseEvent = function (el) {
-        return {
-            id: el["id"],
-            title: el["title"],
-            image: el["image"],
-            venue: ZeroClass.parseVenue(el["venue"]),
-            info: {
-                startTime: new Date(el["info"]["startDate"]),
-                endTime: new Date(el["info"]["endDate"]),
-                days: el["info"]["days"]
-            },
-            isOnSale: el["isOnSale"]
-        };
-    };
-    ZeroClass.parseVenue = function (el) {
-        return {
-            id: el["id"],
-            name: el["name"],
-            position: {
-                coords: {
-                    lat: el["position"]["coords"]["lat"],
-                    lng: el["position"]["coords"]["lng"]
-                }
-            },
-            image: el["image"],
-            url: el["url"]
-        };
-    };
-    ZeroClass.parseArtist = function (data) {
-        return {
-            id: data["id"],
-            name: data["name"],
-            image: data["image"],
-            topTrack: new Track(data["topTrack"]) // #ALEWARNING: settare le callback;
-        };
-    };
-    ZeroClass.parseTicket = function (data) {
-        // #ALEWARNING: qui ovviamente va mappato il tiket di risposta;
-        return {
-            title: data["title"],
-            price: data["prezzo"]
-        };
     };
     ZeroClass.instance = null;
     return ZeroClass;
