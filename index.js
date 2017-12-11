@@ -131,54 +131,6 @@ var EZUser = (function () {
     EZUser.prototype.info = function () {
         return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
     };
-    EZUser.prototype.firstName = function (name) {
-        if (name === void 0) { name = null; }
-        if (name == null)
-            return this.first_name;
-        this.first_name = name;
-    };
-    EZUser.prototype.lastName = function (name) {
-        if (name === void 0) { name = null; }
-        if (name == null)
-            return this.last_name;
-        this.last_name = name;
-    };
-    EZUser.prototype.mail = function (email) {
-        if (email === void 0) { email = null; }
-        if (email == null)
-            return this.email;
-        this.email = email;
-    };
-    EZUser.prototype.image = function (image) {
-        if (image === void 0) { image = null; }
-        if (image == null)
-            return this.profile_image;
-        this.profile_image = image;
-    };
-    EZUser.prototype.enablePushNotifications = function (enable) {
-        if (enable === void 0) { enable = null; }
-        if (enable == null)
-            return this.enable_push_notifications;
-        this.enable_push_notifications = enable;
-    };
-    EZUser.prototype.enableEmailNotifications = function (enable) {
-        if (enable === void 0) { enable = null; }
-        if (enable == null)
-            return this.enable_email_notifications;
-        this.enable_email_notifications = enable;
-    };
-    EZUser.prototype.enableNewsletter = function (enable) {
-        if (enable === void 0) { enable = null; }
-        if (enable == null)
-            return this.enable_newsletter;
-        this.enable_newsletter = enable;
-    };
-    EZUser.prototype.isConnectedToFacebook = function (isConnected) {
-        if (isConnected === void 0) { isConnected = null; }
-        if (isConnected == null)
-            return this.is_connected_to_facebook;
-        this.is_connected_to_facebook = isConnected;
-    };
     return EZUser;
 }());
 exports.EZUser = EZUser;
@@ -510,7 +462,10 @@ var EventManager = (function () {
             ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
                 resolve(EZEvent.array(data));
-            })["catch"](reject);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     EventManager.prototype.reset = function () {
@@ -521,7 +476,10 @@ var EventManager = (function () {
             ZeroPlugin.get(BASE_API_PATH + "events/" + id + "&_embed=1")
                 .then(function (data) {
                 resolve(EZEvent.json(data));
-            })["catch"](reject);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     return EventManager;
@@ -550,7 +508,10 @@ var VenueManager = (function () {
             ZeroPlugin.get(BASE_API_PATH + "locations?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
                 resolve(EZVenue.array(data));
-            })["catch"](reject);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     VenueManager.prototype.reset = function () {
@@ -561,7 +522,10 @@ var VenueManager = (function () {
             ZeroPlugin.get(BASE_API_PATH + "locations/" + id + "&_embed=1")
                 .then(function (data) {
                 resolve(EZVenue.json(data));
-            })["catch"](reject);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     return VenueManager;
@@ -582,7 +546,10 @@ var ArtistManager = (function () {
             ZeroPlugin.get(BASE_API_PATH + "artists?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&order=asc" + categories)
                 .then(function (data) {
                 resolve(EZArtist.array(data));
-            })["catch"](reject);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     ArtistManager.prototype.reset = function () {
@@ -593,7 +560,10 @@ var ArtistManager = (function () {
             ZeroPlugin.get(BASE_API_PATH + "artists/" + id + "&_embed=1")
                 .then(function (data) {
                 resolve(EZArtist.json(data));
-            })["catch"](reject);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     return ArtistManager;
@@ -618,7 +588,10 @@ var AccountManager = (function () {
                     else {
                         reject(new Error("Not users found."));
                     }
-                })["catch"](reject);
+                })["catch"](function (err) {
+                    Zero.onError(err);
+                    reject(err);
+                });
             }
         });
     };
@@ -626,24 +599,34 @@ var AccountManager = (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.login(grant, credentials).then(function (result) {
                 if (result) {
-                    AccountManager.current().then(resolve)["catch"](reject);
+                    AccountManager.current().then(resolve)["catch"](function (err) {
+                        Zero.onError(err);
+                        reject(err);
+                    });
                 }
                 else {
                     reject(new Error("Login Failed."));
                 }
-            })["catch"](function (error) {
-                reject(error);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
             });
         });
     };
     AccountManager.signup = function (first_name, last_name, email) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.signup(first_name, last_name, email).then(resolve)["catch"](reject);
+            ZeroPlugin.signup(first_name, last_name, email).then(resolve)["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     AccountManager.setPassword = function (key, login, password) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.setPassword(key, login, password).then(resolve)["catch"](reject);
+            ZeroPlugin.setPassword(key, login, password).then(resolve)["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     AccountManager.prototype.currentUser = function () {
@@ -656,12 +639,18 @@ var AccountManager = (function () {
     AccountManager.prototype.commit = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.updateUser(_this.user).then(resolve)["catch"](reject);
+            ZeroPlugin.updateUser(_this.user).then(resolve)["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     AccountManager.prototype.isLogged = function () {
         return new Promise(function (resolve, reject) {
-            return ZeroPlugin.checkLogin().then(resolve)["catch"](reject);
+            return ZeroPlugin.checkLogin().then(resolve)["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     AccountManager.prototype.editImage = function (base64) {
@@ -671,19 +660,23 @@ var AccountManager = (function () {
                 var img = EZImage.json(res);
                 if (!img)
                     reject(new Error("Unexpected Response."));
-                that.user.image(img);
+                that.user.profile_image = img;
                 resolve(img);
-            })["catch"](reject);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
+            });
         });
     };
     AccountManager.prototype.connectToFacebook = function (token) {
         var that = this;
         return new Promise(function (resolve, reject) {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook', { token: token }).then(function (data) {
-                that.user.isConnectedToFacebook(true);
+                that.user.is_connected_to_facebook = true;
                 resolve();
-            })["catch"](function (error) {
-                reject(error);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
             });
         });
     };
@@ -691,10 +684,11 @@ var AccountManager = (function () {
         var that = this;
         return new Promise(function (resolve, reject) {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then(function (data) {
-                that.user.isConnectedToFacebook(false);
+                that.user.is_connected_to_facebook = false;
                 resolve();
-            })["catch"](function (error) {
-                reject(error);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
             });
         });
     };
@@ -705,8 +699,9 @@ var AccountManager = (function () {
                 AccountManager.instance = null;
                 that.user = null;
                 resolve();
-            })["catch"](function (error) {
-                reject(error);
+            })["catch"](function (err) {
+                Zero.onError(err);
+                reject(err);
             });
         });
     };

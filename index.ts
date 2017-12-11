@@ -105,15 +105,15 @@ export interface Artist extends ZeroEntity {
 }*/
 
 export class EZUser {
-    private id: number;
-    private first_name: string;
-    private last_name: string;
-    private email: string;
-    private profile_image: EZImage | null;
-    private enable_push_notifications: boolean = false;
-    private enable_email_notifications: boolean = false;
-    private enable_newsletter: boolean = false;
-    private is_connected_to_facebook: boolean = false;
+    public id: number;
+    public first_name: string;
+    public last_name: string;
+    public email: string;
+    public profile_image: EZImage | null;
+    public enable_push_notifications: boolean = false;
+    public enable_email_notifications: boolean = false;
+    public enable_newsletter: boolean = false;
+    public is_connected_to_facebook: boolean = false;
 
     constructor(id: number, first_name: string, last_name: string, email: string, profile_image: EZImage | null, enable_push_notifications: boolean = false, enable_email_notifications: boolean = false, enable_newsletter: boolean = false, is_connected_to_facebook: boolean = false) {
 
@@ -141,46 +141,6 @@ export class EZUser {
 
     public info(): { id: number, first_name: string, last_name: string, email: string } {
         return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
-    }
-
-    public firstName(name: string = null): string | void {
-        if(name == null) return this.first_name;
-        this.first_name = name;
-    }
-
-    public lastName(name: string = null): string | void {
-        if(name == null) return this.last_name;
-        this.last_name = name;
-    }
-
-    public mail(email: string = null): string | void {
-        if(email == null) return this.email;
-        this.email = email;
-    }
-
-    public image(image: EZImage = null): EZImage | void {
-        if(image == null) return this.profile_image;
-        this.profile_image = image;
-    }
-
-    public enablePushNotifications(enable: boolean = null): boolean | void {
-        if(enable == null) return this.enable_push_notifications;
-        this.enable_push_notifications = enable;
-    }
-
-    public enableEmailNotifications(enable: boolean = null): boolean | void {
-        if(enable == null) return this.enable_email_notifications;
-        this.enable_email_notifications = enable;
-    }
-
-    public enableNewsletter(enable: boolean = null): boolean | void {
-        if(enable == null) return this.enable_newsletter;
-        this.enable_newsletter = enable;
-    }
-
-    public isConnectedToFacebook(isConnected: boolean = null): boolean | void {
-        if(isConnected == null) return this.is_connected_to_facebook;
-        this.is_connected_to_facebook = isConnected;
     }
 
 }
@@ -553,7 +513,10 @@ export class EventManager {
             ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+this.page+"&per_page="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc"+coords+categories)
             .then((data)=>{
                 resolve(EZEvent.array(data));
-            }).catch(reject);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 
@@ -566,7 +529,10 @@ export class EventManager {
             ZeroPlugin.get(BASE_API_PATH + "events/"+id+"&_embed=1")
             .then((data)=>{
                 resolve(EZEvent.json(data));
-            }).catch(reject);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 }
@@ -597,7 +563,10 @@ export class VenueManager {
             ZeroPlugin.get(BASE_API_PATH + "locations?context=view&page="+this.page+"&per_page="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc"+coords+categories)
             .then((data)=>{
                 resolve(EZVenue.array(data));
-            }).catch(reject);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 
@@ -608,9 +577,12 @@ export class VenueManager {
     static get(id: number): Promise<EZVenue> {
         return new Promise<EZVenue>((resolve, reject) =>{
             ZeroPlugin.get(BASE_API_PATH + "locations/"+id+"&_embed=1")
-                .then((data)=>{
+            .then((data)=>{
                     resolve(EZVenue.json(data));
-                }).catch(reject);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 }
@@ -633,7 +605,10 @@ export class ArtistManager {
             ZeroPlugin.get(BASE_API_PATH + "artists?context=view&page="+this.page+"&per_page="+this.perPage+"&order=asc"+categories)
             .then((data)=>{
                 resolve(EZArtist.array(data));
-            }).catch(reject);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 
@@ -646,7 +621,10 @@ export class ArtistManager {
             ZeroPlugin.get(BASE_API_PATH + "artists/"+id+"&_embed=1")
             .then((data)=>{
                 resolve(EZArtist.json(data));
-            }).catch(reject);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 }
@@ -668,7 +646,10 @@ export class AccountManager {
                     } else {
                         reject(new Error("Not users found."));
                     }
-                }).catch(reject);
+                }).catch((err) => {
+                    Zero.onError(err);
+                    reject(err)
+                });
             }
         })
     }
@@ -677,25 +658,35 @@ export class AccountManager {
         return new Promise<AccountManager>((resolve, reject) => {
             ZeroPlugin.login(grant, credentials).then((result: boolean) => {
                 if(result) {
-                    AccountManager.current().then(resolve).catch(reject);
+                    AccountManager.current().then(resolve).catch((err) => {
+                        Zero.onError(err);
+                        reject(err)
+                    });
                 } else {
                     reject(new Error("Login Failed."));
                 }
-            }).catch((error) => {
-                reject(error);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
             });
         });
     }
 
     public static signup(first_name: string, last_name: string, email: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch(reject);
+            ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 
     public static setPassword(key: string, login: string, password: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            ZeroPlugin.setPassword(key, login, password).then(resolve).catch(reject);
+            ZeroPlugin.setPassword(key, login, password).then(resolve).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 
@@ -716,15 +707,21 @@ export class AccountManager {
 
     public commit(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            ZeroPlugin.updateUser(this.user).then(resolve).catch(reject);
+            ZeroPlugin.updateUser(this.user).then(resolve).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 
     public isLogged(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            return ZeroPlugin.checkLogin().then(resolve).catch(reject);
+            return ZeroPlugin.checkLogin().then(resolve).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
-    },
+    }
 
     public editImage(base64: string): Promise<EZImage> {
         let that = this;
@@ -733,9 +730,12 @@ export class AccountManager {
                 let img = EZImage.json(res);
                 if(!img)
                     reject(new Error("Unexpected Response."));
-                that.user.image(img);
+                that.user.profile_image = img;
                 resolve(img);
-            }).catch(reject);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
+            });
         });
     }
 
@@ -743,10 +743,11 @@ export class AccountManager {
         let that = this;
         return new Promise<void>(function(resolve, reject) {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook', { token: token }).then(function(data) {
-                that.user.isConnectedToFacebook(true);
+                that.user.is_connected_to_facebook = true;
                 resolve();
-            }).catch(function(error) {
-                reject(error);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
             });
         });
     }
@@ -755,10 +756,11 @@ export class AccountManager {
         let that = this;
         return new Promise<void>(function(resolve, reject) {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then((data) => {
-                that.user.isConnectedToFacebook(false);
+                that.user.is_connected_to_facebook = false;
                 resolve();
-            }).catch((error) => {
-                reject(error);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
             });
         });
     }
@@ -771,8 +773,9 @@ export class AccountManager {
                 AccountManager.instance = null;
                 that.user = null;
                 resolve();
-            }).catch((error) => {
-                reject(error);
+            }).catch((err) => {
+                Zero.onError(err);
+                reject(err)
             });
         });
     }
