@@ -173,6 +173,30 @@ export class EZUser {
 
 }
 
+export class EZDay {
+    public date: Date;
+    public events: EZEvent[];
+
+    constructor(date: Date, events: EZEvent[]) {
+        this.date = date;
+        this.events = events;
+    }
+
+    public static json(json: any): EZDay {
+        return new EZDay(new Date(json.date), EZEvent.array(json.events));
+    }
+
+    public static array(arr: any[]): EZDay[] {
+        let ret = [];
+        if(!isArray(arr) || arr.length == 0) return ret;
+        for(let i = 0; i < arr.length; i++) {
+            let ev = EZDay.json(arr[0]);
+            if(ev) ret.push(ev);
+        }
+        return ret;
+    }
+}
+
 export class EZEvent {
     readonly id: number;
     readonly name: string;
@@ -523,7 +547,7 @@ export class EventManager {
     readonly date: Date;
     readonly coords: {lat: number, lng: number} | null;
 
-    constructor(perPage: number = 30, city: string = "null", date: Date = new Date(), coords: {lat: number, lng: number} | null = null, category: string[]) {
+    constructor(perPage: number = 1, city: string = "null", date: Date = new Date(), coords: {lat: number, lng: number} | null = null, category: string[]) {
         this.page = 0;
         this.perPage = perPage;
         this.city = city;
@@ -533,14 +557,14 @@ export class EventManager {
     }
 
     next(): Promise<EZEvent[]> {
-        return new Promise<EZEvent[]>((resolve, reject) => {
+        return new Promise<EZDay[]>((resolve, reject) => {
             let dates = this.date.getFullYear().toString()+"-"+this.date.getMonth().toString()+"-"+this.date.getDay().toString();
             let categories = this.category && this.category.length > 0 ? "&category=" + this.category.join("|") : "";
             let coords = this.coords ? "&coords[lat]="+this.coords.lat+"&coords[lng]="+this.coords.lng : "";
             this.page ++;
-            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+this.page+"&per_page="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc"+coords+categories)
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+this.page+"&days="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc"+coords+categories)
             .then((data)=>{
-                resolve(EZEvent.array(data));
+                resolve(EZDay.array(data));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err))

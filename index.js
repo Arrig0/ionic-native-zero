@@ -176,6 +176,28 @@ var EZUser = (function () {
     return EZUser;
 }());
 exports.EZUser = EZUser;
+var EZDay = (function () {
+    function EZDay(date, events) {
+        this.date = date;
+        this.events = events;
+    }
+    EZDay.json = function (json) {
+        return new EZDay(new Date(json.date), EZEvent.array(json.events));
+    };
+    EZDay.array = function (arr) {
+        var ret = [];
+        if (!isArray_1.isArray(arr) || arr.length == 0)
+            return ret;
+        for (var i = 0; i < arr.length; i++) {
+            var ev = EZDay.json(arr[0]);
+            if (ev)
+                ret.push(ev);
+        }
+        return ret;
+    };
+    return EZDay;
+}());
+exports.EZDay = EZDay;
 var EZEvent = (function () {
     function EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists) {
         if (isRegular === void 0) { isRegular = false; }
@@ -480,7 +502,7 @@ var EZTrigger = (function () {
 exports.EZTrigger = EZTrigger;
 var EventManager = (function () {
     function EventManager(perPage, city, date, coords, category) {
-        if (perPage === void 0) { perPage = 30; }
+        if (perPage === void 0) { perPage = 1; }
         if (city === void 0) { city = "null"; }
         if (date === void 0) { date = new Date(); }
         if (coords === void 0) { coords = null; }
@@ -498,9 +520,9 @@ var EventManager = (function () {
             var categories = _this.category && _this.category.length > 0 ? "&category=" + _this.category.join("|") : "";
             var coords = _this.coords ? "&coords[lat]=" + _this.coords.lat + "&coords[lng]=" + _this.coords.lng : "";
             _this.page++;
-            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&days=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
-                resolve(EZEvent.array(data));
+                resolve(EZDay.array(data));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
