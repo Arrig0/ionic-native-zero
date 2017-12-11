@@ -186,20 +186,20 @@ export class EZUser {
 }
 
 export class EZEvent {
-    private id: number;
-    private name: string;
-    private isRegular: boolean = false;
-    private startDate: Date;
-    private endDate: Date;
-    private startTime: Date | null;
-    private endTime: Date | null;
-    private price: EZPrice | null;
-    private excerpt: string | null;
-    private category: string[];
-    private featured_image: EZImage | null;
-    private gallery: EZImage[];
-    private artists: EZArtist[];
-    private venue: EZVenue | null;
+    readonly id: number;
+    readonly name: string;
+    readonly isRegular: boolean = false;
+    readonly startDate: Date;
+    readonly endDate: Date;
+    readonly startTime: Date | null;
+    readonly endTime: Date | null;
+    readonly price: EZPrice | null;
+    readonly excerpt: string | null;
+    readonly category: string[];
+    readonly featured_image: EZImage | null;
+    readonly gallery: EZImage[];
+    readonly artists: EZArtist[];
+    readonly venue: EZVenue | null;
 
     constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, isRegular: boolean = false, price: EZPrice | null, excerpt: string, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = []) {
         this.id = id;
@@ -251,19 +251,19 @@ export class EZEvent {
 }
 
 export class EZVenue {
-    private id: number;
-    private name: string;
-    private featured_image: EZImage | null;
-    private gallery: EZImage[] = [];
-    private phone: string | null;
-    private website: string | null
-    private rate: number | null;
-    private address: string | null;
-    private coords: { lat: number, lng: number } | null;
-    private category: string[] = [];
-    private excerpt: string | null;
-    private openingHours: EZTable | null;
-    private priceLevel: number | null;
+    readonly id: number;
+    readonly name: string;
+    readonly featured_image: EZImage | null;
+    readonly gallery: EZImage[] = [];
+    readonly phone: string | null;
+    readonly website: string | null
+    readonly rate: number | null;
+    readonly address: string | null;
+    readonly coords: { lat: number, lng: number } | null;
+    readonly category: string[] = [];
+    readonly excerpt: string | null;
+    readonly openingHours: EZTable | null;
+    readonly priceLevel: number | null;
 
     constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], phone: string | null, website: string | null, rate: number | null, address: string | null, coords: { lat: number, lng: number } | null, category: string[] = [], excerpt: string | null, openingHours: EZTable | null, priceLevel: number | null) {
         this.id = id;
@@ -378,13 +378,13 @@ export class EZImage {
 }
 
 export class EZArtist {
-    private id: number;
-    private name: string;
-    private featured_image: EZImage | null;
-    private gallery: EZImage[];
-    private preview: EZSoundTrack | null;
-    private category: string[];
-    private excerpt: string | null;
+    readonly id: number;
+    readonly name: string;
+    readonly featured_image: EZImage | null;
+    readonly gallery: EZImage[];
+    readonly preview: EZSoundTrack | null;
+    readonly category: string[];
+    readonly excerpt: string | null;
 
     constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], preview: EZSoundTrack | null, category: string[] = [], excerpt: string | null) {
         this.id = id;
@@ -475,7 +475,7 @@ export class EZSoundTrack {
 }
 
 export class EZPrice {
-    private display: string;
+    readonly display: string;
 
     constructor(display: string) {
         this.display = display;
@@ -495,7 +495,7 @@ export class EZPrice {
 }
 
 export class EZTable {
-    private dict: EZDictionary[] | null;
+    readonly dict: EZDictionary[] | null;
 
     constructor(dict: EZDictionary[]) {
         this.dict = dict;
@@ -902,10 +902,7 @@ export class Track {
 */
 
 
-export class ZeroClass {
-
-    private static instance: ZeroClass = null;
-
+export class Zero {
 
     //TRIGGER
     /*private onLogoutAction;
@@ -916,15 +913,32 @@ export class ZeroClass {
 
     private onErrorAction;*/
 
-    static shared() {
-        if(ZeroClass.instance == null) {
-            ZeroClass.instance = new ZeroClass();
-        }
-        return ZeroClass.instance;
+    public static init(clientID: string, clientSecret: string): Promise<void> {
+        return ZeroPlugin.init(clientID, clientSecret);
     }
 
-    init = function(clientID: string, clientSecret: string): Promise<boolean> {
-        return ZeroPlugin.init(clientID, clientSecret);
+    public static registerLoginAction(action: EZTrigger<AccountManager>) {
+        TriggerManager.current().each(action);
+    }
+
+    public static registerErrorAction(action: EZTrigger<Error>) {
+        TriggerManager.current().each(action);
+    }
+
+    public static registerLogoutAction(action: EZTrigger<void>) {
+        TriggerManager.current().each(action);
+    }
+
+    public static onError(e: Error) {
+        TriggerManager.current().catchError(e);
+    }
+
+    public static onLogin(account: AccountManager) {
+        TriggerManager.current().performLogin(account);
+    }
+
+    public static onLogout() {
+        TriggerManager.current().performLogout();
     }
 
     //SEARCH
@@ -1285,8 +1299,5 @@ export class ZeroClass {
     };*/
 
 }
-
-let Zero = ZeroClass.shared();
-export { Zero };
 
 
