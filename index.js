@@ -885,6 +885,14 @@ var Zero = (function () {
     Zero.onLogout = function () {
         TriggerManager.current().performLogout();
     };
+    Zero.openSupportTicket = function (subject, message) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.post(BASE_API_PATH + "support/", { subject: subject, message: message }).then(resolve)["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
     return Zero;
 }());
 exports.Zero = Zero;

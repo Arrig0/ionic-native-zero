@@ -972,6 +972,15 @@ export class Zero {
         TriggerManager.current().performLogout();
     }
 
+    public static openSupportTicket(subject: string, message: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            ZeroPlugin.post(BASE_API_PATH + "support/", { subject: subject, message: message }).then(resolve).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
+            });
+        });
+    }
+
     //SEARCH
     /*search = function(q: string): Promise<SearchResult> {
         return new Promise<SearchResult>((resolve, reject) => {
