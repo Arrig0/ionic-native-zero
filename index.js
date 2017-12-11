@@ -434,7 +434,9 @@ var EZTable = (function () {
 }());
 exports.EZTable = EZTable;
 var EZTrigger = (function () {
-    function EZTrigger() {
+    function EZTrigger(id, action) {
+        this.id = id;
+        this.trigger = action;
     }
     return EZTrigger;
 }());

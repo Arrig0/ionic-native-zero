@@ -484,7 +484,12 @@ export interface EZDictionary {
 
 export class EZTrigger<T> {
     id: string;
-    trigger: (param?: T) => {};
+    trigger: (param?: T) => void;
+
+    constructor(id: string, action: (param?: T) => void) {
+        this.id = id;
+        this.trigger = action;
+    }
 }
 
 export class EventManager {
