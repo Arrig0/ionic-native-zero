@@ -110,6 +110,26 @@ export class EZError extends Error {
         super(message);
         this.code = code;
     }
+
+    public static fromString(reason: string, separator: string = ':') {
+        let err = reason.split(separator);
+        if(err.length == 2){
+            let code = reason.split(separator)[0];
+            let msg = reason.split(separator)[1];
+            if(!isNaN(parseInt(code))) {
+                return new EZError(parseInt(code), msg);
+            } else {
+                if(!isNaN(parseInt(msg))) {
+                    return new EZError(parseInt(msg), code);
+                } else {
+                    return new EZError(500, reason);
+                }
+            }
+        } else {
+            return new EZError(500, reason);
+        }
+
+    }
 }
 
 export class EZUser {
@@ -394,7 +414,6 @@ export class EZSoundTrack {
     private url: string;
     private isPlaying: boolean = false;
     private media: MediaObject = null;
-    private hasError: (error)=>{} = null;
     private disable: boolean = false;
 
     constructor(url: string) {
@@ -413,12 +432,8 @@ export class EZSoundTrack {
         this.media.onError.subscribe((error)=> {
             that.isPlaying = false;
             that.disable = false;
-            if(that.hasError != null) that.hasError(error);
+            Zero.onError(new EZError(9, "EZSoundTrack error: "+error))
         });
-    }
-
-    onError(handler: (error) => {}) {
-        this.hasError = handler;
     }
 
     play() {
@@ -527,8 +542,8 @@ export class EventManager {
             .then((data)=>{
                 resolve(EZEvent.array(data));
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -543,8 +558,8 @@ export class EventManager {
             .then((data)=>{
                 resolve(EZEvent.json(data));
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -577,8 +592,8 @@ export class VenueManager {
             .then((data)=>{
                 resolve(EZVenue.array(data));
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -593,8 +608,8 @@ export class VenueManager {
             .then((data)=>{
                     resolve(EZVenue.json(data));
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -619,8 +634,8 @@ export class ArtistManager {
             .then((data)=>{
                 resolve(EZArtist.array(data));
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -635,8 +650,8 @@ export class ArtistManager {
             .then((data)=>{
                 resolve(EZArtist.json(data));
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -657,11 +672,11 @@ export class AccountManager {
                         AccountManager.instance = new AccountManager(u);
                         resolve(AccountManager.instance);
                     } else {
-                        reject(new Error("Not users found."));
+                        reject(new EZError(500, "Not users found."));
                     }
                 }).catch((err) => {
-                    Zero.onError(err);
-                    reject(err)
+                    Zero.onError(EZError.fromString(err));
+                    reject(EZError.fromString(err))
                 });
             }
         })
@@ -672,15 +687,15 @@ export class AccountManager {
             ZeroPlugin.login(grant, credentials).then((result: boolean) => {
                 if(result) {
                     AccountManager.current().then(resolve).catch((err) => {
-                        Zero.onError(err);
-                        reject(err)
+                        Zero.onError(EZError.fromString(err));
+                        reject(EZError.fromString(err))
                     });
                 } else {
-                    reject(new Error("Login Failed."));
+                    reject(new EZError(401, "Login Failed."));
                 }
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -688,8 +703,8 @@ export class AccountManager {
     public static signup(first_name: string, last_name: string, email: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -697,8 +712,8 @@ export class AccountManager {
     public static setPassword(key: string, login: string, password: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             ZeroPlugin.setPassword(key, login, password).then(resolve).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -721,8 +736,8 @@ export class AccountManager {
     public commit(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             ZeroPlugin.updateUser(this.user).then(resolve).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -730,8 +745,8 @@ export class AccountManager {
     public isLogged(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             return ZeroPlugin.checkLogin().then(resolve).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -742,12 +757,12 @@ export class AccountManager {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/profileImage', { data: base64 }).then((res) => {
                 let img = EZImage.json(res);
                 if(!img)
-                    reject(new Error("Unexpected Response."));
+                    reject(new EZError(500, "Unexpected Response."));
                 that.user.profile_image = img;
                 resolve(img);
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -759,8 +774,8 @@ export class AccountManager {
                 that.user.is_connected_to_facebook = true;
                 resolve();
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -772,8 +787,8 @@ export class AccountManager {
                 that.user.is_connected_to_facebook = false;
                 resolve();
             }).catch((err) => {
-                Zero.onError(err);
-                reject(err)
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err))
             });
         });
     }
@@ -805,17 +820,17 @@ export class TriggerManager {
         return TriggerManager.instance;
     }
 
-    private errorTrigger: EZTrigger<Error>[];
+    private errorTrigger: EZTrigger<EZError>[];
     private loginTrigger: EZTrigger<AccountManager>[];
     private logoutTrigger: EZTrigger<void>[];
 
     private constructor() {}
 
-    each( trigger: EZTrigger<Error> );
+    each( trigger: EZTrigger<EZError> );
     each( trigger: EZTrigger<AccountManager> );
     each( trigger: EZTrigger<void> );
     each( trigger: EZTrigger<any> ) {
-        if( trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof Error ) {
+        if( trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof EZError ) {
             this.errorTrigger.push(trigger);
         } else if( trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof AccountManager ) {
             this.loginTrigger.push(trigger);
@@ -844,7 +859,7 @@ export class TriggerManager {
         this.logoutTrigger = [];
     }
 
-    catchError(error: Error) {
+    catchError(error: EZError) {
         this.errorTrigger.forEach((trigger) => {
             trigger.trigger(error);
         });
@@ -937,7 +952,7 @@ export class Zero {
         TriggerManager.current().each(action);
     }
 
-    public static registerErrorAction(action: EZTrigger<Error>) {
+    public static registerErrorAction(action: EZTrigger<EZError>) {
         TriggerManager.current().each(action);
     }
 
@@ -945,7 +960,7 @@ export class Zero {
         TriggerManager.current().each(action);
     }
 
-    public static onError(e: Error) {
+    public static onError(e: EZError) {
         TriggerManager.current().catchError(e);
     }
 

@@ -117,6 +117,28 @@ var EZError = (function (_super) {
         _this.code = code;
         return _this;
     }
+    EZError.fromString = function (reason, separator) {
+        if (separator === void 0) { separator = ':'; }
+        var err = reason.split(separator);
+        if (err.length == 2) {
+            var code = reason.split(separator)[0];
+            var msg = reason.split(separator)[1];
+            if (!isNaN(parseInt(code))) {
+                return new EZError(parseInt(code), msg);
+            }
+            else {
+                if (!isNaN(parseInt(msg))) {
+                    return new EZError(parseInt(msg), code);
+                }
+                else {
+                    return new EZError(500, reason);
+                }
+            }
+        }
+        else {
+            return new EZError(500, reason);
+        }
+    };
     return EZError;
 }(Error));
 exports.EZError = EZError;
@@ -361,7 +383,6 @@ var EZSoundTrack = (function () {
     function EZSoundTrack(url) {
         this.isPlaying = false;
         this.media = null;
-        this.hasError = null;
         this.disable = false;
         if (!url)
             return null;
@@ -380,13 +401,9 @@ var EZSoundTrack = (function () {
         this.media.onError.subscribe(function (error) {
             that.isPlaying = false;
             that.disable = false;
-            if (that.hasError != null)
-                that.hasError(error);
+            Zero.onError(new EZError(9, "EZSoundTrack error: " + error));
         });
     }
-    EZSoundTrack.prototype.onError = function (handler) {
-        this.hasError = handler;
-    };
     EZSoundTrack.prototype.play = function () {
         if (this.disable)
             return;
@@ -485,8 +502,8 @@ var EventManager = (function () {
                 .then(function (data) {
                 resolve(EZEvent.array(data));
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -499,8 +516,8 @@ var EventManager = (function () {
                 .then(function (data) {
                 resolve(EZEvent.json(data));
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -531,8 +548,8 @@ var VenueManager = (function () {
                 .then(function (data) {
                 resolve(EZVenue.array(data));
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -545,8 +562,8 @@ var VenueManager = (function () {
                 .then(function (data) {
                 resolve(EZVenue.json(data));
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -569,8 +586,8 @@ var ArtistManager = (function () {
                 .then(function (data) {
                 resolve(EZArtist.array(data));
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -583,8 +600,8 @@ var ArtistManager = (function () {
                 .then(function (data) {
                 resolve(EZArtist.json(data));
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -608,11 +625,11 @@ var AccountManager = (function () {
                         resolve(AccountManager.instance);
                     }
                     else {
-                        reject(new Error("Not users found."));
+                        reject(new EZError(500, "Not users found."));
                     }
                 })["catch"](function (err) {
-                    Zero.onError(err);
-                    reject(err);
+                    Zero.onError(EZError.fromString(err));
+                    reject(EZError.fromString(err));
                 });
             }
         });
@@ -622,32 +639,32 @@ var AccountManager = (function () {
             ZeroPlugin.login(grant, credentials).then(function (result) {
                 if (result) {
                     AccountManager.current().then(resolve)["catch"](function (err) {
-                        Zero.onError(err);
-                        reject(err);
+                        Zero.onError(EZError.fromString(err));
+                        reject(EZError.fromString(err));
                     });
                 }
                 else {
-                    reject(new Error("Login Failed."));
+                    reject(new EZError(401, "Login Failed."));
                 }
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
     AccountManager.signup = function (first_name, last_name, email) {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.signup(first_name, last_name, email).then(resolve)["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
     AccountManager.setPassword = function (key, login, password) {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.setPassword(key, login, password).then(resolve)["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -662,16 +679,16 @@ var AccountManager = (function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             ZeroPlugin.updateUser(_this.user).then(resolve)["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
     AccountManager.prototype.isLogged = function () {
         return new Promise(function (resolve, reject) {
             return ZeroPlugin.checkLogin().then(resolve)["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -681,12 +698,12 @@ var AccountManager = (function () {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/profileImage', { data: base64 }).then(function (res) {
                 var img = EZImage.json(res);
                 if (!img)
-                    reject(new Error("Unexpected Response."));
+                    reject(new EZError(500, "Unexpected Response."));
                 that.user.profile_image = img;
                 resolve(img);
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -697,8 +714,8 @@ var AccountManager = (function () {
                 that.user.is_connected_to_facebook = true;
                 resolve();
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -709,8 +726,8 @@ var AccountManager = (function () {
                 that.user.is_connected_to_facebook = false;
                 resolve();
             })["catch"](function (err) {
-                Zero.onError(err);
-                reject(err);
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
             });
         });
     };
@@ -739,7 +756,7 @@ var TriggerManager = (function () {
         return TriggerManager.instance;
     };
     TriggerManager.prototype.each = function (trigger) {
-        if (trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof Error) {
+        if (trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof EZError) {
             this.errorTrigger.push(trigger);
         }
         else if (trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof AccountManager) {
