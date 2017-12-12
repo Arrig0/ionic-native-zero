@@ -850,17 +850,14 @@ export class TriggerManager {
 
     private constructor() {}
 
-    each( trigger: EZTrigger<EZError> );
-    each( trigger: EZTrigger<AccountManager> );
-    each( trigger: EZTrigger<void> );
-    each( trigger: EZTrigger<any> ) {
-        if( trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof EZError ) {
-            this.errorTrigger.push(trigger);
-        } else if( trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof AccountManager ) {
-            this.loginTrigger.push(trigger);
-        } else {
-            this.logoutTrigger.push(trigger);
-        }
+    eachError( trigger: EZTrigger<EZError> ) {
+        this.errorTrigger.push(trigger);
+    }
+    eachLogin( trigger: EZTrigger<AccountManager> ) {
+        this.loginTrigger.push(trigger);
+    }
+    eachLogout( trigger: EZTrigger<void> ) {
+        this.logoutTrigger.push(trigger);
     }
 
     remove(id: string) {
@@ -973,15 +970,15 @@ export class Zero {
     }
 
     public static registerLoginAction(action: EZTrigger<AccountManager>) {
-        TriggerManager.current().each(action);
+        TriggerManager.current().eachLogin(action);
     }
 
     public static registerErrorAction(action: EZTrigger<EZError>) {
-        TriggerManager.current().each(action);
+        TriggerManager.current().eachError(action);
     }
 
     public static registerLogoutAction(action: EZTrigger<void>) {
-        TriggerManager.current().each(action);
+        TriggerManager.current().eachLogout(action);
     }
 
     public static onError(e: EZError) {

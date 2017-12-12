@@ -777,16 +777,14 @@ var TriggerManager = /** @class */ (function () {
             TriggerManager.instance = new TriggerManager();
         return TriggerManager.instance;
     };
-    TriggerManager.prototype.each = function (trigger) {
-        if (trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof EZError) {
-            this.errorTrigger.push(trigger);
-        }
-        else if (trigger.trigger.arguments.length > 0 && trigger.trigger.arguments[0] instanceof AccountManager) {
-            this.loginTrigger.push(trigger);
-        }
-        else {
-            this.logoutTrigger.push(trigger);
-        }
+    TriggerManager.prototype.eachError = function (trigger) {
+        this.errorTrigger.push(trigger);
+    };
+    TriggerManager.prototype.eachLogin = function (trigger) {
+        this.loginTrigger.push(trigger);
+    };
+    TriggerManager.prototype.eachLogout = function (trigger) {
+        this.logoutTrigger.push(trigger);
     };
     TriggerManager.prototype.remove = function (id) {
         this.errorTrigger = this.errorTrigger.filter(function (t) {
@@ -890,13 +888,13 @@ var Zero = /** @class */ (function () {
         return ZeroPlugin.init(clientID, clientSecret);
     };
     Zero.registerLoginAction = function (action) {
-        TriggerManager.current().each(action);
+        TriggerManager.current().eachLogin(action);
     };
     Zero.registerErrorAction = function (action) {
-        TriggerManager.current().each(action);
+        TriggerManager.current().eachError(action);
     };
     Zero.registerLogoutAction = function (action) {
-        TriggerManager.current().each(action);
+        TriggerManager.current().eachLogout(action);
     };
     Zero.onError = function (e) {
         TriggerManager.current().catchError(e);
