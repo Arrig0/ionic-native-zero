@@ -162,6 +162,7 @@ export class EZUser {
 
     public static json(json: any): EZUser | null {
         return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
+        //{"profile_image":{"thumb":null,"standard":"http://192.168.60.113/content/uploads/2017/11/105_1511887397.jpg","large":null}}
     }
 
     public preferences() : { enable_push_notifications: boolean, enable_email_notifications: boolean, enable_newsletter: boolean, is_connected_to_facebook: boolean } {
@@ -361,10 +362,10 @@ export class EZImage {
     static json(jsonImage: any): EZImage | null {
 
         if(typeof jsonImage == "string") return new EZImage(null, jsonImage, null);
-
-        let thumb = jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
-        let standard = jsonImage.sizes.medium ? jsonImage.sizes.medium.file: null;
-        let large = jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
+        //todo:: implementazione solo a scopo di debug;
+        let thumb = jsonImage.thumb;//jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
+        let standard = jsonImage.standard;//jsonImage.sizes.medium ? jsonImage.sizes.medium.file: null;
+        let large = jsonImage.large;//jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
         if(thumb || standard || large) {
             return new EZImage(thumb, standard, large);
         }

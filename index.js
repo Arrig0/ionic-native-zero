@@ -168,6 +168,7 @@ var EZUser = /** @class */ (function () {
     }
     EZUser.json = function (json) {
         return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
+        //{"profile_image":{"thumb":null,"standard":"http://192.168.60.113/content/uploads/2017/11/105_1511887397.jpg","large":null}}
     };
     EZUser.prototype.preferences = function () {
         return { enable_push_notifications: this.enable_push_notifications, enable_email_notifications: this.enable_email_notifications, enable_newsletter: this.enable_newsletter, is_connected_to_facebook: this.is_connected_to_facebook };
@@ -340,9 +341,10 @@ var EZImage = /** @class */ (function () {
     EZImage.json = function (jsonImage) {
         if (typeof jsonImage == "string")
             return new EZImage(null, jsonImage, null);
-        var thumb = jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
-        var standard = jsonImage.sizes.medium ? jsonImage.sizes.medium.file : null;
-        var large = jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
+        //todo:: implementazione solo a scopo di debug;
+        var thumb = jsonImage.thumb; //jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
+        var standard = jsonImage.standard; //jsonImage.sizes.medium ? jsonImage.sizes.medium.file: null;
+        var large = jsonImage.large; //jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
         if (thumb || standard || large) {
             return new EZImage(thumb, standard, large);
         }
