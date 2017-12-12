@@ -771,6 +771,9 @@ var AccountManager = /** @class */ (function () {
 exports.AccountManager = AccountManager;
 var TriggerManager = /** @class */ (function () {
     function TriggerManager() {
+        this.errorTrigger = [];
+        this.loginTrigger = [];
+        this.logoutTrigger = [];
     }
     TriggerManager.current = function () {
         if (!TriggerManager.instance)

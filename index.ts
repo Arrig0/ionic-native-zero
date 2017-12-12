@@ -844,9 +844,9 @@ export class TriggerManager {
         return TriggerManager.instance;
     }
 
-    private errorTrigger: EZTrigger<EZError>[];
-    private loginTrigger: EZTrigger<AccountManager>[];
-    private logoutTrigger: EZTrigger<void>[];
+    private errorTrigger: EZTrigger<EZError>[] = [];
+    private loginTrigger: EZTrigger<AccountManager>[] = [];
+    private logoutTrigger: EZTrigger<void>[] = [];
 
     private constructor() {}
 
