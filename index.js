@@ -662,6 +662,7 @@ var AccountManager = /** @class */ (function () {
             }
             else {
                 ZeroPlugin.userInfo().then(function (user) {
+                    console.log(JSON.stringify(user));
                     var u = EZUser.json(user);
                     if (u) {
                         AccountManager.instance = new AccountManager(u);

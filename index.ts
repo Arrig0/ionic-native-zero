@@ -709,6 +709,7 @@ export class AccountManager {
                 resolve(AccountManager.instance);
             } else {
                 ZeroPlugin.userInfo().then((user) => {
+                    console.log(JSON.stringify(user));
                     let u = EZUser.json(user);
                     if(u) {
                         AccountManager.instance = new AccountManager(u);
