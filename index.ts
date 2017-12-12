@@ -922,12 +922,14 @@ export class TriggerManager {
 
 export class SearchEngine {
 
-    public static recent(): EZMixin[] {
-        return [];
+    public static recent(): Promise<EZMixin[]> {
+        return new Promise<EZMixin[]>((resolve, reject) => {
+            resolve([]);
+        });
         //todo: implement recent!!
     }
 
-    public static search(f: string = "all", q: string): Promise<EZMixin[]> {
+    public static search(q: string, f: string = "all"): Promise<EZMixin[]> {
         return new Promise<EZMixin[]>((resolve, reject) => {
             resolve([]);
             //todo: implement search;

@@ -850,10 +850,12 @@ var SearchEngine = /** @class */ (function () {
     function SearchEngine() {
     }
     SearchEngine.recent = function () {
-        return [];
+        return new Promise(function (resolve, reject) {
+            resolve([]);
+        });
         //todo: implement recent!!
     };
-    SearchEngine.search = function (f, q) {
+    SearchEngine.search = function (q, f) {
         if (f === void 0) { f = "all"; }
         return new Promise(function (resolve, reject) {
             resolve([]);
