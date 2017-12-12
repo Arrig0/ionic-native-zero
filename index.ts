@@ -171,6 +171,19 @@ export class EZUser {
         return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
     }
 
+    public prepare() {
+        return {
+            id: this.id,
+            first_name: this.first_name,
+            last_name: this.last_name,
+            email: this.email,
+            profile_image: this.profile_image.getLarge(),
+            enable_push_notifications: this.enable_push_notifications,
+            enable_email_notifications: this.enable_email_notifications,
+            enable_newsletter: this.enable_newsletter,
+            is_connected_to_facebook: this.is_connected_to_facebook,
+        }
+    }
 }
 
 export class EZDay {
@@ -759,7 +772,7 @@ export class AccountManager {
 
     public commit(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            ZeroPlugin.updateUser(this.user).then(resolve).catch((err) => {
+            ZeroPlugin.updateUser(this.user.prepare()).then(resolve).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err))
             });

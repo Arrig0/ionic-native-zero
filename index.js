@@ -173,6 +173,19 @@ var EZUser = /** @class */ (function () {
     EZUser.prototype.info = function () {
         return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
     };
+    EZUser.prototype.prepare = function () {
+        return {
+            id: this.id,
+            first_name: this.first_name,
+            last_name: this.last_name,
+            email: this.email,
+            profile_image: this.profile_image.getLarge(),
+            enable_push_notifications: this.enable_push_notifications,
+            enable_email_notifications: this.enable_email_notifications,
+            enable_newsletter: this.enable_newsletter,
+            is_connected_to_facebook: this.is_connected_to_facebook
+        };
+    };
     return EZUser;
 }());
 exports.EZUser = EZUser;
@@ -700,7 +713,7 @@ var AccountManager = /** @class */ (function () {
     AccountManager.prototype.commit = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.updateUser(_this.user).then(resolve)["catch"](function (err) {
+            ZeroPlugin.updateUser(_this.user.prepare()).then(resolve)["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
