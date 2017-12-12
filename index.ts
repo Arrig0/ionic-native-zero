@@ -112,6 +112,7 @@ export class EZError extends Error {
     }
 
     public static fromString(reason: string, separator: string = ':') {
+        if(!reason || !(typeof reason == 'string')) return new EZError(500, "Generic Error");
         let err = reason.split(separator);
         if(err.length == 2){
             let code = reason.split(separator)[0];
@@ -187,7 +188,7 @@ export class EZUser {
 }
 
 export class EZMixin {
-
+    // todo: implement EZMixin; vedi SEARCH;
 }
 
 export class EZDay {

@@ -119,6 +119,8 @@ var EZError = /** @class */ (function (_super) {
     }
     EZError.fromString = function (reason, separator) {
         if (separator === void 0) { separator = ':'; }
+        if (!reason || !(typeof reason == 'string'))
+            return new EZError(500, "Generic Error");
         var err = reason.split(separator);
         if (err.length == 2) {
             var code = reason.split(separator)[0];
