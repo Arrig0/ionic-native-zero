@@ -110,7 +110,7 @@ export interface Artist extends ZeroEntity {
     image: string;
     topTrack: Track;
 }*/
-var EZError = (function (_super) {
+var EZError = /** @class */ (function (_super) {
     __extends(EZError, _super);
     function EZError(code, message) {
         var _this = _super.call(this, message) || this;
@@ -142,7 +142,7 @@ var EZError = (function (_super) {
     return EZError;
 }(Error));
 exports.EZError = EZError;
-var EZUser = (function () {
+var EZUser = /** @class */ (function () {
     function EZUser(id, first_name, last_name, email, profile_image, enable_push_notifications, enable_email_notifications, enable_newsletter, is_connected_to_facebook) {
         if (enable_push_notifications === void 0) { enable_push_notifications = false; }
         if (enable_email_notifications === void 0) { enable_email_notifications = false; }
@@ -176,7 +176,7 @@ var EZUser = (function () {
     return EZUser;
 }());
 exports.EZUser = EZUser;
-var EZDay = (function () {
+var EZDay = /** @class */ (function () {
     function EZDay(date, events) {
         this.date = date;
         this.events = events;
@@ -198,7 +198,7 @@ var EZDay = (function () {
     return EZDay;
 }());
 exports.EZDay = EZDay;
-var EZEvent = (function () {
+var EZEvent = /** @class */ (function () {
     function EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists) {
         if (isRegular === void 0) { isRegular = false; }
         if (category === void 0) { category = []; }
@@ -253,7 +253,7 @@ var EZEvent = (function () {
     return EZEvent;
 }());
 exports.EZEvent = EZEvent;
-var EZVenue = (function () {
+var EZVenue = /** @class */ (function () {
     function EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel) {
         if (gallery === void 0) { gallery = []; }
         if (category === void 0) { category = []; }
@@ -305,7 +305,7 @@ var EZVenue = (function () {
     return EZVenue;
 }());
 exports.EZVenue = EZVenue;
-var EZImage = (function () {
+var EZImage = /** @class */ (function () {
     function EZImage(thumb, standard, large) {
         if (thumb || standard || large) {
             this.thumb = thumb;
@@ -363,7 +363,7 @@ var EZImage = (function () {
     return EZImage;
 }());
 exports.EZImage = EZImage;
-var EZArtist = (function () {
+var EZArtist = /** @class */ (function () {
     function EZArtist(id, name, featured_image, gallery, preview, category, excerpt) {
         if (gallery === void 0) { gallery = []; }
         if (category === void 0) { category = []; }
@@ -401,7 +401,7 @@ var EZArtist = (function () {
     return EZArtist;
 }());
 exports.EZArtist = EZArtist;
-var EZSoundTrack = (function () {
+var EZSoundTrack = /** @class */ (function () {
     function EZSoundTrack(url) {
         this.isPlaying = false;
         this.media = null;
@@ -449,7 +449,7 @@ var EZSoundTrack = (function () {
     return EZSoundTrack;
 }());
 exports.EZSoundTrack = EZSoundTrack;
-var EZPrice = (function () {
+var EZPrice = /** @class */ (function () {
     function EZPrice(display) {
         this.display = display;
     }
@@ -469,7 +469,7 @@ var EZPrice = (function () {
     return EZPrice;
 }());
 exports.EZPrice = EZPrice;
-var EZTable = (function () {
+var EZTable = /** @class */ (function () {
     function EZTable(dict) {
         this.dict = dict;
     }
@@ -492,7 +492,7 @@ var EZTable = (function () {
     return EZTable;
 }());
 exports.EZTable = EZTable;
-var EZTrigger = (function () {
+var EZTrigger = /** @class */ (function () {
     function EZTrigger(id, action) {
         this.id = id;
         this.trigger = action;
@@ -500,7 +500,7 @@ var EZTrigger = (function () {
     return EZTrigger;
 }());
 exports.EZTrigger = EZTrigger;
-var EventManager = (function () {
+var EventManager = /** @class */ (function () {
     function EventManager(perPage, city, date, coords, category) {
         if (perPage === void 0) { perPage = 1; }
         if (city === void 0) { city = "null"; }
@@ -546,7 +546,7 @@ var EventManager = (function () {
     return EventManager;
 }());
 exports.EventManager = EventManager;
-var VenueManager = (function () {
+var VenueManager = /** @class */ (function () {
     function VenueManager(perPage, city, date, coords, category) {
         if (perPage === void 0) { perPage = 30; }
         if (city === void 0) { city = "null"; }
@@ -592,7 +592,7 @@ var VenueManager = (function () {
     return VenueManager;
 }());
 exports.VenueManager = VenueManager;
-var ArtistManager = (function () {
+var ArtistManager = /** @class */ (function () {
     function ArtistManager(perPage, category) {
         if (perPage === void 0) { perPage = 30; }
         this.page = 0;
@@ -630,7 +630,7 @@ var ArtistManager = (function () {
     return ArtistManager;
 }());
 exports.ArtistManager = ArtistManager;
-var AccountManager = (function () {
+var AccountManager = /** @class */ (function () {
     function AccountManager(user) {
         this.user = user;
     }
@@ -769,7 +769,7 @@ var AccountManager = (function () {
     return AccountManager;
 }());
 exports.AccountManager = AccountManager;
-var TriggerManager = (function () {
+var TriggerManager = /** @class */ (function () {
     function TriggerManager() {
     }
     TriggerManager.current = function () {
@@ -875,7 +875,7 @@ export class Track {
     }
 }
 */
-var Zero = (function () {
+var Zero = /** @class */ (function () {
     function Zero() {
     }
     //TRIGGER

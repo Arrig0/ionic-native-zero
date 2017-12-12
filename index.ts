@@ -556,7 +556,7 @@ export class EventManager {
         this.category = category;
     }
 
-    next(): Promise<EZEvent[]> {
+    next(): Promise<EZDay[]> {
         return new Promise<EZDay[]>((resolve, reject) => {
             let dates = this.date.getFullYear().toString()+"-"+this.date.getMonth().toString()+"-"+this.date.getDay().toString();
             let categories = this.category && this.category.length > 0 ? "&category=" + this.category.join("|") : "";
