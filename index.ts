@@ -186,6 +186,10 @@ export class EZUser {
     }
 }
 
+export class EZMixin {
+
+}
+
 export class EZDay {
     public date: Date;
     public events: EZEvent[];
@@ -723,7 +727,10 @@ export class AccountManager {
         return new Promise<AccountManager>((resolve, reject) => {
             ZeroPlugin.login(grant, credentials).then((result: boolean) => {
                 if(result) {
-                    AccountManager.current().then(resolve).catch((err) => {
+                    AccountManager.current().then(am => {
+                        Zero.onLogin(am);
+                        resolve(am)
+                    }).catch((err) => {
                         Zero.onError(EZError.fromString(err));
                         reject(EZError.fromString(err))
                     });
@@ -912,6 +919,29 @@ export class TriggerManager {
     }
 
 }
+
+export class SearchEngine {
+
+    public static recent(): EZMixin[] {
+        return [];
+        //todo: implement recent!!
+    }
+
+    public static search(f: string = "all", q: string): Promise<EZMixin[]> {
+        return new Promise<EZMixin[]>((resolve, reject) => {
+            resolve([]);
+            //todo: implement search;
+        });
+    }
+
+    public static foryou(): Promise<EZMixin[]> {
+        return new Promise<EZMixin[]>((resolve, reject) => {
+            resolve([]);
+            //todo: implement foryou;
+        });
+    }
+}
+
 
 /*
 export class Track {

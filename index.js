@@ -189,6 +189,12 @@ var EZUser = /** @class */ (function () {
     return EZUser;
 }());
 exports.EZUser = EZUser;
+var EZMixin = /** @class */ (function () {
+    function EZMixin() {
+    }
+    return EZMixin;
+}());
+exports.EZMixin = EZMixin;
 var EZDay = /** @class */ (function () {
     function EZDay(date, events) {
         this.date = date;
@@ -673,7 +679,10 @@ var AccountManager = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.login(grant, credentials).then(function (result) {
                 if (result) {
-                    AccountManager.current().then(resolve)["catch"](function (err) {
+                    AccountManager.current().then(function (am) {
+                        Zero.onLogin(am);
+                        resolve(am);
+                    })["catch"](function (err) {
                         Zero.onError(EZError.fromString(err));
                         reject(EZError.fromString(err));
                     });
@@ -837,6 +846,29 @@ var TriggerManager = /** @class */ (function () {
     return TriggerManager;
 }());
 exports.TriggerManager = TriggerManager;
+var SearchEngine = /** @class */ (function () {
+    function SearchEngine() {
+    }
+    SearchEngine.recent = function () {
+        return [];
+        //todo: implement recent!!
+    };
+    SearchEngine.search = function (f, q) {
+        if (f === void 0) { f = "all"; }
+        return new Promise(function (resolve, reject) {
+            resolve([]);
+            //todo: implement search;
+        });
+    };
+    SearchEngine.foryou = function () {
+        return new Promise(function (resolve, reject) {
+            resolve([]);
+            //todo: implement foryou;
+        });
+    };
+    return SearchEngine;
+}());
+exports.SearchEngine = SearchEngine;
 /*
 export class Track {
     url: string;
