@@ -547,7 +547,7 @@ var EventManager = /** @class */ (function () {
             _this.page++;
             ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&days=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
-                resolve(EZDay.array(data));
+                resolve(EZDay.array(data.days));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
