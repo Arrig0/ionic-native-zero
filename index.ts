@@ -202,6 +202,7 @@ export class EZDay {
     }
 
     public static json(json: any): EZDay {
+        console.log('EZDAY:::: '+JSON.stringify(json));
         return new EZDay(new Date(json.date), EZEvent.array(json.events));
     }
 
@@ -250,7 +251,7 @@ export class EZEvent {
     }
 
     static json(jsonEvent: any): EZEvent | null {
-        console.log(jsonEvent);
+        console.log("EZEVENT:::: "+JSON.stringify(jsonEvent));
         let id = jsonEvent.id;
         let name = jsonEvent.name.plain;
         let isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
@@ -316,7 +317,7 @@ export class EZVenue {
     }
 
     static json(json: any): EZVenue | null {
-        console.log(json);
+        console.log("EZVENUE:::: "+JSON.stringify(json));
         let id = json.id;
         let name = json.name;
         let featured_image = EZImage.json(json.featured_image);
