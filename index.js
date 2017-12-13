@@ -258,7 +258,7 @@ var EZEvent = /** @class */ (function () {
         var featured_image = EZImage.json(jsonEvent.featured_image);
         var gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
-        var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : (jsonEvent.venue_id && jsonEvent.venue_name ? EZVenue.json({ id: jsonEvent.venue_id, name: jsonEvent.venue_name }) : null);
+        var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({ id: jsonEvent.venue_id, name: jsonEvent.venue_name, coordinate: jsonEvent.venue_coords }) : null);
         if (!id || !name || !startDate || !venue)
             return null;
         return new EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists);
@@ -296,7 +296,7 @@ var EZVenue = /** @class */ (function () {
         this.category = category;
         this.openingHours = openingHours;
         this.priceLevel = priceLevel;
-        if (!id || !name)
+        if (!id || !name || !coords)
             return null;
     }
     EZVenue.json = function (json) {

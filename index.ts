@@ -265,7 +265,7 @@ export class EZEvent {
         let featured_image = EZImage.json(jsonEvent.featured_image);
         let gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
-        let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name ? EZVenue.json({id: jsonEvent.venue_id, name: jsonEvent.venue_name}) : null);
+        let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({id: jsonEvent.venue_id, name: jsonEvent.venue_name, coordinate: jsonEvent.venue_coords}) : null);
 
         if( !id || !name || !startDate || !venue ) return null;
 
@@ -313,7 +313,7 @@ export class EZVenue {
         this.openingHours = openingHours;
         this.priceLevel = priceLevel;
 
-        if( !id || !name ) return null;
+        if( !id || !name || !coords ) return null;
     }
 
     static json(json: any): EZVenue | null {
