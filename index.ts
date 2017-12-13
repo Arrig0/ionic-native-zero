@@ -209,7 +209,7 @@ export class EZDay {
         let ret = [];
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
-            let ev = EZDay.json(arr[0]);
+            let ev = EZDay.json(arr[i]);
             if(ev) ret.push(ev);
         }
         return ret;

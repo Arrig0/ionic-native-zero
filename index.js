@@ -211,7 +211,7 @@ var EZDay = /** @class */ (function () {
         if (!isArray_1.isArray(arr) || arr.length == 0)
             return ret;
         for (var i = 0; i < arr.length; i++) {
-            var ev = EZDay.json(arr[0]);
+            var ev = EZDay.json(arr[i]);
             if (ev)
                 ret.push(ev);
         }
