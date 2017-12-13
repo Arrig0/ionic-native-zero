@@ -225,10 +225,10 @@ export class EZDay {
             } else if(ddays == 1) {
                 return "Domani"
             } else {
-                return this.date.getDate().toString() + " " + this.date.getMonth();
+                return this.date.toLocaleDateString("it-IT", { weekday: 'long', month: 'long', day: 'numeric' })
             }
         } else {
-            return this.date.getDate().toString() + " " + this.date.getMonth();
+            return this.date.toLocaleDateString("it-IT", { weekday: 'long', month: 'long', day: 'numeric' })
         }
     }
 }
