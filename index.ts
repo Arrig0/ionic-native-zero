@@ -577,7 +577,7 @@ export class EventManager {
 
     next(): Promise<EZDay[]> {
         return new Promise<EZDay[]>((resolve, reject) => {
-            let dates = this.date.getFullYear().toString()+"-"+this.date.getMonth().toString()+"-"+this.date.getDay().toString();
+            let dates = this.date.getFullYear().toString()+"-"+this.date.getMonth().toString()+"-"+this.date.getDate().toString();
             let categories = this.category && this.category.length > 0 ? "&category=" + this.category.join("|") : "";
             let coords = this.coords ? "&coords[lat]="+this.coords.lat+"&coords[lng]="+this.coords.lng : "";
             this.page ++;

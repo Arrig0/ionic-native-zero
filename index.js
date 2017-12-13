@@ -539,7 +539,7 @@ var EventManager = /** @class */ (function () {
     EventManager.prototype.next = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            var dates = _this.date.getFullYear().toString() + "-" + _this.date.getMonth().toString() + "-" + _this.date.getDay().toString();
+            var dates = _this.date.getFullYear().toString() + "-" + _this.date.getMonth().toString() + "-" + _this.date.getDate().toString();
             var categories = _this.category && _this.category.length > 0 ? "&category=" + _this.category.join("|") : "";
             var coords = _this.coords ? "&coords[lat]=" + _this.coords.lat + "&coords[lng]=" + _this.coords.lng : "";
             _this.page++;
