@@ -202,7 +202,6 @@ export class EZDay {
     }
 
     public static json(json: any): EZDay {
-        console.log('EZDAY:::: '+JSON.stringify(json));
         return new EZDay(new Date(json.date), EZEvent.array(json.events));
     }
 
@@ -267,7 +266,6 @@ export class EZEvent {
     }
 
     static json(jsonEvent: any): EZEvent | null {
-        console.log("EZEVENT:::: "+JSON.stringify(jsonEvent));
         let id = jsonEvent.id;
         let name = jsonEvent.name.plain;
         let isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
@@ -333,7 +331,6 @@ export class EZVenue {
     }
 
     static json(json: any): EZVenue | null {
-        console.log("EZVENUE:::: "+JSON.stringify(json));
         let id = json.id;
         let name = json.name;
         let featured_image = json.featured_image ? EZImage.json(json.featured_image) : null;
@@ -729,7 +726,6 @@ export class AccountManager {
                 resolve(AccountManager.instance);
             } else {
                 ZeroPlugin.userInfo().then((user) => {
-                    console.log(JSON.stringify(user));
                     let u = EZUser.json(user);
                     if(u) {
                         AccountManager.instance = new AccountManager(u);

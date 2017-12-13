@@ -204,7 +204,6 @@ var EZDay = /** @class */ (function () {
         this.events = events;
     }
     EZDay.json = function (json) {
-        console.log('EZDAY:::: ' + JSON.stringify(json));
         return new EZDay(new Date(json.date), EZEvent.array(json.events));
     };
     EZDay.array = function (arr) {
@@ -262,7 +261,6 @@ var EZEvent = /** @class */ (function () {
         this.venue = venue;
     }
     EZEvent.json = function (jsonEvent) {
-        console.log("EZEVENT:::: " + JSON.stringify(jsonEvent));
         var id = jsonEvent.id;
         var name = jsonEvent.name.plain;
         var isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
@@ -318,7 +316,6 @@ var EZVenue = /** @class */ (function () {
             return null;
     }
     EZVenue.json = function (json) {
-        console.log("EZVENUE:::: " + JSON.stringify(json));
         var id = json.id;
         var name = json.name;
         var featured_image = json.featured_image ? EZImage.json(json.featured_image) : null;
@@ -685,7 +682,6 @@ var AccountManager = /** @class */ (function () {
             }
             else {
                 ZeroPlugin.userInfo().then(function (user) {
-                    console.log(JSON.stringify(user));
                     var u = EZUser.json(user);
                     if (u) {
                         AccountManager.instance = new AccountManager(u);
