@@ -243,6 +243,7 @@ var EZEvent = /** @class */ (function () {
         this.venue = venue;
     }
     EZEvent.json = function (jsonEvent) {
+        console.log(json);
         var id = jsonEvent.id;
         var name = jsonEvent.name.plain;
         var isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
@@ -298,6 +299,7 @@ var EZVenue = /** @class */ (function () {
             return null;
     }
     EZVenue.json = function (json) {
+        console.log(json);
         var id = json.id;
         var name = json.name;
         var featured_image = EZImage.json(json.featured_image);

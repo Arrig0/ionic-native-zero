@@ -250,6 +250,7 @@ export class EZEvent {
     }
 
     static json(jsonEvent: any): EZEvent | null {
+        console.log(json);
         let id = jsonEvent.id;
         let name = jsonEvent.name.plain;
         let isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
@@ -315,6 +316,7 @@ export class EZVenue {
     }
 
     static json(json: any): EZVenue | null {
+        console.log(json);
         let id = json.id;
         let name = json.name;
         let featured_image = EZImage.json(json.featured_image);
