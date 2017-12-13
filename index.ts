@@ -111,12 +111,12 @@ export class EZError extends Error {
         this.code = code;
     }
 
-    public static fromString(reason: string, separator: string = ':') {
+    public static fromString(reason: string, separator: string = ':'): EZError {
         if(!reason || !(typeof reason == 'string')) return new EZError(500, "Generic Error");
         let err = reason.split(separator);
         if(err.length == 2){
-            let code = reason.split(separator)[0];
-            let msg = reason.split(separator)[1];
+            let code = err[0];
+            let msg = err[1];
             if(!isNaN(parseInt(code))) {
                 return new EZError(parseInt(code), msg);
             } else {
@@ -263,7 +263,7 @@ export class EZEvent {
         let featured_image = EZImage.json(jsonEvent.featured_image);
         let gallery = EZImage.array(jsonEvent.gallery);
         let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
-        let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): null;
+        let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name ? EZVenue.json({id: jsonEvent.venue_id, name: jsonEvent.venue_name}) : null);
 
         if( !id || !name || !startDate || !venue ) return null;
 

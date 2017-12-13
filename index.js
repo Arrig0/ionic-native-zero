@@ -123,8 +123,8 @@ var EZError = /** @class */ (function (_super) {
             return new EZError(500, "Generic Error");
         var err = reason.split(separator);
         if (err.length == 2) {
-            var code = reason.split(separator)[0];
-            var msg = reason.split(separator)[1];
+            var code = err[0];
+            var msg = err[1];
             if (!isNaN(parseInt(code))) {
                 return new EZError(parseInt(code), msg);
             }
@@ -256,7 +256,7 @@ var EZEvent = /** @class */ (function () {
         var featured_image = EZImage.json(jsonEvent.featured_image);
         var gallery = EZImage.array(jsonEvent.gallery);
         var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
-        var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : null;
+        var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : (jsonEvent.venue_id && jsonEvent.venue_name ? EZVenue.json({ id: jsonEvent.venue_id, name: jsonEvent.venue_name }) : null);
         if (!id || !name || !startDate || !venue)
             return null;
         return new EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists);
