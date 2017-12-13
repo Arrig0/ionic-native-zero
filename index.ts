@@ -215,6 +215,22 @@ export class EZDay {
         }
         return ret;
     }
+
+    public friendly(): string {
+        let today = new Date();
+        let ddays = this.date.getDate() - today.getDate();
+        if( this.date.getMonth() == today.getMonth() && this.date.getFullYear() == today.getFullYear()) {
+            if(ddays == 0) {
+                return "Oggi"
+            } else if(ddays == 1) {
+                return "Domani"
+            } else {
+                return this.date.getDate().toString() + " " + this.date.getMonth();
+            }
+        } else {
+            return this.date.getDate().toString() + " " + this.date.getMonth();
+        }
+    }
 }
 
 export class EZEvent {
