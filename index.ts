@@ -259,11 +259,11 @@ export class EZEvent {
         let endDate = jsonEvent.end_date ? new Date(jsonEvent.end_date) : null;
         let startTime = jsonEvent.start_time ? new Date(jsonEvent.start_time) : null;
         let endTime = jsonEvent.end_time ? new Date(jsonEvent.end_date) : null;
-        let price = EZPrice.json(jsonEvent.price);
+        let price = jsonEvent.price ? EZPrice.json(jsonEvent.price) : null;
         let excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
-        let category = isArray(jsonEvent.category) ? jsonEvent.category : [];
+        let category = jsonEvent.category && isArray(jsonEvent.category) ? jsonEvent.category : [];
         let featured_image = EZImage.json(jsonEvent.featured_image);
-        let gallery = EZImage.array(jsonEvent.gallery);
+        let gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
         let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name ? EZVenue.json({id: jsonEvent.venue_id, name: jsonEvent.venue_name}) : null);
 
@@ -320,16 +320,16 @@ export class EZVenue {
         console.log("EZVENUE:::: "+JSON.stringify(json));
         let id = json.id;
         let name = json.name;
-        let featured_image = EZImage.json(json.featured_image);
-        let gallery = isArray(json.gallery) ? EZImage.array(json.gallery) : null;
-        let phone = json.phone;
-        let website = json.website;
+        let featured_image = json.featured_image ? EZImage.json(json.featured_image) : null;
+        let gallery = json.gallery && isArray(json.gallery) ? EZImage.array(json.gallery) : null;
+        let phone = json.phone ? json.phone : null;
+        let website = json.website ? json.website : null;
         let rate = (typeof json.rate == 'number') ? json.rate : null;
-        let address = json.address;
+        let address = json.address ? json.address: null;
         let coords = json.coordinate && json.coordinate.hasOwnProperty('lat') && json.coordinate.hasOwnProperty('lng') ? json.coordinate : null;
         let excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
-        let category = json.category;
-        let openingHours = EZTable.json(json.openingHours);
+        let category = json.category ? json.category : null;
+        let openingHours = json.openingHours ? EZTable.json(json.openingHours) : null;
         let priceLevel = (typeof json.price_level == 'number') ? json.price_level : null;
 
         return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);

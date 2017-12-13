@@ -252,11 +252,11 @@ var EZEvent = /** @class */ (function () {
         var endDate = jsonEvent.end_date ? new Date(jsonEvent.end_date) : null;
         var startTime = jsonEvent.start_time ? new Date(jsonEvent.start_time) : null;
         var endTime = jsonEvent.end_time ? new Date(jsonEvent.end_date) : null;
-        var price = EZPrice.json(jsonEvent.price);
+        var price = jsonEvent.price ? EZPrice.json(jsonEvent.price) : null;
         var excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
-        var category = isArray_1.isArray(jsonEvent.category) ? jsonEvent.category : [];
+        var category = jsonEvent.category && isArray_1.isArray(jsonEvent.category) ? jsonEvent.category : [];
         var featured_image = EZImage.json(jsonEvent.featured_image);
-        var gallery = EZImage.array(jsonEvent.gallery);
+        var gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
         var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : (jsonEvent.venue_id && jsonEvent.venue_name ? EZVenue.json({ id: jsonEvent.venue_id, name: jsonEvent.venue_name }) : null);
         if (!id || !name || !startDate || !venue)
@@ -303,16 +303,16 @@ var EZVenue = /** @class */ (function () {
         console.log("EZVENUE:::: " + JSON.stringify(json));
         var id = json.id;
         var name = json.name;
-        var featured_image = EZImage.json(json.featured_image);
-        var gallery = isArray_1.isArray(json.gallery) ? EZImage.array(json.gallery) : null;
-        var phone = json.phone;
-        var website = json.website;
+        var featured_image = json.featured_image ? EZImage.json(json.featured_image) : null;
+        var gallery = json.gallery && isArray_1.isArray(json.gallery) ? EZImage.array(json.gallery) : null;
+        var phone = json.phone ? json.phone : null;
+        var website = json.website ? json.website : null;
         var rate = (typeof json.rate == 'number') ? json.rate : null;
-        var address = json.address;
+        var address = json.address ? json.address : null;
         var coords = json.coordinate && json.coordinate.hasOwnProperty('lat') && json.coordinate.hasOwnProperty('lng') ? json.coordinate : null;
         var excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
-        var category = json.category;
-        var openingHours = EZTable.json(json.openingHours);
+        var category = json.category ? json.category : null;
+        var openingHours = json.openingHours ? EZTable.json(json.openingHours) : null;
         var priceLevel = (typeof json.price_level == 'number') ? json.price_level : null;
         return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);
     };
