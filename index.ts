@@ -250,7 +250,7 @@ export class EZEvent {
     }
 
     static json(jsonEvent: any): EZEvent | null {
-        console.log(json);
+        console.log(jsonEvent);
         let id = jsonEvent.id;
         let name = jsonEvent.name.plain;
         let isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;

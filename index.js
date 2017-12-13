@@ -243,7 +243,7 @@ var EZEvent = /** @class */ (function () {
         this.venue = venue;
     }
     EZEvent.json = function (jsonEvent) {
-        console.log(json);
+        console.log(jsonEvent);
         var id = jsonEvent.id;
         var name = jsonEvent.name.plain;
         var isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
