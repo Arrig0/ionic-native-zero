@@ -104,6 +104,7 @@ export interface Artist extends ZeroEntity {
     topTrack: Track;
 }*/
 
+
 export class EZError extends Error {
     readonly code: number;
     constructor(code: number, message: string) {
@@ -190,6 +191,30 @@ export class EZUser {
 
 export class EZMixin {
     // todo: implement EZMixin; vedi SEARCH;
+}
+
+export class EZDate {
+    private date: Date;
+
+    constructor(date: Date) {
+        this.date = date;
+    }
+
+    public friendly(): string {
+        let today = new Date();
+        let ddays = this.date.getDate() - today.getDate();
+        if( this.date.getMonth() == today.getMonth() && this.date.getFullYear() == today.getFullYear()) {
+            if(ddays == 0) {
+                return "Oggi"
+            } else if(ddays == 1) {
+                return "Domani"
+            } else {
+                return this.date.toLocaleDateString("it-IT", { weekday: 'long', month: 'long', day: 'numeric' })
+            }
+        } else {
+            return this.date.toLocaleDateString("it-IT", { weekday: 'long', month: 'long', day: 'numeric' })
+        }
+    }
 }
 
 export class EZDay {

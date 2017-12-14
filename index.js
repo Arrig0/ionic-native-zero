@@ -198,6 +198,31 @@ var EZMixin = /** @class */ (function () {
     return EZMixin;
 }());
 exports.EZMixin = EZMixin;
+var EZDate = /** @class */ (function () {
+    function EZDate(date) {
+        this.date = date;
+    }
+    EZDate.prototype.friendly = function () {
+        var today = new Date();
+        var ddays = this.date.getDate() - today.getDate();
+        if (this.date.getMonth() == today.getMonth() && this.date.getFullYear() == today.getFullYear()) {
+            if (ddays == 0) {
+                return "Oggi";
+            }
+            else if (ddays == 1) {
+                return "Domani";
+            }
+            else {
+                return this.date.toLocaleDateString("it-IT", { weekday: 'long', month: 'long', day: 'numeric' });
+            }
+        }
+        else {
+            return this.date.toLocaleDateString("it-IT", { weekday: 'long', month: 'long', day: 'numeric' });
+        }
+    };
+    return EZDate;
+}());
+exports.EZDate = EZDate;
 var EZDay = /** @class */ (function () {
     function EZDay(date, events) {
         this.date = date;
