@@ -395,7 +395,7 @@ export class EZVenue {
     }
 
     related(): Promise<EZVenue[]> {
-        return new Promise<EZVenue>((resolve, reject) => {
+        return new Promise<EZVenue[]>((resolve, reject) => {
             ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/related").then((data) => {
                 resolve(EZVenue.array(data));
             }).catch((err) => {
