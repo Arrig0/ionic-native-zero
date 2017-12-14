@@ -346,7 +346,9 @@ var EZVenue = /** @class */ (function () {
         return ret;
     };
     EZVenue.prototype.images = function () {
-        return [this.featured_image].concat(this.gallery);
+        return [this.featured_image].concat(this.gallery).filter(function (el) {
+            return !!el;
+        });
     };
     return EZVenue;
 }());
