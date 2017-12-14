@@ -305,6 +305,17 @@ var EZEvent = /** @class */ (function () {
             return !!el;
         });
     };
+    EZEvent.prototype.related = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'events/' + _this.id + "/related").then(function (data) {
+                resolve(EZEvent.array(data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
     return EZEvent;
 }());
 exports.EZEvent = EZEvent;
@@ -360,6 +371,28 @@ var EZVenue = /** @class */ (function () {
     EZVenue.prototype.images = function () {
         return [this.featured_image].concat(this.gallery).filter(function (el) {
             return !!el;
+        });
+    };
+    EZVenue.prototype.related = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + _this.id + "/related").then(function (data) {
+                resolve(EZVenue.array(data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
+    EZVenue.prototype.upcoming = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + _this.id + "/calendar").then(function (data) {
+                resolve(EZEvent.array(data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
         });
     };
     return EZVenue;
@@ -458,6 +491,17 @@ var EZArtist = /** @class */ (function () {
                 ret.push(img);
         }
         return ret;
+    };
+    EZArtist.prototype.upcoming = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'artists/' + _this.id + "/calendar").then(function (data) {
+                resolve(EZEvent.array(data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
     };
     return EZArtist;
 }());

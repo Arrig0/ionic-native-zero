@@ -314,6 +314,17 @@ export class EZEvent {
             return !!el
         })
     }
+
+    related(): Promise<EZEvent[]> {
+        return new Promise<EZEvent[]>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'events/' + this.id + "/related").then((data) => {
+                resolve(EZEvent.array(data));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    }
 }
 
 export class EZVenue {
@@ -381,6 +392,28 @@ export class EZVenue {
         return [this.featured_image].concat(this.gallery).filter((el) => {
             return !!el
         })
+    }
+
+    related(): Promise<EZVenue[]> {
+        return new Promise<EZVenue>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/related").then((data) => {
+                resolve(EZVenue.array(data));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    }
+
+    upcoming(): Promise<EZEvent[]> {
+        return new Promise<EZEvent[]>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/calendar").then((data) => {
+                resolve(EZEvent.array(data));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
     }
 
 }
@@ -489,6 +522,18 @@ export class EZArtist {
             if(img) ret.push(img);
         }
         return ret;
+    }
+
+
+    upcoming(): Promise<EZEvent[]> {
+        return new Promise<EZEvent[]>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'artists/' + this.id + "/calendar").then((data) => {
+                resolve(EZEvent.array(data));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
     }
 
 }
