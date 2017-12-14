@@ -297,7 +297,9 @@ export class EZEvent {
     }
 
     images(): EZImage[] {
-        return [this.featured_image].concat(this.gallery);
+        return [this.featured_image].concat(this.gallery).filter((el) => {
+            return !!el
+        })
     }
 }
 

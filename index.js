@@ -291,7 +291,9 @@ var EZEvent = /** @class */ (function () {
         return ret;
     };
     EZEvent.prototype.images = function () {
-        return [this.featured_image].concat(this.gallery);
+        return [this.featured_image].concat(this.gallery).filter(function (el) {
+            return !!el;
+        });
     };
     return EZEvent;
 }());
