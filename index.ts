@@ -295,6 +295,10 @@ export class EZEvent {
         }
         return ret;
     }
+
+    images(): EZImage[] {
+        return [this.featured_image].concat(this.gallery);
+    }
 }
 
 export class EZVenue {
@@ -356,6 +360,10 @@ export class EZVenue {
             if(venue) ret.push(venue);
         }
         return ret;
+    }
+
+    images(): EZImage[] {
+        return [this.featured_image].concat(this.gallery);
     }
 
 }

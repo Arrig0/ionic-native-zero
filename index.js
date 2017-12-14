@@ -290,6 +290,9 @@ var EZEvent = /** @class */ (function () {
         }
         return ret;
     };
+    EZEvent.prototype.images = function () {
+        return [this.featured_image].concat(this.gallery);
+    };
     return EZEvent;
 }());
 exports.EZEvent = EZEvent;
@@ -341,6 +344,9 @@ var EZVenue = /** @class */ (function () {
                 ret.push(venue);
         }
         return ret;
+    };
+    EZVenue.prototype.images = function () {
+        return [this.featured_image].concat(this.gallery);
     };
     return EZVenue;
 }());
