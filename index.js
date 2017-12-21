@@ -316,6 +316,17 @@ var EZEvent = /** @class */ (function () {
             });
         });
     };
+    EZEvent.prototype.reload = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'events/' + _this.id).then(function (json) {
+                resolve(EZEvent.json(json));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
     return EZEvent;
 }());
 exports.EZEvent = EZEvent;
@@ -389,6 +400,17 @@ var EZVenue = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'venues/' + _this.id + "/calendar").then(function (data) {
                 resolve(EZEvent.array(data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
+    EZVenue.prototype.reload = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + _this.id).then(function (json) {
+                resolve(EZVenue.json(json));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
@@ -497,6 +519,17 @@ var EZArtist = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'artists/' + _this.id + "/calendar").then(function (data) {
                 resolve(EZEvent.array(data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
+    EZArtist.prototype.reload = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'artists/' + _this.id).then(function (json) {
+                resolve(EZArtist.json(json));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
@@ -867,6 +900,7 @@ var AccountManager = /** @class */ (function () {
             ZeroPlugin.logout().then(function () {
                 AccountManager.instance = null;
                 that.user = null;
+                TriggerManager.current().performLogout();
                 resolve();
             })["catch"](function (err) {
                 Zero.onError(err);

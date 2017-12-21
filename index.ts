@@ -325,6 +325,17 @@ export class EZEvent {
             });
         });
     }
+
+    reload(): Promise<EZEvent> {
+        return new Promise<EZEvent>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'events/' + this.id).then((json) => {
+                resolve(EZEvent.json(json));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    }
 }
 
 export class EZVenue {
@@ -409,6 +420,17 @@ export class EZVenue {
         return new Promise<EZEvent[]>((resolve, reject) => {
             ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/calendar").then((data) => {
                 resolve(EZEvent.array(data));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    }
+    
+    reload(): Promise<EZVenue> {
+        return new Promise<EZVenue>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id).then((json) => {
+                resolve(EZVenue.json(json));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
@@ -529,6 +551,17 @@ export class EZArtist {
         return new Promise<EZEvent[]>((resolve, reject) => {
             ZeroPlugin.get(BASE_API_PATH + 'artists/' + this.id + "/calendar").then((data) => {
                 resolve(EZEvent.array(data));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    }
+
+    reload(): Promise<EZArtist> {
+        return new Promise<EZArtist>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'artists/' + this.id).then((json) => {
+                resolve(EZArtist.json(json));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
@@ -932,6 +965,7 @@ export class AccountManager {
             ZeroPlugin.logout().then(() => {
                 AccountManager.instance = null;
                 that.user = null;
+                TriggerManager.current().performLogout();
                 resolve();
             }).catch((err) => {
                 Zero.onError(err);
