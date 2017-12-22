@@ -192,9 +192,58 @@ var EZUser = /** @class */ (function () {
     return EZUser;
 }());
 exports.EZUser = EZUser;
+var EZType;
+(function (EZType) {
+    EZType["Event"] = "event";
+    EZType["Venue"] = "venue";
+    EZType["Artist"] = "artist";
+})(EZType || (EZType = {}));
 var EZMixin = /** @class */ (function () {
-    function EZMixin() {
+    function EZMixin(id, type, title, excerpt, featured_image) {
+        if (id && type && title && excerpt && featured_image) {
+            this.id = id;
+            this.type = type;
+            this.title = title;
+            this.excerpt = excerpt;
+            this.featured_image = featured_image;
+        }
+        else {
+            return null;
+        }
     }
+    EZMixin.json = function (json) {
+        if (!json)
+            return null;
+        var id = json.id;
+        var type = EZMixin.parseType(json.type);
+        var title = json.title ? json.title.plain : null;
+        var excerpt = json.excerpt ? json.excerpt.plain : null;
+        var image = EZImage.json(json.featured_image);
+        return new EZMixin(id, type, title, excerpt, image);
+    };
+    EZMixin.array = function (jsonArray) {
+        var ret = [];
+        if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
+            return ret;
+        for (var i = 0; i < jsonArray.length; i++) {
+            var mix = EZMixin.json(jsonArray[0]);
+            if (mix)
+                ret.push(mix);
+        }
+        return ret;
+    };
+    EZMixin.parseType = function (val) {
+        switch (val) {
+            case "event":
+                return EZType.Event;
+            case "venue":
+                return EZType.Venue;
+            case "artist":
+                return EZType.Artist;
+            default:
+                return null;
+        }
+    };
     return EZMixin;
 }());
 exports.EZMixin = EZMixin;
@@ -971,15 +1020,25 @@ var SearchEngine = /** @class */ (function () {
     }
     SearchEngine.recent = function () {
         return new Promise(function (resolve, reject) {
-            resolve([]);
+            ZeroPlugin.recentResearch().then(function (res) {
+                resolve(EZMixin.array(res));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
         });
-        //todo: implement recent!!
     };
     SearchEngine.search = function (q, f) {
-        if (f === void 0) { f = "all"; }
+        if (f === void 0) { f = [EZType.Artist, EZType.Venue, EZType.Event]; }
         return new Promise(function (resolve, reject) {
-            resolve([]);
-            //todo: implement search;
+            var c = f.join("|");
+            var s = encodeURIComponent(q);
+            ZeroPlugin.get(BASE_API_PATH + "search/" + s + "/?types=" + c).then(function (res) {
+                resolve(EZMixin.array(res));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
         });
     };
     SearchEngine.foryou = function () {

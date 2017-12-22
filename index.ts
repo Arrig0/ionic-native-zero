@@ -189,8 +189,67 @@ export class EZUser {
     }
 }
 
+enum EZType {
+    Event = "event",
+    Venue = "venue",
+    Artist = "artist"
+}
+
 export class EZMixin {
-    // todo: implement EZMixin; vedi SEARCH;
+    readonly id: number;
+    readonly type: EZType;
+    readonly title: string;
+    readonly excerpt: string;
+    readonly featured_image: EZImage;
+
+    constructor(id: number, type: EZType, title: string, excerpt: string, featured_image: EZImage) {
+        if(id && type && title && excerpt && featured_image) {
+            this.id = id;
+            this.type = type;
+            this.title = title;
+            this.excerpt = excerpt;
+            this.featured_image = featured_image;
+        } else {
+            return null;
+        }
+    }
+
+    static json( json: any ): EZMixin | null {
+
+        if(!json)
+            return null;
+
+        let id = json.id;
+        let type = EZMixin.parseType(json.type);
+        let title = json.title ? json.title.plain : null;
+        let excerpt = json.excerpt ? json.excerpt.plain : null;
+        let image = EZImage.json(json.featured_image);
+
+        return new EZMixin(id, type, title, excerpt, image);
+    }
+
+    static array(jsonArray: any[]): EZMixin[] {
+        let ret = [];
+        if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
+        for(let i = 0; i < jsonArray.length; i++) {
+            let mix = EZMixin.json(jsonArray[0]);
+            if(mix) ret.push(mix);
+        }
+        return ret;
+    }
+
+    private static parseType(val: string): EZType | null {
+        switch (val) {
+            case "event":
+                return EZType.Event;
+            case "venue":
+                return EZType.Venue;
+            case "artist":
+                return EZType.Artist;
+            default:
+                return null;
+        }
+    }
 }
 
 export class EZDate {
@@ -1046,15 +1105,25 @@ export class SearchEngine {
 
     public static recent(): Promise<EZMixin[]> {
         return new Promise<EZMixin[]>((resolve, reject) => {
-            resolve([]);
+            ZeroPlugin.recentResearch().then((res) => {
+                resolve(EZMixin.array(res));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
         });
-        //todo: implement recent!!
     }
 
-    public static search(q: string, f: string = "all"): Promise<EZMixin[]> {
+    public static search(q: string, f: EZType[] = [EZType.Artist, EZType.Venue, EZType.Event]): Promise<EZMixin[]> {
         return new Promise<EZMixin[]>((resolve, reject) => {
-            resolve([]);
-            //todo: implement search;
+            let c = f.join("|");
+            let s = encodeURIComponent(q);
+            ZeroPlugin.get(BASE_API_PATH+"search/"+s+"/?types="+c).then((res) => {
+                resolve(EZMixin.array(res))
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
         });
     }
 
