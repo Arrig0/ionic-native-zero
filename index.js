@@ -197,7 +197,7 @@ var EZType;
     EZType["Event"] = "event";
     EZType["Venue"] = "venue";
     EZType["Artist"] = "artist";
-})(EZType || (EZType = {}));
+})(EZType = exports.EZType || (exports.EZType = {}));
 var EZMixin = /** @class */ (function () {
     function EZMixin(id, type, title, excerpt, featured_image) {
         if (id && type && title && excerpt && featured_image) {

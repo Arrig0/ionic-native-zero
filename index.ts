@@ -189,7 +189,7 @@ export class EZUser {
     }
 }
 
-enum EZType {
+export enum EZType {
     Event = "event",
     Venue = "venue",
     Artist = "artist"
