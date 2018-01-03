@@ -1103,8 +1103,8 @@ export class TriggerManager {
 
 export class SearchEngine {
 
-    public static recent(): Promise<EZMixin[]> {
-        return new Promise<EZMixin[]>((resolve, reject) => {
+    public static recent(): Promise<string[]> {
+        return new Promise<string[]>((resolve, reject) => {
             /*ZeroPlugin.recentResearch().then((res) => {
                 resolve(EZMixin.array(res));
             }).catch((err) => {
