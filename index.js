@@ -244,6 +244,16 @@ var EZMixin = /** @class */ (function () {
                 return null;
         }
     };
+    EZMixin.prototype.concrete = function () {
+        switch (this.type) {
+            case EZType.Event:
+                return EventManager.get(this.id);
+            case EZType.Venue:
+                return VenueManager.get(this.id);
+            case EZType.Artist:
+                return ArtistManager.get(this.id);
+        }
+    };
     return EZMixin;
 }());
 exports.EZMixin = EZMixin;
@@ -1085,7 +1095,20 @@ var SearchEngine = /** @class */ (function () {
     };
     SearchEngine.foryou = function () {
         return new Promise(function (resolve, reject) {
-            resolve([]);
+            setTimeout(function () {
+                resolve([
+                    new EZMixin(4, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(5, EZType.Event, "Un Evento", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(6, EZType.Venue, "Una Venue", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(7, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(8, EZType.Event, "Un Evento", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(11, EZType.Venue, "Una Venue", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(12, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(22, EZType.Event, "Un Evento", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(32, EZType.Venue, "Una Venue", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                    new EZMixin(42, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
+                ]);
+            }, 3000);
             //todo: implement foryou;
         });
     };
