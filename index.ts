@@ -1,5 +1,6 @@
 import { Media, MediaObject } from '@ionic-native/media';
 import {isArray} from "rxjs/util/isArray";
+import {TimeInterval} from "rxjs/Rx";
 
 declare var ZeroPlugin: any;
 declare var BraintreePlugin;
@@ -641,6 +642,39 @@ export class EZArtist {
 
 }
 
+export class EZTicket {
+    readonly id: number;
+    readonly event: EZEvent;
+    readonly price: string;
+    readonly validFrom: Date;
+    readonly validTo: Date;
+    readonly code: string;
+
+    constructor(id: number | null, event: EZEvent | null, price: string | null, validFrom: Date | null, validTo: Date | null, code: string | null) {
+        if( !id || !event || !price || !code ) return null;
+        this.id = id;
+        this.event = event;
+        this.price = price;
+        this.validFrom = validFrom;
+        this.validTo = validTo;
+        this.code = code;
+    }
+
+    public static json(json: any): EZTicket | null {
+        return new EZTicket(json.id, EZEvent.json(json.event), json.price, new Date(json.validFrom), new Date(json.validTo), json.code);
+    }
+
+    public static array(jsonArray: any): EZTicket[] {
+        let ret = [];
+        if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
+        for(let i = 0; i < jsonArray.length; i++) {
+            let t = EZTicket.json(jsonArray[0]);
+            if(t) ret.push(t);
+        }
+        return ret;
+    }
+}
+
 export class EZSoundTrack {
 
     private url: string;
@@ -1110,6 +1144,22 @@ export class TriggerManager {
         });
     }
 
+}
+
+export class TicketManager {
+
+    private static instance: TicketManager = null;
+
+    public all(): Promise<EZTicket[]> {
+        return new Promise<EZTicket[]>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH+"users/me/tickets/").then((data) => {
+                resolve(EZTicket.array(data));
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    }
 }
 
 export class SearchEngine {

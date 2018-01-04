@@ -598,6 +598,34 @@ var EZArtist = /** @class */ (function () {
     return EZArtist;
 }());
 exports.EZArtist = EZArtist;
+var EZTicket = /** @class */ (function () {
+    function EZTicket(id, event, price, validFrom, validTo, code) {
+        if (!id || !event || !price || !code)
+            return null;
+        this.id = id;
+        this.event = event;
+        this.price = price;
+        this.validFrom = validFrom;
+        this.validTo = validTo;
+        this.code = code;
+    }
+    EZTicket.json = function (json) {
+        return new EZTicket(json.id, EZEvent.json(json.event), json.price, new Date(json.validFrom), new Date(json.validTo), json.code);
+    };
+    EZTicket.array = function (jsonArray) {
+        var ret = [];
+        if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
+            return ret;
+        for (var i = 0; i < jsonArray.length; i++) {
+            var t = EZTicket.json(jsonArray[0]);
+            if (t)
+                ret.push(t);
+        }
+        return ret;
+    };
+    return EZTicket;
+}());
+exports.EZTicket = EZTicket;
 var EZSoundTrack = /** @class */ (function () {
     function EZSoundTrack(url) {
         this.isPlaying = false;
@@ -1025,6 +1053,23 @@ var TriggerManager = /** @class */ (function () {
     return TriggerManager;
 }());
 exports.TriggerManager = TriggerManager;
+var TicketManager = /** @class */ (function () {
+    function TicketManager() {
+    }
+    TicketManager.prototype.all = function () {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + "users/me/tickets/").then(function (data) {
+                resolve(EZTicket.array(data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
+    TicketManager.instance = null;
+    return TicketManager;
+}());
+exports.TicketManager = TicketManager;
 var SearchEngine = /** @class */ (function () {
     function SearchEngine() {
     }
