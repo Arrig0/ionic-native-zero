@@ -1051,6 +1051,8 @@ var SearchEngine = /** @class */ (function () {
             });*/
             // TODO:: REMOVE THIS IS FOR TEST, REMOVE IT
             sleep(3000);
+            if (q == "ciao")
+                return resolve([]);
             resolve([
                 new EZMixin(2, EZType.Event, "Un Evento" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
                 new EZMixin(3, EZType.Venue, "Una Venue" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
