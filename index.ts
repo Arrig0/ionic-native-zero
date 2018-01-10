@@ -355,8 +355,8 @@ export class EZEvent {
         let isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
         let startDate = jsonEvent.start_date ? new Date(jsonEvent.start_date) : null;
         let endDate = jsonEvent.end_date ? new Date(jsonEvent.end_date) : null;
-        let startTime = jsonEvent.start_time ? new Date(jsonEvent.start_time) : null;
-        let endTime = jsonEvent.end_time ? new Date(jsonEvent.end_date) : null;
+        let startTime = jsonEvent.start_time ? new Date((new Date()).toDateString() + " " + jsonEvent.start_time) : null;
+        let endTime = jsonEvent.end_time ? new Date((new Date()).toDateString() + " " + jsonEvent.end_date) : null;
         let price = jsonEvent.price ? EZPrice.json(jsonEvent.price) : null;
         let excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
         let category = jsonEvent.category && isArray(jsonEvent.category) ? jsonEvent.category : [];
