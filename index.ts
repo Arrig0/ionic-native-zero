@@ -407,6 +407,20 @@ export class EZEvent {
             });
         });
     }
+
+    pricing(): Promise<{availability: number, rates: EZRate[]}> {
+        return new Promise<{availability: number, rates: EZRate[]}>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + 'events/'+this.id+'/tickets/pricing').then((json) => {
+                resolve({
+                    availability: json.availability,
+                    rates: EZRate.array(json.rates)
+                });
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        })
+    }
 }
 
 export class EZVenue {
@@ -725,21 +739,87 @@ export class EZSoundTrack {
 
 export class EZPrice {
     readonly display: string;
+    readonly currency: string;
+    readonly price: number;
+    readonly charges: number;
+    readonly presale: number;
 
-    constructor(display: string) {
+    constructor(display: string | null, currency: string | null, price: number | null, charges: number | null, presale: number | null) {
         this.display = display;
+        this.currency = currency;
+        this.price = price;
+        this.presale = presale;
+        this.charges = charges;
     }
 
     static json(jsonPrice: any): EZPrice | null {
         let display = "";
+        let currency = null;
+        let price = null;
+        let charges = null;
+        let presale = null;
+
         if(typeof jsonPrice == "string") {
             display = jsonPrice;
-        } else if(jsonPrice.hasOwnProperty("price")) {
-            display = jsonPrice.price;
+        } else if( jsonPrice && (typeof jsonPrice == 'object') ) {
+            display = jsonPrice.display;
+            currency = jsonPrice.currency;
+            price = jsonPrice.price;
+            charges = jsonPrice.charges;
+            presale = jsonPrice.presale;
         } else {
             return null;
         }
-        return new EZPrice(display);
+        return new EZPrice(display, currency, price, charges, presale);
+    }
+
+    static array(arr: any[]): EZPrice[] {
+        let ret = [];
+        if(!isArray(arr) || arr.length == 0) return ret;
+        for(let i = 0; i < arr.length; i++) {
+            let price = EZPrice.json(arr[0]);
+            if(price) ret.push(price);
+        }
+        return ret;
+    }
+}
+
+export class EZRate {
+    readonly id: number;
+    readonly name: string;
+    readonly description: string | null;
+    readonly price: EZPrice
+
+    constructor(id: number, name: string, description: string, price: EZPrice) {
+        if(id && name && price) {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.price = price;
+        } else {
+            return null;
+        }
+    }
+
+    static json(json: any): EZRate {
+        if(!json) return null;
+        let id = json.id;
+        let name = json.name;
+        let price = EZPrice.json(json.price);
+        if(id && name && price) {
+            return new EZRate(id, name, json.description, price);
+        }
+        return null;
+    }
+
+    static array(arr: any[]): EZRate[] {
+        let ret = [];
+        if(!isArray(arr) || arr.length == 0) return ret;
+        for(let i = 0; i < arr.length; i++) {
+            let rate = EZRate.json(arr[0]);
+            if(rate) ret.push(rate);
+        }
+        return ret;
     }
 }
 

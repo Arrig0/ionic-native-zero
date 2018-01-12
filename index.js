@@ -386,6 +386,20 @@ var EZEvent = /** @class */ (function () {
             });
         });
     };
+    EZEvent.prototype.pricing = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + 'events/' + _this.id + '/tickets/pricing').then(function (json) {
+                resolve({
+                    availability: json.availability,
+                    rates: EZRate.array(json.rates)
+                });
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
+        });
+    };
     return EZEvent;
 }());
 exports.EZEvent = EZEvent;
@@ -675,25 +689,85 @@ var EZSoundTrack = /** @class */ (function () {
 }());
 exports.EZSoundTrack = EZSoundTrack;
 var EZPrice = /** @class */ (function () {
-    function EZPrice(display) {
+    function EZPrice(display, currency, price, charges, presale) {
         this.display = display;
+        this.currency = currency;
+        this.price = price;
+        this.presale = presale;
+        this.charges = charges;
     }
     EZPrice.json = function (jsonPrice) {
         var display = "";
+        var currency = null;
+        var price = null;
+        var charges = null;
+        var presale = null;
         if (typeof jsonPrice == "string") {
             display = jsonPrice;
         }
-        else if (jsonPrice.hasOwnProperty("price")) {
-            display = jsonPrice.price;
+        else if (jsonPrice && (typeof jsonPrice == 'object')) {
+            display = jsonPrice.display;
+            currency = jsonPrice.currency;
+            price = jsonPrice.price;
+            charges = jsonPrice.charges;
+            presale = jsonPrice.presale;
         }
         else {
             return null;
         }
-        return new EZPrice(display);
+        return new EZPrice(display, currency, price, charges, presale);
+    };
+    EZPrice.array = function (arr) {
+        var ret = [];
+        if (!isArray_1.isArray(arr) || arr.length == 0)
+            return ret;
+        for (var i = 0; i < arr.length; i++) {
+            var price = EZPrice.json(arr[0]);
+            if (price)
+                ret.push(price);
+        }
+        return ret;
     };
     return EZPrice;
 }());
 exports.EZPrice = EZPrice;
+var EZRate = /** @class */ (function () {
+    function EZRate(id, name, description, price) {
+        if (id && name && price) {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.price = price;
+        }
+        else {
+            return null;
+        }
+    }
+    EZRate.json = function (json) {
+        if (!json)
+            return null;
+        var id = json.id;
+        var name = json.name;
+        var price = EZPrice.json(json.price);
+        if (id && name && price) {
+            return new EZRate(id, name, json.description, price);
+        }
+        return null;
+    };
+    EZRate.array = function (arr) {
+        var ret = [];
+        if (!isArray_1.isArray(arr) || arr.length == 0)
+            return ret;
+        for (var i = 0; i < arr.length; i++) {
+            var rate = EZRate.json(arr[0]);
+            if (rate)
+                ret.push(rate);
+        }
+        return ret;
+    };
+    return EZRate;
+}());
+exports.EZRate = EZRate;
 var EZTable = /** @class */ (function () {
     function EZTable(dict) {
         this.dict = dict;
