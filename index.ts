@@ -374,7 +374,7 @@ export class EZEvent {
         let ret = [];
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
-            let ev = EZEvent.json(arr[0]);
+            let ev = EZEvent.json(arr[i]);
             if(ev) ret.push(ev);
         }
         return ret;
@@ -478,7 +478,7 @@ export class EZVenue {
         let ret = [];
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
-            let venue = EZVenue.json(arr[0]);
+            let venue = EZVenue.json(arr[i]);
             if(venue) ret.push(venue);
         }
         return ret;
@@ -777,7 +777,7 @@ export class EZPrice {
         let ret = [];
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
-            let price = EZPrice.json(arr[0]);
+            let price = EZPrice.json(arr[i]);
             if(price) ret.push(price);
         }
         return ret;
@@ -816,7 +816,7 @@ export class EZRate {
         let ret = [];
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
-            let rate = EZRate.json(arr[0]);
+            let rate = EZRate.json(arr[i]);
             if(rate) ret.push(rate);
         }
         return ret;

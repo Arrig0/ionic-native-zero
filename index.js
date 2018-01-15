@@ -353,7 +353,7 @@ var EZEvent = /** @class */ (function () {
         if (!isArray_1.isArray(arr) || arr.length == 0)
             return ret;
         for (var i = 0; i < arr.length; i++) {
-            var ev = EZEvent.json(arr[0]);
+            var ev = EZEvent.json(arr[i]);
             if (ev)
                 ret.push(ev);
         }
@@ -446,7 +446,7 @@ var EZVenue = /** @class */ (function () {
         if (!isArray_1.isArray(arr) || arr.length == 0)
             return ret;
         for (var i = 0; i < arr.length; i++) {
-            var venue = EZVenue.json(arr[0]);
+            var venue = EZVenue.json(arr[i]);
             if (venue)
                 ret.push(venue);
         }
@@ -722,7 +722,7 @@ var EZPrice = /** @class */ (function () {
         if (!isArray_1.isArray(arr) || arr.length == 0)
             return ret;
         for (var i = 0; i < arr.length; i++) {
-            var price = EZPrice.json(arr[0]);
+            var price = EZPrice.json(arr[i]);
             if (price)
                 ret.push(price);
         }
@@ -759,7 +759,7 @@ var EZRate = /** @class */ (function () {
         if (!isArray_1.isArray(arr) || arr.length == 0)
             return ret;
         for (var i = 0; i < arr.length; i++) {
-            var rate = EZRate.json(arr[0]);
+            var rate = EZRate.json(arr[i]);
             if (rate)
                 ret.push(rate);
         }
