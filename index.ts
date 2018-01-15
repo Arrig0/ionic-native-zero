@@ -409,7 +409,7 @@ export class EZEvent {
     }
 
     pricing(): Promise<{availability: number, currency: EZCurrency, rates: EZRate[]}> {
-        return new Promise<{availability: number, rates: EZRate[]}>((resolve, reject) => {
+        return new Promise<{availability: number, currency: EZCurrency, rates: EZRate[]}>((resolve, reject) => {
             ZeroPlugin.get(BASE_API_PATH + 'events/'+this.id+'/tickets/pricing').then((json) => {
                 resolve({
                     availability: json.availability,
