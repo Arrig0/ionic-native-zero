@@ -392,6 +392,7 @@ var EZEvent = /** @class */ (function () {
             ZeroPlugin.get(BASE_API_PATH + 'events/' + _this.id + '/tickets/pricing').then(function (json) {
                 resolve({
                     availability: json.availability,
+                    currency: json.currency,
                     rates: EZRate.array(json.rates)
                 });
             })["catch"](function (err) {
@@ -689,16 +690,14 @@ var EZSoundTrack = /** @class */ (function () {
 }());
 exports.EZSoundTrack = EZSoundTrack;
 var EZPrice = /** @class */ (function () {
-    function EZPrice(display, currency, price, charges, presale) {
+    function EZPrice(display, price, charges, presale) {
         this.display = display;
-        this.currency = currency;
         this.price = price;
         this.presale = presale;
         this.charges = charges;
     }
     EZPrice.json = function (jsonPrice) {
         var display = "";
-        var currency = null;
         var price = null;
         var charges = null;
         var presale = null;
@@ -707,7 +706,6 @@ var EZPrice = /** @class */ (function () {
         }
         else if (jsonPrice && (typeof jsonPrice == 'object')) {
             display = jsonPrice.display;
-            currency = jsonPrice.currency;
             price = jsonPrice.price;
             charges = jsonPrice.charges;
             presale = jsonPrice.presale;
@@ -715,7 +713,7 @@ var EZPrice = /** @class */ (function () {
         else {
             return null;
         }
-        return new EZPrice(display, currency, price, charges, presale);
+        return new EZPrice(display, price, charges, presale);
     };
     EZPrice.array = function (arr) {
         var ret = [];

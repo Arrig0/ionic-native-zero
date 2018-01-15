@@ -408,11 +408,12 @@ export class EZEvent {
         });
     }
 
-    pricing(): Promise<{availability: number, rates: EZRate[]}> {
+    pricing(): Promise<{availability: number, currency: EZCurrency, rates: EZRate[]}> {
         return new Promise<{availability: number, rates: EZRate[]}>((resolve, reject) => {
             ZeroPlugin.get(BASE_API_PATH + 'events/'+this.id+'/tickets/pricing').then((json) => {
                 resolve({
                     availability: json.availability,
+                    currency: json.currency,
                     rates: EZRate.array(json.rates)
                 });
             }).catch((err) => {
@@ -429,7 +430,7 @@ export class EZVenue {
     readonly featured_image: EZImage | null;
     readonly gallery: EZImage[] = [];
     readonly phone: string | null;
-    readonly website: string | null
+    readonly website: string | null;
     readonly rate: number | null;
     readonly address: string | null;
     readonly coords: { lat: number, lng: number } | null;
@@ -739,14 +740,12 @@ export class EZSoundTrack {
 
 export class EZPrice {
     readonly display: string;
-    readonly currency: string;
     readonly price: number;
     readonly charges: number;
     readonly presale: number;
 
-    constructor(display: string | null, currency: string | null, price: number | null, charges: number | null, presale: number | null) {
+    constructor(display: string | null, price: number | null, charges: number | null, presale: number | null) {
         this.display = display;
-        this.currency = currency;
         this.price = price;
         this.presale = presale;
         this.charges = charges;
@@ -754,7 +753,6 @@ export class EZPrice {
 
     static json(jsonPrice: any): EZPrice | null {
         let display = "";
-        let currency = null;
         let price = null;
         let charges = null;
         let presale = null;
@@ -763,14 +761,13 @@ export class EZPrice {
             display = jsonPrice;
         } else if( jsonPrice && (typeof jsonPrice == 'object') ) {
             display = jsonPrice.display;
-            currency = jsonPrice.currency;
             price = jsonPrice.price;
             charges = jsonPrice.charges;
             presale = jsonPrice.presale;
         } else {
             return null;
         }
-        return new EZPrice(display, currency, price, charges, presale);
+        return new EZPrice(display, price, charges, presale);
     }
 
     static array(arr: any[]): EZPrice[] {
@@ -849,6 +846,11 @@ export class EZTable {
 export interface EZDictionary {
     name: string;
     value: any;
+}
+
+export interface EZCurrency {
+    iso_code: string
+    symbol: string
 }
 
 export class EZTrigger<T> {
