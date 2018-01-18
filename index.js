@@ -401,6 +401,59 @@ var EZEvent = /** @class */ (function () {
             });
         });
     };
+    EZEvent.prototype.purchase = function (rates) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.get(BASE_API_PATH + "payments/token").then(function (data) {
+                var token = data.token;
+                if (token != null && token != "") {
+                    BraintreePlugin.initialize(token, function () {
+                        var s = 0;
+                        for (var i = 0; i < rates.length; i++) {
+                            var el = rates[i];
+                            if (el.rate == null || el.rate.price == null)
+                                return reject(new EZError(500, "Il pagamento non è andato a buon fine."));
+                            var price = el.rate.price.price != null ? el.rate.price.price : 0;
+                            var presale = el.rate.price.presale != null ? el.rate.price.presale : 0;
+                            var charges = el.rate.price.charges != null ? el.rate.price.charges : 0;
+                            s += el.quantity * (el.rate.price.price + el.rate.price.presale + el.rate.price.charges);
+                        }
+                        var options = {
+                            amount: s,
+                            primaryDescription: that.name + " @ " + that.venue.name + " - " + (new EZDate(that.startDate)).friendly()
+                        };
+                        BraintreePlugin.presentDropInPaymentUI(options, function (result) {
+                            if (result.userCancelled) {
+                                reject(new EZError(403, "User cancel payment"));
+                            }
+                            else if (result.nonce != null && result.nonce != "") {
+                                var ratesParam = rates.map(function (el, index) {
+                                    return "rates[" + index + "]['id']=" + el.rate.id + "&rates[" + index + "]['quantity']=" + el.quantity;
+                                }).join("&");
+                                console.log(ratesParam);
+                                ZeroPlugin.get(BASE_API_PATH + "cart/expresscheckout" + "/?payment_nonce=" + result.nonce + "&" + ratesParam).then(function (response) {
+                                    console.log(JSON.stringify(response));
+                                    if (response.status) {
+                                        resolve();
+                                    }
+                                    else {
+                                        reject(new EZError(500, "Il pagamento non è andato a buon fine."));
+                                    }
+                                })["catch"](function (err) {
+                                    reject(new EZError(500, "Il pagamento non è andato a buon fine."));
+                                });
+                            }
+                        });
+                    }, reject);
+                }
+                else {
+                    reject(new EZError(500, "Impossibile ottenere un token per il pagamento."));
+                }
+            })["catch"](function (err) {
+                reject(new EZError(500, "Impossibile ottenere un token per il pagamento."));
+            });
+        });
+    };
     return EZEvent;
 }());
 exports.EZEvent = EZEvent;

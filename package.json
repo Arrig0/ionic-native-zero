@@ -21,9 +21,9 @@
   },
   "homepage": "https://github.com/Arrig0/ionic-native-zero#readme",
   "dependencies": {
-    "@ionic-native/media": "*",
     "@angular/core": "^5.0.1",
     "@ionic-native/core": "^4.4.0",
+    "@ionic-native/media": "*",
     "rxjs": "^5.5.2",
     "zone.js": "^0.8.4"
   }

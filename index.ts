@@ -1,6 +1,5 @@
 import { Media, MediaObject } from '@ionic-native/media';
 import {isArray} from "rxjs/util/isArray";
-import {TimeInterval} from "rxjs/Rx";
 
 declare var ZeroPlugin: any;
 declare var BraintreePlugin;
@@ -421,6 +420,62 @@ export class EZEvent {
                 reject(EZError.fromString(err));
             });
         })
+    }
+
+    purchase(rates: {rate: EZRate, quantity: number}[]): Promise<void> {
+        let that = this;
+        return new Promise<void>((resolve, reject) => {
+            ZeroPlugin.get(BASE_API_PATH + "payments/token").then((data) => {
+                let token = data.token;
+                if(token != null && token != "") {
+                    BraintreePlugin.initialize(
+                        token,
+                        () => {
+                            let s = 0;
+                            for(var i = 0; i < rates.length; i++) {
+                                let el = rates[i];
+                                if(el.rate == null || el.rate.price == null)
+                                    return reject(new EZError(500, "Il pagamento non è andato a buon fine."));
+                                let price = el.rate.price.price != null ? el.rate.price.price : 0;
+                                let presale = el.rate.price.presale != null ? el.rate.price.presale : 0;
+                                let charges = el.rate.price.charges != null ? el.rate.price.charges : 0;
+                                s += el.quantity * (el.rate.price.price + el.rate.price.presale + el.rate.price.charges);
+                            }
+                            let options = {
+                                amount: s,
+                                primaryDescription: that.name + " @ " + that.venue.name + " - " + (new EZDate(that.startDate)).friendly()
+                            };
+                            BraintreePlugin.presentDropInPaymentUI(options, function (result) {
+                                if (result.userCancelled) {
+                                    reject(new EZError(403,"User cancel payment"));
+                                }
+                                else if(result.nonce != null && result.nonce != "") {
+                                    let ratesParam = rates.map((el, index) => {
+                                        return "rates["+index+"]['id']="+el.rate.id+"&rates["+index+"]['quantity']="+el.quantity;
+                                    }).join("&");
+                                    console.log(ratesParam);
+                                    ZeroPlugin.get(BASE_API_PATH + "cart/expresscheckout"+"/?payment_nonce="+result.nonce+"&"+ratesParam).then((response) => {
+                                        console.log(JSON.stringify(response));
+                                        if(response.status) {
+                                            resolve();
+                                        } else {
+                                            reject(new EZError(500, "Il pagamento non è andato a buon fine."));
+                                        }
+                                    }).catch(err => {
+                                        reject(new EZError(500, "Il pagamento non è andato a buon fine."));
+                                    });
+                                }
+                            });
+                        },
+                        reject
+                    );
+                } else {
+                    reject(new EZError(500, "Impossibile ottenere un token per il pagamento."));
+                }
+            }).catch(err => {
+                reject(new EZError(500, "Impossibile ottenere un token per il pagamento."));
+            });
+        });
     }
 }
 
