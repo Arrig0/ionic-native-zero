@@ -514,7 +514,7 @@ export class EZVenue {
 
     static json(json: any): EZVenue | null {
         let id = json.id;
-        let name = json.name;
+        let name = json.name ? json.name.plain : json.name;
         let featured_image = json.featured_image ? EZImage.json(json.featured_image) : null;
         let gallery = json.gallery && isArray(json.gallery) ? EZImage.array(json.gallery) : null;
         let phone = json.phone ? json.phone : null;

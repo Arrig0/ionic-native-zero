@@ -481,7 +481,7 @@ var EZVenue = /** @class */ (function () {
     }
     EZVenue.json = function (json) {
         var id = json.id;
-        var name = json.name;
+        var name = json.name ? json.name.plain : json.name;
         var featured_image = json.featured_image ? EZImage.json(json.featured_image) : null;
         var gallery = json.gallery && isArray_1.isArray(json.gallery) ? EZImage.array(json.gallery) : null;
         var phone = json.phone ? json.phone : null;
