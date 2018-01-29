@@ -439,7 +439,7 @@ export class EZEvent {
                                 let price = el.rate.price.price != null ? el.rate.price.price : 0;
                                 let presale = el.rate.price.presale != null ? el.rate.price.presale : 0;
                                 let charges = el.rate.price.charges != null ? el.rate.price.charges : 0;
-                                s += el.quantity * (el.rate.price.price + el.rate.price.presale + el.rate.price.charges);
+                                s += el.quantity * (price + presale + charges);
                             }
                             let options = {
                                 amount: s,
@@ -957,7 +957,7 @@ export class EventManager {
 
     static get(id: number): Promise<EZEvent> {
         return new Promise<EZEvent>((resolve, reject) =>{
-            ZeroPlugin.get(BASE_API_PATH + "events/"+id+"&_embed=1")
+            ZeroPlugin.get(BASE_API_PATH + "events/"+id+"?_embed=1")
             .then((data)=>{
                 resolve(EZEvent.json(data));
             }).catch((err) => {

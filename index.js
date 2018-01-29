@@ -416,7 +416,7 @@ var EZEvent = /** @class */ (function () {
                             var price = el.rate.price.price != null ? el.rate.price.price : 0;
                             var presale = el.rate.price.presale != null ? el.rate.price.presale : 0;
                             var charges = el.rate.price.charges != null ? el.rate.price.charges : 0;
-                            s += el.quantity * (el.rate.price.price + el.rate.price.presale + el.rate.price.charges);
+                            s += el.quantity * (price + presale + charges);
                         }
                         var options = {
                             amount: s,
@@ -884,7 +884,7 @@ var EventManager = /** @class */ (function () {
     };
     EventManager.get = function (id) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.get(BASE_API_PATH + "events/" + id + "&_embed=1")
+            ZeroPlugin.get(BASE_API_PATH + "events/" + id + "?_embed=1")
                 .then(function (data) {
                 resolve(EZEvent.json(data));
             })["catch"](function (err) {
