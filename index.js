@@ -930,7 +930,7 @@ var VenueManager = /** @class */ (function () {
     };
     VenueManager.get = function (id) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.get(BASE_API_PATH + "locations/" + id + "&_embed=1")
+            ZeroPlugin.get(BASE_API_PATH + "locations/" + id + "?_embed=1")
                 .then(function (data) {
                 resolve(EZVenue.json(data));
             })["catch"](function (err) {

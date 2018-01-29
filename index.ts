@@ -1007,7 +1007,7 @@ export class VenueManager {
 
     static get(id: number): Promise<EZVenue> {
         return new Promise<EZVenue>((resolve, reject) =>{
-            ZeroPlugin.get(BASE_API_PATH + "locations/"+id+"&_embed=1")
+            ZeroPlugin.get(BASE_API_PATH + "locations/"+id+"?_embed=1")
             .then((data)=>{
                     resolve(EZVenue.json(data));
             }).catch((err) => {
