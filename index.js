@@ -488,7 +488,7 @@ var EZVenue = /** @class */ (function () {
         var website = json.website ? json.website : null;
         var rate = (typeof json.rate == 'number') ? json.rate : null;
         var address = json.address ? json.address : null;
-        var coords = json.coordinate && json.coordinate.hasOwnProperty('lat') && json.coordinate.hasOwnProperty('lng') ? json.coordinate : null;
+        var coords = json.coordinates && json.coordinates.hasOwnProperty('lat') && json.coordinates.hasOwnProperty('lng') ? json.coordinates : null;
         var excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
         var category = json.category ? json.category : null;
         var openingHours = json.openingHours ? EZTable.json(json.openingHours) : null;

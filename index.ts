@@ -521,7 +521,7 @@ export class EZVenue {
         let website = json.website ? json.website : null;
         let rate = (typeof json.rate == 'number') ? json.rate : null;
         let address = json.address ? json.address: null;
-        let coords = json.coordinate && json.coordinate.hasOwnProperty('lat') && json.coordinate.hasOwnProperty('lng') ? json.coordinate : null;
+        let coords = json.coordinates && json.coordinates.hasOwnProperty('lat') && json.coordinates.hasOwnProperty('lng') ? json.coordinates : null;
         let excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
         let category = json.category ? json.category : null;
         let openingHours = json.openingHours ? EZTable.json(json.openingHours) : null;
