@@ -667,7 +667,7 @@ export class EZArtist {
 
     static json(jsonArtist: any): EZArtist | null {
         let id = jsonArtist.id;
-        let name = jsonArtist.name;
+        let name = jsonArtist.name ? jsonArtist.name.plain : null;
         let featured_image = EZImage.json(jsonArtist.featured_image);
         let gallery = EZImage.array(jsonArtist.gallery);
         let preview = new EZSoundTrack(jsonArtist.preview_url);

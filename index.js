@@ -623,7 +623,7 @@ var EZArtist = /** @class */ (function () {
     }
     EZArtist.json = function (jsonArtist) {
         var id = jsonArtist.id;
-        var name = jsonArtist.name;
+        var name = jsonArtist.name ? jsonArtist.name.plain : null;
         var featured_image = EZImage.json(jsonArtist.featured_image);
         var gallery = EZImage.array(jsonArtist.gallery);
         var preview = new EZSoundTrack(jsonArtist.preview_url);
