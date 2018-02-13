@@ -192,7 +192,8 @@ export class EZUser {
 export enum EZType {
     Event = "event",
     Venue = "venue",
-    Artist = "artist"
+    Artist = "artist",
+    Article = "article"
 }
 
 export class EZMixin {
@@ -238,7 +239,7 @@ export class EZMixin {
         return ret;
     }
 
-    private static parseType(val: string): EZType | null {
+    public static parseType(val: string): EZType | null {
         switch (val) {
             case "event":
                 return EZType.Event;
@@ -247,7 +248,7 @@ export class EZMixin {
             case "artist":
                 return EZType.Artist;
             default:
-                return null;
+                return EZType.Article;
         }
     }
 
@@ -898,6 +899,117 @@ export class EZTable {
     }
 }
 
+export class EZBrand {
+    readonly id: number;
+    readonly title: string;
+    readonly description: string;
+    readonly logo: string;
+    readonly background: string;
+    readonly textPrimaryColor: string;
+    readonly textContrastColor: string;
+    readonly content: EZBrandedContent[];
+
+    constructor(id: number, title: string, description: string, logo: string, background: string = "#ffffff", textPrimaryColor: string = "#000000", textContrastColor: string = "#ffffff", content: EZBrandedContent[] = []) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.logo = logo;
+        this.background = background;
+        this.textPrimaryColor = textPrimaryColor;
+        this.textContrastColor = textContrastColor;
+        this.content = content;
+    }
+
+    static json(j: any): EZBrand {
+        let id = j.id;
+        let title = j.title;
+        let descr = j.description;
+        let logo = j.logo;
+        let background = j.background;
+        let primary = j.text_primary_color;
+        let contrast = j.text_contrast_color;
+        let content = EZBrandedContent.array(j.content);
+        if(id != null && title != null && logo != null) return new EZBrand(id, title, descr, logo, background, primary, contrast, content);
+    }
+
+    static array(arr: any[]): EZBrand[] {
+        let ret = [];
+        if(!isArray(arr) || arr.length == 0) return ret;
+        for(let i = 0; i < arr.length; i++) {
+            let mix = EZBrand.json(arr[0]);
+            if(mix) ret.push(mix);
+        }
+        return ret;
+    }
+
+}
+
+export class EZBrandedContent {
+    readonly type: EZType;
+    readonly content: EZEvent | EZVenue | EZArtist | EZArticle;
+
+    constructor(type: EZType, content: EZEvent | EZVenue | EZArtist | EZArticle) {
+        if(type == null || content == null) return null;
+        this.content = content;
+        this.type = type;
+    }
+
+    static json(j: any): EZBrandedContent {
+        let type = EZMixin.parseType(j.type);
+        switch(type) {
+            case EZType.Event:
+                return new EZBrandedContent(type, EZEvent.json(j.content));
+            case EZType.Venue:
+                return new EZBrandedContent(type, EZVenue.json(j.content));
+            case EZType.Artist:
+                return new EZBrandedContent(type, EZArtist.json(j.content));
+            case EZType.Article:
+                return new EZBrandedContent(type, EZArticle.json(j.content));
+        }
+    }
+    
+    static array(arr: any[]): EZBrandedContent[] {
+        let ret = [];
+        if(!isArray(arr) || arr.length == 0) return ret;
+        for(let i = 0; i < arr.length; i++) {
+            let mix = EZBrandedContent.json(arr[0]);
+            if(mix) ret.push(mix);
+        }
+        return ret;
+    }
+
+}
+
+export class EZArticle {
+    readonly title: string;
+    readonly category: string;
+    readonly excerpt: string;
+    readonly link: string;
+    readonly featured_image: EZImage;
+
+    constructor(title: string, category: string, excerpt: string, link: string, featured_image: EZImage) {
+        if(title != null && link != null && featured_image != null) {
+            this.title = title;
+            this.category = category;
+            this.excerpt = excerpt;
+            this.link = link;
+            this.featured_image = featured_image;
+        } else {
+            return null;
+        }
+    }
+
+    static json(j: any): EZArticle {
+        let title = j.title;
+        let category = j.category;
+        let excerpt = j.excerpt;
+        let link = j.link;
+        let fi = EZImage.json(j.featured_image);
+        return new EZArticle(title, category, excerpt, link, fi);
+    }
+}
+
+
 export interface EZDictionary {
     name: string;
     value: any;
@@ -1365,6 +1477,155 @@ export class SearchEngine {
                     new EZMixin(42, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
                 ])
             }, 3000);
+        });
+    }
+
+    public static branded(): Promise<EZBrand[]> {
+        return new Promise<EZBrand[]>((resolve, reject) => {
+            /*ZeroPlugin.get(BASE_API_PATH+"branded/?target=app").then((res) => {
+                resolve(EZBrand.array(res))
+            }).catch((err) => {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });*/
+
+            // TODO:: THIS IS FOR TEST, REMOVE IT
+            setTimeout(() => {
+                resolve(
+                    EZBrand.array([
+                        {
+                            id: 1,
+                            title: "Goditi la tua vacanza!",
+                            description: "Vivi i tuoi eventi con Aperol.",
+                            logo: 'https://www.aperol.com/themes/was-theme/assets/images/logo/logo-aperol.svg',
+                            background: "#FAE37C",
+                            text_primary_color: "#000000",
+                            text_contrast_color: "#ffffff",
+                            content: [
+                                {
+                                    type: "event",
+                                    content: {"id":42721,"name":{"rendered":"Tom Odell","plain":"Tom Odell"},"slug":"tom-odell-2","content":{"raw":"","rendered":"","plain":""},"excerpt":{"raw":"Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".","rendered":"Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".","plain":"Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\"."},"status":"publish","regular":false,"start_date":"2017-02-15","end_date":"2017-02-15","start_time":"20:30","end_time":"","price":"\u20ac 25\/22 + d.p.","post_class":"post-42721 evento type-evento status-publish hentry sezione-musica-concerti citta-milano categoria_evento-concerti","tour_id":0,"venue_id":2805,"categoria_evento":[335],"category":["musica","jazz"],"featured_image":{"thumb":"https:\/\/picsum.photos\/200\/300","standard":"https:\/\/picsum.photos\/400\/600","large":"https:\/\/picsum.photos\/600\/900"},"venue_name":"nome del luogo","venue_coords":{"lat":45.4555558,"lng":9.1952502},"_links":{"self":[{"href":"http:\/\/192.168.60.113\/api\/v2\/events\/42721"}],"collection":[{"href":"http:\/\/192.168.60.113\/api\/v2\/events"}],"venue":[{"embeddable":true,"href":"http:\/\/192.168.60.113\/api\/v2\/locations\/2805"}],"attachment":[{"embeddable":true,"href":"http:\/\/192.168.60.113\/api\/v2\/media?parent=42721"}],"taxonomies":[{"taxonomy":"categoria_evento","embeddable":true,"href":"http:\/\/192.168.60.113\/api\/v2\/taxonomies\/categoria_evento?post=42721"}]},"_embedded":{"venue":[{"id":2805,"owner_id":0,"name":{"rendered":"Alcatraz","plain":"Alcatraz"},"slug":"alcatraz","phone":"+39 0269016352","website":"http:\/\/www.alcatrazmilano.com","country":"IT","town":"Milano","subdivision_1":"25","subdivision_2":"MI","address":"Via Valtellina","civic_number":"25","coordinates":{"lat":"45.49468900","lng":"9.18265800"}}],"taxonomies":[{"name":"Categorie","slug":"categoria_evento","rest_base":"categoria_evento","_links":{"collection":[{"href":"http:\/\/192.168.60.113\/api\/v2\/taxonomies"}],"wp:items":[{"href":"http:\/\/192.168.60.113\/api\/wp\/v2\/categoria_evento"}],"curies":[{"name":"wp","href":"https:\/\/api.w.org\/{rel}","templated":true}]}}]}}
+                                },
+                                {
+                                    type: "venue",
+                                    content: {"id":2805,"owner_id":0,"name":{"rendered":"Alcatraz","plain":"Alcatraz"},"slug":"alcatraz","phone":"+39 0269016352","website":"http:\/\/www.alcatrazmilano.com","country":"IT","town":"Milano","subdivision_1":"25","subdivision_2":"MI","address":"Via Valtellina","civic_number":"25","coordinates":{"lat":"45.49468900","lng":"9.18265800"}}
+                                },
+                                {
+                                    type: "artist",
+                                    content: {
+                                        "id": 79331,
+                                        "date": "2017-11-23T11:19:52",
+                                        "date_gmt": "2017-11-23T11:19:52",
+                                        "guid": {
+                                            "rendered": "http://localdev.zero.eu/?post_type=artista&#038;p=79331"
+                                        },
+                                        "modified": "2017-11-23T11:19:52",
+                                        "modified_gmt": "2017-11-23T11:19:52",
+                                        "slug": "david-guetta",
+                                        "status": "publish",
+                                        "type": "artista",
+                                        "link": "http://192.168.60.113/?artista=david-guetta",
+                                        "name": {
+                                            "rendered": "David Guetta"
+                                        },
+                                        "content": {
+                                            "rendered": "",
+                                            "protected": false
+                                        },
+                                        "excerpt": {
+                                            "rendered": "",
+                                            "protected": false
+                                        },
+                                        "featured_media": 0,
+                                        "template": "",
+                                        "categoria_artista": [],
+                                        "preview_url": "https://p.scdn.co/mp3-preview/3d7ceaf99d866a8a3fdf0b66cb2763006c970650?cid=5d32859f7f30446db02e9aba0b224b89",
+                                    }
+                                },
+                                {
+                                    type: "article",
+                                    content: {
+                                        title: 'Da quattro amici al bar all’evento numero 1 in Europa: intervista a Luigi Brusaferri, da 23 anni il boss della Milano Tattoo Convention',
+                                        category: 'intervista',
+                                        excerpt: 'INTERVISTA A UNO DEI PADRI FONDATORI DELLA MILANO TATTOO CONVENTION',
+                                        featured_image: {
+                                            "thumb": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
+                                            "standard": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
+                                            "large": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg"
+                                        },
+                                        link: 'https://zero.eu/persone/luigi-brusaferri/'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            id: 2,
+                            title: "Il gusto delle Sagre",
+                            description: "SCOPRI LE SAGRE PIU BELLE",
+                            logo: 'https://s3-eu-west-1.amazonaws.com/zeroeu-static-assets/clienti/ramazzotti/ogni-sagra-una-storia/ramazzotti-logo.png',
+                            background: "#172F52",
+                            text_primary_color: "#ffffff",
+                            text_contrast_color: "#000000",
+                            content: [
+                                {
+                                    type: "event",
+                                    content: {"id":42721,"name":{"rendered":"Tom Odell","plain":"Tom Odell"},"slug":"tom-odell-2","content":{"raw":"","rendered":"","plain":""},"excerpt":{"raw":"Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".","rendered":"Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".","plain":"Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\"."},"status":"publish","regular":false,"start_date":"2017-02-15","end_date":"2017-02-15","start_time":"20:30","end_time":"","price":"\u20ac 25\/22 + d.p.","post_class":"post-42721 evento type-evento status-publish hentry sezione-musica-concerti citta-milano categoria_evento-concerti","tour_id":0,"venue_id":2805,"categoria_evento":[335],"category":["musica","jazz"],"featured_image":{"thumb":"https:\/\/picsum.photos\/200\/300","standard":"https:\/\/picsum.photos\/400\/600","large":"https:\/\/picsum.photos\/600\/900"},"venue_name":"nome del luogo","venue_coords":{"lat":45.4555558,"lng":9.1952502},"_links":{"self":[{"href":"http:\/\/192.168.60.113\/api\/v2\/events\/42721"}],"collection":[{"href":"http:\/\/192.168.60.113\/api\/v2\/events"}],"venue":[{"embeddable":true,"href":"http:\/\/192.168.60.113\/api\/v2\/locations\/2805"}],"attachment":[{"embeddable":true,"href":"http:\/\/192.168.60.113\/api\/v2\/media?parent=42721"}],"taxonomies":[{"taxonomy":"categoria_evento","embeddable":true,"href":"http:\/\/192.168.60.113\/api\/v2\/taxonomies\/categoria_evento?post=42721"}]},"_embedded":{"venue":[{"id":2805,"owner_id":0,"name":{"rendered":"Alcatraz","plain":"Alcatraz"},"slug":"alcatraz","phone":"+39 0269016352","website":"http:\/\/www.alcatrazmilano.com","country":"IT","town":"Milano","subdivision_1":"25","subdivision_2":"MI","address":"Via Valtellina","civic_number":"25","coordinates":{"lat":"45.49468900","lng":"9.18265800"}}],"taxonomies":[{"name":"Categorie","slug":"categoria_evento","rest_base":"categoria_evento","_links":{"collection":[{"href":"http:\/\/192.168.60.113\/api\/v2\/taxonomies"}],"wp:items":[{"href":"http:\/\/192.168.60.113\/api\/wp\/v2\/categoria_evento"}],"curies":[{"name":"wp","href":"https:\/\/api.w.org\/{rel}","templated":true}]}}]}}
+                                },
+                                {
+                                    type: "venue",
+                                    content: {"id":2805,"owner_id":0,"name":{"rendered":"Alcatraz","plain":"Alcatraz"},"slug":"alcatraz","phone":"+39 0269016352","website":"http:\/\/www.alcatrazmilano.com","country":"IT","town":"Milano","subdivision_1":"25","subdivision_2":"MI","address":"Via Valtellina","civic_number":"25","coordinates":{"lat":"45.49468900","lng":"9.18265800"}}
+                                },
+                                {
+                                    type: "artist",
+                                    content: {
+                                        "id": 79331,
+                                        "date": "2017-11-23T11:19:52",
+                                        "date_gmt": "2017-11-23T11:19:52",
+                                        "guid": {
+                                            "rendered": "http://localdev.zero.eu/?post_type=artista&#038;p=79331"
+                                        },
+                                        "modified": "2017-11-23T11:19:52",
+                                        "modified_gmt": "2017-11-23T11:19:52",
+                                        "slug": "david-guetta",
+                                        "status": "publish",
+                                        "type": "artista",
+                                        "link": "http://192.168.60.113/?artista=david-guetta",
+                                        "name": {
+                                            "rendered": "David Guetta"
+                                        },
+                                        "content": {
+                                            "rendered": "",
+                                            "protected": false
+                                        },
+                                        "excerpt": {
+                                            "rendered": "",
+                                            "protected": false
+                                        },
+                                        "featured_media": 0,
+                                        "template": "",
+                                        "categoria_artista": [],
+                                        "preview_url": "https://p.scdn.co/mp3-preview/3d7ceaf99d866a8a3fdf0b66cb2763006c970650?cid=5d32859f7f30446db02e9aba0b224b89",
+                                    }
+                                },
+                                {
+                                    type: "article",
+                                    content: {
+                                        title: 'Da quattro amici al bar all’evento numero 1 in Europa: intervista a Luigi Brusaferri, da 23 anni il boss della Milano Tattoo Convention',
+                                        category: 'intervista',
+                                        excerpt: 'INTERVISTA A UNO DEI PADRI FONDATORI DELLA MILANO TATTOO CONVENTION',
+                                        featured_image: {
+                                            "thumb": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
+                                            "standard": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
+                                            "large": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg"
+                                        },
+                                        link: 'https://zero.eu/persone/luigi-brusaferri/'
+                                    }
+                                }
+                            ]
+                        }
+                    ])
+                );
+            }, 1000);
         });
     }
 
