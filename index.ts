@@ -233,7 +233,7 @@ export class EZMixin {
         let ret = [];
         if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
         for(let i = 0; i < jsonArray.length; i++) {
-            let mix = EZMixin.json(jsonArray[0]);
+            let mix = EZMixin.json(jsonArray[i]);
             if(mix) ret.push(mix);
         }
         return ret;
@@ -614,7 +614,7 @@ export class EZImage {
         let ret = [];
         if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
         for(let i = 0; i < jsonArray.length; i++) {
-            let img = EZImage.json(jsonArray[0]);
+            let img = EZImage.json(jsonArray[i]);
             if(img) ret.push(img);
         }
         return ret;
@@ -682,7 +682,7 @@ export class EZArtist {
         let ret = [];
         if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
         for(let i = 0; i < jsonArray.length; i++) {
-            let img = EZArtist.json(jsonArray[0]);
+            let img = EZArtist.json(jsonArray[i]);
             if(img) ret.push(img);
         }
         return ret;
@@ -739,7 +739,7 @@ export class EZTicket {
         let ret = [];
         if(!isArray(jsonArray) || jsonArray.length == 0) return ret;
         for(let i = 0; i < jsonArray.length; i++) {
-            let t = EZTicket.json(jsonArray[0]);
+            let t = EZTicket.json(jsonArray[i]);
             if(t) ret.push(t);
         }
         return ret;
@@ -936,7 +936,7 @@ export class EZBrand {
         let ret = [];
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
-            let mix = EZBrand.json(arr[0]);
+            let mix = EZBrand.json(arr[i]);
             if(mix) ret.push(mix);
         }
         return ret;
@@ -972,7 +972,7 @@ export class EZBrandedContent {
         let ret = [];
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
-            let mix = EZBrandedContent.json(arr[0]);
+            let mix = EZBrandedContent.json(arr[i]);
             if(mix) ret.push(mix);
         }
         return ret;

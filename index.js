@@ -227,7 +227,7 @@ var EZMixin = /** @class */ (function () {
         if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
             return ret;
         for (var i = 0; i < jsonArray.length; i++) {
-            var mix = EZMixin.json(jsonArray[0]);
+            var mix = EZMixin.json(jsonArray[i]);
             if (mix)
                 ret.push(mix);
         }
@@ -576,7 +576,7 @@ var EZImage = /** @class */ (function () {
         if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
             return ret;
         for (var i = 0; i < jsonArray.length; i++) {
-            var img = EZImage.json(jsonArray[0]);
+            var img = EZImage.json(jsonArray[i]);
             if (img)
                 ret.push(img);
         }
@@ -636,7 +636,7 @@ var EZArtist = /** @class */ (function () {
         if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
             return ret;
         for (var i = 0; i < jsonArray.length; i++) {
-            var img = EZArtist.json(jsonArray[0]);
+            var img = EZArtist.json(jsonArray[i]);
             if (img)
                 ret.push(img);
         }
@@ -686,7 +686,7 @@ var EZTicket = /** @class */ (function () {
         if (!isArray_1.isArray(jsonArray) || jsonArray.length == 0)
             return ret;
         for (var i = 0; i < jsonArray.length; i++) {
-            var t = EZTicket.json(jsonArray[0]);
+            var t = EZTicket.json(jsonArray[i]);
             if (t)
                 ret.push(t);
         }
@@ -875,7 +875,7 @@ var EZBrand = /** @class */ (function () {
         if (!isArray_1.isArray(arr) || arr.length == 0)
             return ret;
         for (var i = 0; i < arr.length; i++) {
-            var mix = EZBrand.json(arr[0]);
+            var mix = EZBrand.json(arr[i]);
             if (mix)
                 ret.push(mix);
         }
@@ -909,7 +909,7 @@ var EZBrandedContent = /** @class */ (function () {
         if (!isArray_1.isArray(arr) || arr.length == 0)
             return ret;
         for (var i = 0; i < arr.length; i++) {
-            var mix = EZBrandedContent.json(arr[0]);
+            var mix = EZBrandedContent.json(arr[i]);
             if (mix)
                 ret.push(mix);
         }
