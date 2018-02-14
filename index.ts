@@ -1523,7 +1523,8 @@ export class SearchEngine {
                                         "type": "artista",
                                         "link": "http://192.168.60.113/?artista=david-guetta",
                                         "name": {
-                                            "rendered": "David Guetta"
+                                            "rendered": "David Guetta",
+                                            "plain": "David Guetta"
                                         },
                                         "content": {
                                             "rendered": "",
@@ -1533,8 +1534,11 @@ export class SearchEngine {
                                             "rendered": "",
                                             "protected": false
                                         },
+                                        "featured_image": {
+                                            "large": "http://www.piterpan.it/p/wp-content/uploads/2017/09/14633879.jpg"
+                                        },
                                         "template": "",
-                                        "categoria_artista": [],
+                                        "category": ['top artist', 'techno'],
                                         "preview_url": "https://p.scdn.co/mp3-preview/3d7ceaf99d866a8a3fdf0b66cb2763006c970650?cid=5d32859f7f30446db02e9aba0b224b89",
                                     }
                                 },
@@ -1587,7 +1591,8 @@ export class SearchEngine {
                                         "type": "artista",
                                         "link": "http://192.168.60.113/?artista=david-guetta",
                                         "name": {
-                                            "rendered": "David Guetta"
+                                            "rendered": "David Guetta",
+                                            "plain": "David Guetta"
                                         },
                                         "content": {
                                             "rendered": "",
