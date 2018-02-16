@@ -492,7 +492,7 @@ var EZVenue = /** @class */ (function () {
         var coords = json.coordinates && json.coordinates.hasOwnProperty('lat') && json.coordinates.hasOwnProperty('lng') ? json.coordinates : null;
         var excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
         var category = json.category ? json.category : null;
-        var openingHours = json.openingHours ? EZTable.json(json.openingHours) : null;
+        var openingHours = json.opening_hours ? EZTable.json(json.opening_hours) : null;
         var priceLevel = (typeof json.price_level == 'number') ? json.price_level : null;
         return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);
     };
