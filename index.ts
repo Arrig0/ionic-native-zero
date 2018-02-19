@@ -607,6 +607,7 @@ export class EZImage {
                 return new EZImage(thumb, standard, large);
             }
         }
+        if(jsonImage.thumb || jsonImage.standard || jsonImage.large) return new EZImage(jsonImage.thumb, jsonImage.standard, jsonImage.large);
         return null;
     }
 
