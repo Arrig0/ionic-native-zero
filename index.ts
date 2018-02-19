@@ -596,6 +596,7 @@ export class EZImage {
     static json(jsonImage: any): EZImage | null {
         if(!jsonImage) return null;
         if(typeof jsonImage == "string") return new EZImage(null, jsonImage, null);
+        if(jsonImage.thumb || jsonImage.standard || jsonImage.large) return new EZImage(jsonImage.thumb, jsonImage.standard, jsonImage.large);
         if((!jsonImage.sizes) || jsonImage.sizes.length == 0) {
             let thumb = jsonImage.file;
             return new EZImage(thumb, null, null);
@@ -607,7 +608,6 @@ export class EZImage {
                 return new EZImage(thumb, standard, large);
             }
         }
-        if(jsonImage.thumb || jsonImage.standard || jsonImage.large) return new EZImage(jsonImage.thumb, jsonImage.standard, jsonImage.large);
         return null;
     }
 

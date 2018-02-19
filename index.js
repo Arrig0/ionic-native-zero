@@ -559,6 +559,8 @@ var EZImage = /** @class */ (function () {
             return null;
         if (typeof jsonImage == "string")
             return new EZImage(null, jsonImage, null);
+        if (jsonImage.thumb || jsonImage.standard || jsonImage.large)
+            return new EZImage(jsonImage.thumb, jsonImage.standard, jsonImage.large);
         if ((!jsonImage.sizes) || jsonImage.sizes.length == 0) {
             var thumb = jsonImage.file;
             return new EZImage(thumb, null, null);
@@ -571,8 +573,6 @@ var EZImage = /** @class */ (function () {
                 return new EZImage(thumb, standard, large);
             }
         }
-        if (jsonImage.thumb || jsonImage.standard || jsonImage.large)
-            return new EZImage(jsonImage.thumb, jsonImage.standard, jsonImage.large);
         return null;
     };
     EZImage.array = function (jsonArray) {
