@@ -163,7 +163,6 @@ export class EZUser {
 
     public static json(json: any): EZUser | null {
         return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
-        //{"profile_image":{"thumb":null,"standard":"http://192.168.60.113/content/uploads/2017/11/105_1511887397.jpg","large":null}}
     }
 
     public preferences() : { enable_push_notifications: boolean, enable_email_notifications: boolean, enable_newsletter: boolean, is_connected_to_facebook: boolean } {
@@ -319,7 +318,6 @@ export class EZDay {
 export class EZEvent {
     readonly id: number;
     readonly name: string;
-    readonly isRegular: boolean = false;
     readonly startDate: Date;
     readonly endDate: Date;
     readonly startTime: Date | null;
@@ -332,10 +330,9 @@ export class EZEvent {
     readonly artists: EZArtist[];
     readonly venue: EZVenue | null;
 
-    constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, isRegular: boolean = false, price: EZPrice | null, excerpt: string, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = []) {
+    constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, price: EZPrice | null, excerpt: string, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = []) {
         this.id = id;
         this.name = name;
-        this.isRegular = isRegular;
         this.startDate = startDate;
         this.startTime = startTime;
         this.endDate = endDate;
@@ -351,23 +348,22 @@ export class EZEvent {
 
     static json(jsonEvent: any): EZEvent | null {
         let id = jsonEvent.id;
-        let name = jsonEvent.name.plain;
-        let isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
+        let name = jsonEvent.name ? jsonEvent.name.plain : null;
         let startDate = jsonEvent.start_date ? new Date(jsonEvent.start_date) : null;
         let endDate = jsonEvent.end_date ? new Date(jsonEvent.end_date) : null;
         let startTime = jsonEvent.start_time ? new Date((new Date()).toDateString() + " " + jsonEvent.start_time) : null;
-        let endTime = jsonEvent.end_time ? new Date((new Date()).toDateString() + " " + jsonEvent.end_date) : null;
+        let endTime = jsonEvent.end_time ? new Date((new Date()).toDateString() + " " + jsonEvent.end_time) : null;
         let price = jsonEvent.price ? EZPrice.json(jsonEvent.price) : null;
         let excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
         let category = jsonEvent.category && isArray(jsonEvent.category) ? jsonEvent.category : [];
-        let featured_image = EZImage.json(jsonEvent.featured_image);
+        let featured_image = jsonEvent.featured_image ? EZImage.json(jsonEvent.featured_image) : null;
         let gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
         let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({id: jsonEvent.venue_id, name: jsonEvent.venue_name, coordinate: jsonEvent.venue_coords}) : null);
 
         if( !id || !name || !startDate || !venue ) return null;
 
-        return new EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists);
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists);
     }
 
     static array(arr: any[]): EZEvent[] {
@@ -520,13 +516,13 @@ export class EZVenue {
         let gallery = json.gallery && isArray(json.gallery) ? EZImage.array(json.gallery) : null;
         let phone = json.phone ? json.phone : null;
         let website = json.website ? json.website : null;
-        let rate = (typeof json.rate == 'number') ? json.rate : null;
-        let address = json.address ? json.address: null;
+        let rate = json.ratings && (typeof json.ratings == 'number') ? json.ratings : null;
+        let address = json.full_address ? json.full_address: null;
         let coords = json.coordinates && json.coordinates.hasOwnProperty('lat') && json.coordinates.hasOwnProperty('lng') ? json.coordinates : null;
         let excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
         let category = json.category ? json.category : null;
         let openingHours = json.opening_hours ? EZTable.json(json.opening_hours) : null;
-        let priceLevel = (typeof json.price_level == 'number') ? json.price_level : null;
+        let priceLevel = json.price_level && (typeof json.price_level == 'number') ? json.price_level : null;
 
         return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);
     }
@@ -600,12 +596,16 @@ export class EZImage {
     static json(jsonImage: any): EZImage | null {
         if(!jsonImage) return null;
         if(typeof jsonImage == "string") return new EZImage(null, jsonImage, null);
-        //todo:: implementazione solo a scopo di debug;
-        let thumb = jsonImage.thumb;//jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
-        let standard = jsonImage.standard;//jsonImage.sizes.medium ? jsonImage.sizes.medium.file: null;
-        let large = jsonImage.large;//jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
-        if(thumb || standard || large) {
-            return new EZImage(thumb, standard, large);
+        if((!jsonImage.sizes) || jsonImage.sizes.length == 0) {
+            let thumb = jsonImage.file;
+            return new EZImage(thumb, null, null);
+        } else {
+            let thumb = jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
+            let standard = jsonImage.sizes.medium ? jsonImage.sizes.medium.file: null;
+            let large = jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
+            if(thumb || standard || large) {
+                return new EZImage(thumb, standard, large);
+            }
         }
         return null;
     }

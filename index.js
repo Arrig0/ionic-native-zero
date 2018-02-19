@@ -168,7 +168,6 @@ var EZUser = /** @class */ (function () {
     }
     EZUser.json = function (json) {
         return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
-        //{"profile_image":{"thumb":null,"standard":"http://192.168.60.113/content/uploads/2017/11/105_1511887397.jpg","large":null}}
     };
     EZUser.prototype.preferences = function () {
         return { enable_push_notifications: this.enable_push_notifications, enable_email_notifications: this.enable_email_notifications, enable_newsletter: this.enable_newsletter, is_connected_to_facebook: this.is_connected_to_facebook };
@@ -309,15 +308,12 @@ var EZDay = /** @class */ (function () {
 }());
 exports.EZDay = EZDay;
 var EZEvent = /** @class */ (function () {
-    function EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists) {
-        if (isRegular === void 0) { isRegular = false; }
+    function EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists) {
         if (category === void 0) { category = []; }
         if (gallery === void 0) { gallery = []; }
         if (artists === void 0) { artists = []; }
-        this.isRegular = false;
         this.id = id;
         this.name = name;
-        this.isRegular = isRegular;
         this.startDate = startDate;
         this.startTime = startTime;
         this.endDate = endDate;
@@ -332,22 +328,21 @@ var EZEvent = /** @class */ (function () {
     }
     EZEvent.json = function (jsonEvent) {
         var id = jsonEvent.id;
-        var name = jsonEvent.name.plain;
-        var isRegular = jsonEvent.is_regular ? jsonEvent.is_regular : false;
+        var name = jsonEvent.name ? jsonEvent.name.plain : null;
         var startDate = jsonEvent.start_date ? new Date(jsonEvent.start_date) : null;
         var endDate = jsonEvent.end_date ? new Date(jsonEvent.end_date) : null;
         var startTime = jsonEvent.start_time ? new Date((new Date()).toDateString() + " " + jsonEvent.start_time) : null;
-        var endTime = jsonEvent.end_time ? new Date((new Date()).toDateString() + " " + jsonEvent.end_date) : null;
+        var endTime = jsonEvent.end_time ? new Date((new Date()).toDateString() + " " + jsonEvent.end_time) : null;
         var price = jsonEvent.price ? EZPrice.json(jsonEvent.price) : null;
         var excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
         var category = jsonEvent.category && isArray_1.isArray(jsonEvent.category) ? jsonEvent.category : [];
-        var featured_image = EZImage.json(jsonEvent.featured_image);
+        var featured_image = jsonEvent.featured_image ? EZImage.json(jsonEvent.featured_image) : null;
         var gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
         var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({ id: jsonEvent.venue_id, name: jsonEvent.venue_name, coordinate: jsonEvent.venue_coords }) : null);
         if (!id || !name || !startDate || !venue)
             return null;
-        return new EZEvent(id, name, startDate, endDate, startTime, endTime, isRegular, price, excerpt, category, featured_image, gallery, venue, artists);
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists);
     };
     EZEvent.array = function (arr) {
         var ret = [];
@@ -487,13 +482,13 @@ var EZVenue = /** @class */ (function () {
         var gallery = json.gallery && isArray_1.isArray(json.gallery) ? EZImage.array(json.gallery) : null;
         var phone = json.phone ? json.phone : null;
         var website = json.website ? json.website : null;
-        var rate = (typeof json.rate == 'number') ? json.rate : null;
-        var address = json.address ? json.address : null;
+        var rate = json.ratings && (typeof json.ratings == 'number') ? json.ratings : null;
+        var address = json.full_address ? json.full_address : null;
         var coords = json.coordinates && json.coordinates.hasOwnProperty('lat') && json.coordinates.hasOwnProperty('lng') ? json.coordinates : null;
         var excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
         var category = json.category ? json.category : null;
         var openingHours = json.opening_hours ? EZTable.json(json.opening_hours) : null;
-        var priceLevel = (typeof json.price_level == 'number') ? json.price_level : null;
+        var priceLevel = json.price_level && (typeof json.price_level == 'number') ? json.price_level : null;
         return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);
     };
     EZVenue.array = function (arr) {
@@ -564,12 +559,17 @@ var EZImage = /** @class */ (function () {
             return null;
         if (typeof jsonImage == "string")
             return new EZImage(null, jsonImage, null);
-        //todo:: implementazione solo a scopo di debug;
-        var thumb = jsonImage.thumb; //jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
-        var standard = jsonImage.standard; //jsonImage.sizes.medium ? jsonImage.sizes.medium.file: null;
-        var large = jsonImage.large; //jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
-        if (thumb || standard || large) {
-            return new EZImage(thumb, standard, large);
+        if ((!jsonImage.sizes) || jsonImage.sizes.length == 0) {
+            var thumb = jsonImage.file;
+            return new EZImage(thumb, null, null);
+        }
+        else {
+            var thumb = jsonImage.sizes.thumbnail ? jsonImage.sizes.thumbnail.file : null;
+            var standard = jsonImage.sizes.medium ? jsonImage.sizes.medium.file : null;
+            var large = jsonImage.sizes.large ? jsonImage.sizes.large.file : null;
+            if (thumb || standard || large) {
+                return new EZImage(thumb, standard, large);
+            }
         }
         return null;
     };
