@@ -793,6 +793,10 @@ export class EZSoundTrack {
             this.play();
         }
     }
+
+    playing(): boolean {
+        return this.isPlaying;
+    }
 }
 
 export class EZPrice {

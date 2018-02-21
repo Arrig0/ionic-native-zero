@@ -744,6 +744,9 @@ var EZSoundTrack = /** @class */ (function () {
             this.play();
         }
     };
+    EZSoundTrack.prototype.playing = function () {
+        return this.isPlaying;
+    };
     return EZSoundTrack;
 }());
 exports.EZSoundTrack = EZSoundTrack;
