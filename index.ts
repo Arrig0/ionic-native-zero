@@ -1852,7 +1852,7 @@ export class Zero {
 
     public static openSupportTicket(subject: string, message: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            ZeroPlugin.post(BASE_API_PATH + "support/", { subject: subject, message: message }).then(resolve).catch((err) => {
+            ZeroPlugin.post(BASE_API_PATH + "support/issue", { subject: subject, message: message }).then(resolve).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err))
             });
