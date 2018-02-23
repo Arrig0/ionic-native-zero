@@ -179,7 +179,7 @@ export class EZUser {
             first_name: this.first_name,
             last_name: this.last_name,
             email: this.email,
-            profile_image: this.profile_image.getLarge(),
+            profile_image: this.profile_image ? this.profile_image.getLarge() : null,
             enable_push_notifications: this.enable_push_notifications,
             enable_email_notifications: this.enable_email_notifications,
             enable_newsletter: this.enable_newsletter,
@@ -1229,7 +1229,7 @@ export class AccountManager {
         return new Promise<void>((resolve, reject) => {
             ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch((err) => {
                 Zero.onError(EZError.fromString(err));
-                reject(EZError.fromString(err))
+                reject(EZError.fromString(err));
             });
         });
     }

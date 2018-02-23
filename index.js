@@ -181,7 +181,7 @@ var EZUser = /** @class */ (function () {
             first_name: this.first_name,
             last_name: this.last_name,
             email: this.email,
-            profile_image: this.profile_image.getLarge(),
+            profile_image: this.profile_image ? this.profile_image.getLarge() : null,
             enable_push_notifications: this.enable_push_notifications,
             enable_email_notifications: this.enable_email_notifications,
             enable_newsletter: this.enable_newsletter,
