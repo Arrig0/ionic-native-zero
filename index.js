@@ -12,7 +12,9 @@ var __extends = (this && this.__extends) || (function () {
 exports.__esModule = true;
 var media_1 = require("@ionic-native/media");
 var isArray_1 = require("rxjs/util/isArray");
+var API_KEY = 'Amichetti_come_Kim_Jong-un';
 var BASE_API_PATH = "http://192.168.60.113/api/v2/";
+var APP_VERSION = "v1.0.0";
 //const BASE_API_PATH: string = "https://dev.zero.eu/API/v1/";
 /*export interface ZeroEntity {}
 
@@ -238,7 +240,7 @@ var EZMixin = /** @class */ (function () {
                 return EZType.Event;
             case "venue":
                 return EZType.Venue;
-            case "artist":
+            case " ":
                 return EZType.Artist;
             default:
                 return EZType.Article;
@@ -851,7 +853,7 @@ var EZTable = /** @class */ (function () {
 }());
 exports.EZTable = EZTable;
 var EZBrand = /** @class */ (function () {
-    function EZBrand(id, title, description, logo, background, textPrimaryColor, textContrastColor, content) {
+    function EZBrand(id, name, title, description, logo, link, background, textPrimaryColor, textContrastColor, content) {
         if (background === void 0) { background = "#ffffff"; }
         if (textPrimaryColor === void 0) { textPrimaryColor = "#000000"; }
         if (textContrastColor === void 0) { textContrastColor = "#ffffff"; }
@@ -863,19 +865,23 @@ var EZBrand = /** @class */ (function () {
         this.background = background;
         this.textPrimaryColor = textPrimaryColor;
         this.textContrastColor = textContrastColor;
+        this.link = link;
+        this.name = name;
         this.content = content;
     }
     EZBrand.json = function (j) {
         var id = j.id;
+        var name = j.name;
         var title = j.title;
         var descr = j.description;
         var logo = j.logo;
         var background = j.background;
         var primary = j.text_primary_color;
         var contrast = j.text_contrast_color;
-        var content = EZBrandedContent.array(j.content);
+        var link = j.link;
+        var content = EZBrandedContent.array(j.contents);
         if (id != null && title != null && logo != null)
-            return new EZBrand(id, title, descr, logo, background, primary, contrast, content);
+            return new EZBrand(id, name, title, descr, logo, link, background, primary, contrast, content);
     };
     EZBrand.array = function (arr) {
         var ret = [];
@@ -981,7 +987,7 @@ var EventManager = /** @class */ (function () {
     EventManager.prototype.next = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            var dates = _this.date.getFullYear().toString() + "-" + _this.date.getMonth().toString() + "-" + _this.date.getDate().toString();
+            var dates = _this.date.getFullYear().toString() + "-" + (_this.date.getMonth() + 1).toString() + "-" + _this.date.getDate().toString();
             var categories = _this.category && _this.category.length > 0 ? "&category=" + _this.category.join("|") : "";
             var coords = _this.coords ? "&coords[lat]=" + _this.coords.lat + "&coords[lng]=" + _this.coords.lng : "";
             _this.page++;
@@ -1337,45 +1343,14 @@ var SearchEngine = /** @class */ (function () {
     SearchEngine.search = function (q, f) {
         if (f === void 0) { f = [EZType.Artist, EZType.Venue, EZType.Event]; }
         return new Promise(function (resolve, reject) {
-            /*let c = f.join("|");
-            let s = encodeURIComponent(q);
-            ZeroPlugin.get(BASE_API_PATH+"search/"+s+"/?types="+c).then((res) => {
-                resolve(EZMixin.array(res))
-            }).catch((err) => {
+            var c = f.join("|");
+            var s = encodeURIComponent(q);
+            ZeroPlugin.get(BASE_API_PATH + "search/" + s + "/?types=" + c + "&format=object").then(function (res) {
+                resolve(EZMixin.array(res.data));
+            })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
-            });*/
-            // TODO:: REMOVE THIS IS FOR TEST, REMOVE IT
-            setTimeout(function () {
-                if (q == "ciao")
-                    return resolve([]);
-                resolve([
-                    new EZMixin(2, EZType.Event, "Un Evento" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(3, EZType.Venue, "Una Venue" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(4, EZType.Artist, "Un Artista" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(5, EZType.Event, "Un Evento" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(6, EZType.Venue, "Una Venue" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(7, EZType.Artist, "Un Artista" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(8, EZType.Event, "Un Evento" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(11, EZType.Venue, "Una Venue" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(12, EZType.Artist, "Un Artista" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(22, EZType.Event, "Un Evento" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(32, EZType.Venue, "Una Venue" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(42, EZType.Artist, "Un Artista" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(2, EZType.Event, "Un Evento" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(3, EZType.Venue, "Una Venue" + q, "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(4, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(5, EZType.Event, "Un Evento", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(6, EZType.Venue, "Una Venue", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(7, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(8, EZType.Event, "Un Evento", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(11, EZType.Venue, "Una Venue", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(12, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(22, EZType.Event, "Un Evento", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(32, EZType.Venue, "Una Venue", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                    new EZMixin(42, EZType.Artist, "Un Artista", "Excerpt for this test event", new EZImage(null, "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/flip.jpg", null)),
-                ]);
-            }, 3000);
+            });
         });
     };
     SearchEngine.branded = function () {
@@ -1644,6 +1619,27 @@ var SearchEngine = /** @class */ (function () {
     return SearchEngine;
 }());
 exports.SearchEngine = SearchEngine;
+var EZCity = /** @class */ (function () {
+    function EZCity() {
+    }
+    return EZCity;
+}());
+exports.EZCity = EZCity;
+var EZConfiguration = /** @class */ (function () {
+    function EZConfiguration() {
+    }
+    EZConfiguration.init = function (json) {
+        //todo
+        return false;
+    };
+    EZConfiguration.current = function () {
+        return EZConfiguration.instance;
+    };
+    // todo
+    EZConfiguration.instance = null;
+    return EZConfiguration;
+}());
+exports.EZConfiguration = EZConfiguration;
 /*
 export class Track {
     url: string;
@@ -1707,8 +1703,19 @@ var Zero = /** @class */ (function () {
     private onLoginAction;
 
     private onErrorAction;*/
-    Zero.init = function (clientID, clientSecret) {
-        return ZeroPlugin.init(clientID, clientSecret);
+    Zero.init = function (clientID, clientSecret, platform) {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.init(clientID, clientSecret).then(function () {
+                ZeroPlugin.get(BASE_API_PATH + "app/settings?apikey=" + API_KEY + "&app_version=" + APP_VERSION + "&platform=" + platform).then(function (res) {
+                    if (EZConfiguration.current(res)) {
+                        return resolve();
+                    }
+                    else {
+                        return reject(new EZError(503, "Unexpected Response"));
+                    }
+                })["catch"](reject);
+            })["catch"](reject);
+        });
     };
     Zero.registerLoginAction = function (action) {
         TriggerManager.current().eachLogin(action);
