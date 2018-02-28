@@ -384,8 +384,8 @@ export class EZEvent {
 
     related(): Promise<EZEvent[]> {
         return new Promise<EZEvent[]>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH + 'events/' + this.id + "/related").then((data) => {
-                resolve(EZEvent.array(data));
+            ZeroPlugin.get(BASE_API_PATH + 'events/' + this.id + "/related?format=object").then((data) => {
+                resolve(EZEvent.array(data.data));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
@@ -545,8 +545,8 @@ export class EZVenue {
 
     related(): Promise<EZVenue[]> {
         return new Promise<EZVenue[]>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/related").then((data) => {
-                resolve(EZVenue.array(data));
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/related?format=object").then((data) => {
+                resolve(EZVenue.array(data.data));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
@@ -556,8 +556,8 @@ export class EZVenue {
 
     upcoming(): Promise<EZEvent[]> {
         return new Promise<EZEvent[]>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/calendar").then((data) => {
-                resolve(EZEvent.array(data));
+            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/calendar?format=object").then((data) => {
+                resolve(EZEvent.array(data.data));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
@@ -692,8 +692,8 @@ export class EZArtist {
 
     upcoming(): Promise<EZEvent[]> {
         return new Promise<EZEvent[]>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH + 'artists/' + this.id + "/calendar").then((data) => {
-                resolve(EZEvent.array(data));
+            ZeroPlugin.get(BASE_API_PATH + 'artists/' + this.id + "/calendar?format=object").then((data) => {
+                resolve(EZEvent.array(data.data));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
