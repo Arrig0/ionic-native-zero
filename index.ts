@@ -545,7 +545,7 @@ export class EZVenue {
 
     related(): Promise<EZVenue[]> {
         return new Promise<EZVenue[]>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/related?format=object").then((data) => {
+            ZeroPlugin.get(BASE_API_PATH + 'locations/' + this.id + "/related?format=object").then((data) => {
                 resolve(EZVenue.array(data.data));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
@@ -556,7 +556,7 @@ export class EZVenue {
 
     upcoming(): Promise<EZEvent[]> {
         return new Promise<EZEvent[]>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id + "/calendar?format=object").then((data) => {
+            ZeroPlugin.get(BASE_API_PATH + 'locations/' + this.id + "/calendar?format=object").then((data) => {
                 resolve(EZEvent.array(data.data));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
@@ -567,7 +567,7 @@ export class EZVenue {
     
     reload(): Promise<EZVenue> {
         return new Promise<EZVenue>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + this.id).then((json) => {
+            ZeroPlugin.get(BASE_API_PATH + 'locations/' + this.id).then((json) => {
                 resolve(EZVenue.json(json));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));

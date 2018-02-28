@@ -510,7 +510,7 @@ var EZVenue = /** @class */ (function () {
     EZVenue.prototype.related = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + _this.id + "/related?format=object").then(function (data) {
+            ZeroPlugin.get(BASE_API_PATH + 'locations/' + _this.id + "/related?format=object").then(function (data) {
                 resolve(EZVenue.array(data.data));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
@@ -521,7 +521,7 @@ var EZVenue = /** @class */ (function () {
     EZVenue.prototype.upcoming = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + _this.id + "/calendar?format=object").then(function (data) {
+            ZeroPlugin.get(BASE_API_PATH + 'locations/' + _this.id + "/calendar?format=object").then(function (data) {
                 resolve(EZEvent.array(data.data));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
@@ -532,7 +532,7 @@ var EZVenue = /** @class */ (function () {
     EZVenue.prototype.reload = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.get(BASE_API_PATH + 'venues/' + _this.id).then(function (json) {
+            ZeroPlugin.get(BASE_API_PATH + 'locations/' + _this.id).then(function (json) {
                 resolve(EZVenue.json(json));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
