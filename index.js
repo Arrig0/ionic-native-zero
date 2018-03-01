@@ -1761,14 +1761,22 @@ var Zero = /** @class */ (function () {
     Zero.init = function (clientID, clientSecret, platform) {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.init(clientID, clientSecret).then(function () {
-                ZeroPlugin.get(BASE_API_PATH + "app/settings?apikey=" + API_KEY + "&app_version=" + APP_VERSION + "&platform=" + platform).then(function (res) {
-                    if (EZConfiguration.init(res)) {
-                        return resolve();
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'myservice/username?id=some-unique-id');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        if (EZConfiguration.init(JSON.parse(xhr.responseText))) {
+                            return resolve();
+                        }
+                        else {
+                            return reject(new EZError(503, "Unexpected Response"));
+                        }
                     }
                     else {
-                        return reject(new EZError(503, "Unexpected Response"));
+                        return reject(new EZError(xhr.status, "FATAL_ERROR"));
                     }
-                })["catch"](reject);
+                };
+                xhr.send();
             })["catch"](reject);
         });
     };

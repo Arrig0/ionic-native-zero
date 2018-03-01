@@ -1888,13 +1888,21 @@ export class Zero {
     public static init(clientID: string, clientSecret: string, platform: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             ZeroPlugin.init(clientID, clientSecret).then(() => {
-                ZeroPlugin.get(BASE_API_PATH+"app/settings?apikey="+API_KEY+"&app_version="+APP_VERSION+"&platform="+platform).then((res) => {
-                    if(EZConfiguration.init(res)) {
-                        return resolve();
-                    } else {
-                        return reject(new EZError(503, "Unexpected Response"));
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'myservice/username?id=some-unique-id');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        if(EZConfiguration.init(JSON.parse(xhr.responseText))) {
+                            return resolve();
+                        } else {
+                            return reject(new EZError(503, "Unexpected Response"));
+                        }
                     }
-                }).catch(reject);
+                    else {
+                        return reject(new EZError(xhr.status, "FATAL_ERROR"));
+                    }
+                };
+                xhr.send();
             }).catch(reject);
         })
     }
