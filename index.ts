@@ -1735,23 +1735,83 @@ export class SearchEngine {
 
 
 export class EZCity {
-    // todo
+    readonly name: string;
+    readonly slug: string;
+    readonly center: { lat: number, lng: number };
+    readonly filters: EZFilter[];
+
+    public constructor(name: string, slug: string, center: { lat: number, lng: number }, filters: EZFilter[]) {
+        this.name = name;
+        this.slug = slug;
+        this.center = center;
+        this.filters = filters;
+        if(!name || !slug || !center) return null;
+    }
+
+    public static json(j: any): EZCity {
+        return new EZCity(j.name, j.slug, j.coordinates, EZFilter.array(j.filters));
+    }
+
+    public static array(arr: any[]) {
+        let ret = [];
+        if(!isArray(arr) || arr.length == 0) return ret;
+        for(let i = 0; i < arr.length; i++) {
+            let mix = EZCity.json(arr[i]);
+            if(mix) ret.push(mix);
+        }
+        return ret;
+    }
+
+}
+
+export class EZFilter {
+    readonly filter: string;
+    readonly slug: string;
+    public selected: boolean = false;
+
+    public constructor(filter: string, slug: string, selected: boolean = false) {
+        if(!filter || !slug) return null;
+        this.filter = filter;
+        this.slug = slug;
+        this.selected = selected;
+    }
+
+    public static json(j: any): EZFilter {
+        return new EZFilter(j.name, j.slug,false);
+    }
+
+    public static array(arr: any[]): EZFilter[] {
+        let ret = [];
+        if(!isArray(arr) || arr.length == 0) return ret;
+        for(let i = 0; i < arr.length; i++) {
+            let mix = EZFilter.json(arr[i]);
+            if(mix) ret.push(mix);
+        }
+        return ret;
+    }
 }
 
 
 export class EZConfiguration {
 
-    readonly mantenanceMode: boolean;
+    readonly maintenanceMode: boolean;
     readonly needsUpdate: boolean;
     readonly cities: EZCity[];
 
-    // todo
+    private constructor(mantenanceMode: boolean = false, needsUpdate: boolean = false, cities: EZCity[] = []) {
+        this.maintenanceMode = mantenanceMode;
+        this.needsUpdate = needsUpdate;
+        this.cities = cities;
+    }
 
     private static instance: EZConfiguration = null;
 
     public static init(json: any): boolean {
-        //todo
-        return false;
+        let maintenanceMode = json.maintenance_mode;
+        let needsUpdate = json.needs_update;
+        let cities = EZCity.array(json.metro_areas);
+        EZConfiguration.instance = new EZConfiguration(maintenanceMode, needsUpdate, cities);
+        return EZConfiguration.instance != null;
     }
 
     public static current(): EZConfiguration {
@@ -1829,7 +1889,7 @@ export class Zero {
         return new Promise<void>((resolve, reject) => {
             ZeroPlugin.init(clientID, clientSecret).then(() => {
                 ZeroPlugin.get(BASE_API_PATH+"app/settings?apikey="+API_KEY+"&app_version="+APP_VERSION+"&platform="+platform).then((res) => {
-                    if(EZConfiguration.current(res)) {
+                    if(EZConfiguration.init(res)) {
                         return resolve();
                     } else {
                         return reject(new EZError(503, "Unexpected Response"));

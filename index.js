@@ -1620,22 +1620,77 @@ var SearchEngine = /** @class */ (function () {
 }());
 exports.SearchEngine = SearchEngine;
 var EZCity = /** @class */ (function () {
-    function EZCity() {
+    function EZCity(name, slug, center, filters) {
+        this.name = name;
+        this.slug = slug;
+        this.center = center;
+        this.filters = filters;
+        if (!name || !slug || !center)
+            return null;
     }
+    EZCity.json = function (j) {
+        return new EZCity(j.name, j.slug, j.coordinates, EZFilter.array(j.filters));
+    };
+    EZCity.array = function (arr) {
+        var ret = [];
+        if (!isArray_1.isArray(arr) || arr.length == 0)
+            return ret;
+        for (var i = 0; i < arr.length; i++) {
+            var mix = EZCity.json(arr[i]);
+            if (mix)
+                ret.push(mix);
+        }
+        return ret;
+    };
     return EZCity;
 }());
 exports.EZCity = EZCity;
+var EZFilter = /** @class */ (function () {
+    function EZFilter(filter, slug, selected) {
+        if (selected === void 0) { selected = false; }
+        this.selected = false;
+        if (!filter || !slug)
+            return null;
+        this.filter = filter;
+        this.slug = slug;
+        this.selected = selected;
+    }
+    EZFilter.json = function (j) {
+        return new EZFilter(j.name, j.slug, false);
+    };
+    EZFilter.array = function (arr) {
+        var ret = [];
+        if (!isArray_1.isArray(arr) || arr.length == 0)
+            return ret;
+        for (var i = 0; i < arr.length; i++) {
+            var mix = EZFilter.json(arr[i]);
+            if (mix)
+                ret.push(mix);
+        }
+        return ret;
+    };
+    return EZFilter;
+}());
+exports.EZFilter = EZFilter;
 var EZConfiguration = /** @class */ (function () {
-    function EZConfiguration() {
+    function EZConfiguration(mantenanceMode, needsUpdate, cities) {
+        if (mantenanceMode === void 0) { mantenanceMode = false; }
+        if (needsUpdate === void 0) { needsUpdate = false; }
+        if (cities === void 0) { cities = []; }
+        this.maintenanceMode = mantenanceMode;
+        this.needsUpdate = needsUpdate;
+        this.cities = cities;
     }
     EZConfiguration.init = function (json) {
-        //todo
-        return false;
+        var maintenanceMode = json.maintenance_mode;
+        var needsUpdate = json.needs_update;
+        var cities = EZCity.array(json.metro_areas);
+        EZConfiguration.instance = new EZConfiguration(maintenanceMode, needsUpdate, cities);
+        return EZConfiguration.instance != null;
     };
     EZConfiguration.current = function () {
         return EZConfiguration.instance;
     };
-    // todo
     EZConfiguration.instance = null;
     return EZConfiguration;
 }());
@@ -1707,7 +1762,7 @@ var Zero = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.init(clientID, clientSecret).then(function () {
                 ZeroPlugin.get(BASE_API_PATH + "app/settings?apikey=" + API_KEY + "&app_version=" + APP_VERSION + "&platform=" + platform).then(function (res) {
-                    if (EZConfiguration.current(res)) {
+                    if (EZConfiguration.init(res)) {
                         return resolve();
                     }
                     else {
