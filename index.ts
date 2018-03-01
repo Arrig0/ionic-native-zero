@@ -1903,14 +1903,6 @@ export class Zero {
                     }
                 };
                 xhr.send();
-                xhr.send();
-                ZeroPlugin.get().then((res) => {
-                    if(EZConfiguration.init(res)) {
-                        return resolve();
-                    } else {
-                        return reject(new EZError(503, "Unexpected Response"));
-                    }
-                }).catch(reject);
             }).catch(reject);
         })
     }

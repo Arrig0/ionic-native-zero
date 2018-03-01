@@ -1777,15 +1777,6 @@ var Zero = /** @class */ (function () {
                     }
                 };
                 xhr.send();
-                xhr.send();
-                ZeroPlugin.get().then(function (res) {
-                    if (EZConfiguration.init(res)) {
-                        return resolve();
-                    }
-                    else {
-                        return reject(new EZError(503, "Unexpected Response"));
-                    }
-                })["catch"](reject);
             })["catch"](reject);
         });
     };
