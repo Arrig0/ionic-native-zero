@@ -1889,7 +1889,7 @@ export class Zero {
         return new Promise<void>((resolve, reject) => {
             ZeroPlugin.init(clientID, clientSecret).then(() => {
                 let xhr = new XMLHttpRequest();
-                xhr.open('GET', 'myservice/username?id=some-unique-id');
+                xhr.open('GET', BASE_API_PATH+"app/settings?apikey="+API_KEY+"&app_version="+APP_VERSION+"&platform="+platform);
                 xhr.onload = function() {
                     if (xhr.status === 200) {
                         if(EZConfiguration.init(JSON.parse(xhr.responseText))) {
@@ -1903,6 +1903,14 @@ export class Zero {
                     }
                 };
                 xhr.send();
+                xhr.send();
+                ZeroPlugin.get().then((res) => {
+                    if(EZConfiguration.init(res)) {
+                        return resolve();
+                    } else {
+                        return reject(new EZError(503, "Unexpected Response"));
+                    }
+                }).catch(reject);
             }).catch(reject);
         })
     }

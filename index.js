@@ -1762,7 +1762,7 @@ var Zero = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.init(clientID, clientSecret).then(function () {
                 var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'myservice/username?id=some-unique-id');
+                xhr.open('GET', BASE_API_PATH + "app/settings?apikey=" + API_KEY + "&app_version=" + APP_VERSION + "&platform=" + platform);
                 xhr.onload = function () {
                     if (xhr.status === 200) {
                         if (EZConfiguration.init(JSON.parse(xhr.responseText))) {
@@ -1777,6 +1777,15 @@ var Zero = /** @class */ (function () {
                     }
                 };
                 xhr.send();
+                xhr.send();
+                ZeroPlugin.get().then(function (res) {
+                    if (EZConfiguration.init(res)) {
+                        return resolve();
+                    }
+                    else {
+                        return reject(new EZError(503, "Unexpected Response"));
+                    }
+                })["catch"](reject);
             })["catch"](reject);
         });
     };
