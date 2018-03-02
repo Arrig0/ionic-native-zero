@@ -1319,25 +1319,24 @@ exports.TicketManager = TicketManager;
 var SearchEngine = /** @class */ (function () {
     function SearchEngine() {
     }
-    SearchEngine.recent = function () {
+    SearchEngine.save = function (search) {
         return new Promise(function (resolve, reject) {
-            /*ZeroPlugin.recentResearch().then((res) => {
-                resolve(EZMixin.array(res));
-            }).catch((err) => {
+            ZeroPlugin.saveRecentResearch(search).then(function () {
+                resolve();
+            })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
-            });*/
-            // TODO:: REMOVE THIS IS FOR TEST, REMOVE IT
-            setTimeout(function () {
-                resolve([
-                    "Mike",
-                    "Ciao",
-                    "Hola",
-                    "aaaaaa",
-                    "posizione",
-                    "loola paloosa"
-                ]);
-            }, 500);
+            });
+        });
+    };
+    SearchEngine.recent = function () {
+        return new Promise(function (resolve, reject) {
+            ZeroPlugin.recentResearch().then(function (res) {
+                resolve(EZMixin.array(res));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
         });
     };
     SearchEngine.search = function (q, f) {
@@ -1355,265 +1354,22 @@ var SearchEngine = /** @class */ (function () {
     };
     SearchEngine.branded = function () {
         return new Promise(function (resolve, reject) {
-            /*ZeroPlugin.get(BASE_API_PATH+"branded/?target=app").then((res) => {
-                resolve(EZBrand.array(res))
-            }).catch((err) => {
+            ZeroPlugin.get(BASE_API_PATH + "branded/?target=app&format=object").then(function (res) {
+                resolve(EZBrand.array(res.data));
+            })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
-            });*/
-            // TODO:: THIS IS FOR TEST, REMOVE IT
-            setTimeout(function () {
-                resolve(EZBrand.array([
-                    {
-                        id: 1,
-                        title: "Goditi la tua vacanza!",
-                        description: "Vivi i tuoi eventi con Aperol.",
-                        logo: 'https://www.aperol.com/themes/was-theme/assets/images/logo/logo-aperol.svg',
-                        background: "#FAE37C",
-                        text_primary_color: "#000000",
-                        text_contrast_color: "#ffffff",
-                        content: [
-                            {
-                                type: "event",
-                                content: { "id": 42721, "name": { "rendered": "Tom Odell", "plain": "Tom Odell" }, "slug": "tom-odell-2", "content": { "raw": "", "rendered": "", "plain": "" }, "excerpt": { "raw": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "rendered": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "plain": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\"." }, "status": "publish", "regular": false, "start_date": "2017-02-15", "end_date": "2017-02-15", "start_time": "20:30", "end_time": "", "price": "\u20ac 25/22 + d.p.", "post_class": "post-42721 evento type-evento status-publish hentry sezione-musica-concerti citta-milano categoria_evento-concerti", "tour_id": 0, "venue_id": 2805, "categoria_evento": [335], "category": ["musica", "jazz"], "featured_image": { "thumb": "https://picsum.photos/200/300", "standard": "https://picsum.photos/400/600", "large": "https://picsum.photos/600/900" }, "venue_name": "nome del luogo", "venue_coords": { "lat": 45.4555558, "lng": 9.1952502 }, "_links": { "self": [{ "href": "http://192.168.60.113/api/v2/events/42721" }], "collection": [{ "href": "http://192.168.60.113/api/v2/events" }], "venue": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/locations/2805" }], "attachment": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/media?parent=42721" }], "taxonomies": [{ "taxonomy": "categoria_evento", "embeddable": true, "href": "http://192.168.60.113/api/v2/taxonomies/categoria_evento?post=42721" }] }, "_embedded": { "venue": [{ "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }], "taxonomies": [{ "name": "Categorie", "slug": "categoria_evento", "rest_base": "categoria_evento", "_links": { "collection": [{ "href": "http://192.168.60.113/api/v2/taxonomies" }], "wp:items": [{ "href": "http://192.168.60.113/api/wp/v2/categoria_evento" }], "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }] } }] } }
-                            },
-                            {
-                                type: "venue",
-                                content: { "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }
-                            },
-                            {
-                                type: "artist",
-                                content: {
-                                    "id": 79331,
-                                    "date": "2017-11-23T11:19:52",
-                                    "date_gmt": "2017-11-23T11:19:52",
-                                    "modified": "2017-11-23T11:19:52",
-                                    "modified_gmt": "2017-11-23T11:19:52",
-                                    "slug": "david-guetta",
-                                    "status": "publish",
-                                    "type": "artista",
-                                    "link": "http://192.168.60.113/?artista=david-guetta",
-                                    "name": {
-                                        "rendered": "David Guetta",
-                                        "plain": "David Guetta"
-                                    },
-                                    "content": {
-                                        "rendered": "",
-                                        "protected": false
-                                    },
-                                    "excerpt": {
-                                        "rendered": "",
-                                        "protected": false
-                                    },
-                                    "featured_image": {
-                                        "large": "http://www.piterpan.it/p/wp-content/uploads/2017/09/14633879.jpg"
-                                    },
-                                    "template": "",
-                                    "category": ['top artist', 'techno'],
-                                    "preview_url": "https://p.scdn.co/mp3-preview/3d7ceaf99d866a8a3fdf0b66cb2763006c970650?cid=5d32859f7f30446db02e9aba0b224b89"
-                                }
-                            },
-                            {
-                                type: "article",
-                                content: {
-                                    title: 'Da quattro amici al bar all’evento numero 1 in Europa: intervista a Luigi Brusaferri, da 23 anni il boss della Milano Tattoo Convention',
-                                    category: 'intervista',
-                                    excerpt: 'INTERVISTA A UNO DEI PADRI FONDATORI DELLA MILANO TATTOO CONVENTION',
-                                    featured_image: {
-                                        "thumb": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                        "standard": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                        "large": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg"
-                                    },
-                                    link: 'https://zero.eu/persone/luigi-brusaferri/'
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        title: "Il gusto delle Sagre",
-                        description: "SCOPRI LE SAGRE PIU BELLE",
-                        logo: 'https://s3-eu-west-1.amazonaws.com/zeroeu-static-assets/clienti/ramazzotti/ogni-sagra-una-storia/ramazzotti-logo.png',
-                        background: "#172F52",
-                        text_primary_color: "#ffffff",
-                        text_contrast_color: "#000000",
-                        content: [
-                            {
-                                type: "event",
-                                content: { "id": 42721, "name": { "rendered": "Tom Odell", "plain": "Tom Odell" }, "slug": "tom-odell-2", "content": { "raw": "", "rendered": "", "plain": "" }, "excerpt": { "raw": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "rendered": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "plain": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\"." }, "status": "publish", "regular": false, "start_date": "2017-02-15", "end_date": "2017-02-15", "start_time": "20:30", "end_time": "", "price": "\u20ac 25/22 + d.p.", "post_class": "post-42721 evento type-evento status-publish hentry sezione-musica-concerti citta-milano categoria_evento-concerti", "tour_id": 0, "venue_id": 2805, "categoria_evento": [335], "category": ["musica", "jazz"], "featured_image": { "thumb": "https://picsum.photos/200/300", "standard": "https://picsum.photos/400/600", "large": "https://picsum.photos/600/900" }, "venue_name": "nome del luogo", "venue_coords": { "lat": 45.4555558, "lng": 9.1952502 }, "_links": { "self": [{ "href": "http://192.168.60.113/api/v2/events/42721" }], "collection": [{ "href": "http://192.168.60.113/api/v2/events" }], "venue": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/locations/2805" }], "attachment": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/media?parent=42721" }], "taxonomies": [{ "taxonomy": "categoria_evento", "embeddable": true, "href": "http://192.168.60.113/api/v2/taxonomies/categoria_evento?post=42721" }] }, "_embedded": { "venue": [{ "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }], "taxonomies": [{ "name": "Categorie", "slug": "categoria_evento", "rest_base": "categoria_evento", "_links": { "collection": [{ "href": "http://192.168.60.113/api/v2/taxonomies" }], "wp:items": [{ "href": "http://192.168.60.113/api/wp/v2/categoria_evento" }], "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }] } }] } }
-                            },
-                            {
-                                type: "venue",
-                                content: { "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }
-                            },
-                            {
-                                type: "artist",
-                                content: {
-                                    "id": 79331,
-                                    "date": "2017-11-23T11:19:52",
-                                    "date_gmt": "2017-11-23T11:19:52",
-                                    "guid": {
-                                        "rendered": "http://localdev.zero.eu/?post_type=artista&#038;p=79331"
-                                    },
-                                    "modified": "2017-11-23T11:19:52",
-                                    "modified_gmt": "2017-11-23T11:19:52",
-                                    "slug": "david-guetta",
-                                    "status": "publish",
-                                    "type": "artista",
-                                    "link": "http://192.168.60.113/?artista=david-guetta",
-                                    "name": {
-                                        "rendered": "David Guetta",
-                                        "plain": "David Guetta"
-                                    },
-                                    "content": {
-                                        "rendered": "",
-                                        "protected": false
-                                    },
-                                    "excerpt": {
-                                        "rendered": "",
-                                        "protected": false
-                                    },
-                                    "featured_media": 0,
-                                    "template": "",
-                                    "categoria_artista": [],
-                                    "preview_url": "https://p.scdn.co/mp3-preview/3d7ceaf99d866a8a3fdf0b66cb2763006c970650?cid=5d32859f7f30446db02e9aba0b224b89"
-                                }
-                            },
-                            {
-                                type: "article",
-                                content: {
-                                    title: 'Da quattro amici al bar all’evento numero 1 in Europa: intervista a Luigi Brusaferri, da 23 anni il boss della Milano Tattoo Convention',
-                                    category: 'intervista',
-                                    excerpt: 'INTERVISTA A UNO DEI PADRI FONDATORI DELLA MILANO TATTOO CONVENTION',
-                                    featured_image: {
-                                        "thumb": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                        "standard": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                        "large": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg"
-                                    },
-                                    link: 'https://zero.eu/persone/luigi-brusaferri/'
-                                }
-                            }
-                        ]
-                    }
-                ]));
-            }, 1000);
+            });
         });
     };
     SearchEngine.foryou = function () {
         return new Promise(function (resolve, reject) {
-            setTimeout(function () {
-                resolve(EZGenericContent.array([
-                    {
-                        type: "event",
-                        content: { "id": 42721, "name": { "rendered": "Tom Odell", "plain": "Tom Odell" }, "slug": "tom-odell-2", "content": { "raw": "", "rendered": "", "plain": "" }, "excerpt": { "raw": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "rendered": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "plain": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\"." }, "status": "publish", "regular": false, "start_date": "2017-02-15", "end_date": "2017-02-15", "start_time": "20:30", "end_time": "", "price": "\u20ac 25/22 + d.p.", "post_class": "post-42721 evento type-evento status-publish hentry sezione-musica-concerti citta-milano categoria_evento-concerti", "tour_id": 0, "venue_id": 2805, "categoria_evento": [335], "category": ["musica", "jazz"], "featured_image": { "thumb": "https://picsum.photos/200/300", "standard": "https://picsum.photos/400/600", "large": "https://picsum.photos/600/900" }, "venue_name": "nome del luogo", "venue_coords": { "lat": 45.4555558, "lng": 9.1952502 }, "_links": { "self": [{ "href": "http://192.168.60.113/api/v2/events/42721" }], "collection": [{ "href": "http://192.168.60.113/api/v2/events" }], "venue": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/locations/2805" }], "attachment": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/media?parent=42721" }], "taxonomies": [{ "taxonomy": "categoria_evento", "embeddable": true, "href": "http://192.168.60.113/api/v2/taxonomies/categoria_evento?post=42721" }] }, "_embedded": { "venue": [{ "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }], "taxonomies": [{ "name": "Categorie", "slug": "categoria_evento", "rest_base": "categoria_evento", "_links": { "collection": [{ "href": "http://192.168.60.113/api/v2/taxonomies" }], "wp:items": [{ "href": "http://192.168.60.113/api/wp/v2/categoria_evento" }], "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }] } }] } }
-                    },
-                    {
-                        type: "venue",
-                        content: { "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }
-                    },
-                    {
-                        type: "artist",
-                        content: {
-                            "id": 79331,
-                            "date": "2017-11-23T11:19:52",
-                            "date_gmt": "2017-11-23T11:19:52",
-                            "modified": "2017-11-23T11:19:52",
-                            "modified_gmt": "2017-11-23T11:19:52",
-                            "slug": "david-guetta",
-                            "status": "publish",
-                            "type": "artista",
-                            "link": "http://192.168.60.113/?artista=david-guetta",
-                            "name": {
-                                "rendered": "David Guetta",
-                                "plain": "David Guetta"
-                            },
-                            "content": {
-                                "rendered": "",
-                                "protected": false
-                            },
-                            "excerpt": {
-                                "rendered": "",
-                                "protected": false
-                            },
-                            "featured_image": {
-                                "large": "http://www.piterpan.it/p/wp-content/uploads/2017/09/14633879.jpg"
-                            },
-                            "template": "",
-                            "category": ['top artist', 'techno'],
-                            "preview_url": "https://p.scdn.co/mp3-preview/3d7ceaf99d866a8a3fdf0b66cb2763006c970650?cid=5d32859f7f30446db02e9aba0b224b89"
-                        }
-                    },
-                    {
-                        type: "article",
-                        content: {
-                            title: 'Da quattro amici al bar all’evento numero 1 in Europa: intervista a Luigi Brusaferri, da 23 anni il boss della Milano Tattoo Convention',
-                            category: 'intervista',
-                            excerpt: 'INTERVISTA A UNO DEI PADRI FONDATORI DELLA MILANO TATTOO CONVENTION',
-                            featured_image: {
-                                "thumb": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                "standard": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                "large": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg"
-                            },
-                            link: 'https://zero.eu/persone/luigi-brusaferri/'
-                        }
-                    },
-                    {
-                        type: "event",
-                        content: { "id": 42721, "name": { "rendered": "Tom Odell", "plain": "Tom Odell" }, "slug": "tom-odell-2", "content": { "raw": "", "rendered": "", "plain": "" }, "excerpt": { "raw": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "rendered": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\".", "plain": "Il cantautore britannico in concerto con brani dal nuovo album \"Wrong Crowd\"." }, "status": "publish", "regular": false, "start_date": "2017-02-15", "end_date": "2017-02-15", "start_time": "20:30", "end_time": "", "price": "\u20ac 25/22 + d.p.", "post_class": "post-42721 evento type-evento status-publish hentry sezione-musica-concerti citta-milano categoria_evento-concerti", "tour_id": 0, "venue_id": 2805, "categoria_evento": [335], "category": ["musica", "jazz"], "featured_image": { "thumb": "https://picsum.photos/200/300", "standard": "https://picsum.photos/400/600", "large": "https://picsum.photos/600/900" }, "venue_name": "nome del luogo", "venue_coords": { "lat": 45.4555558, "lng": 9.1952502 }, "_links": { "self": [{ "href": "http://192.168.60.113/api/v2/events/42721" }], "collection": [{ "href": "http://192.168.60.113/api/v2/events" }], "venue": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/locations/2805" }], "attachment": [{ "embeddable": true, "href": "http://192.168.60.113/api/v2/media?parent=42721" }], "taxonomies": [{ "taxonomy": "categoria_evento", "embeddable": true, "href": "http://192.168.60.113/api/v2/taxonomies/categoria_evento?post=42721" }] }, "_embedded": { "venue": [{ "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }], "taxonomies": [{ "name": "Categorie", "slug": "categoria_evento", "rest_base": "categoria_evento", "_links": { "collection": [{ "href": "http://192.168.60.113/api/v2/taxonomies" }], "wp:items": [{ "href": "http://192.168.60.113/api/wp/v2/categoria_evento" }], "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }] } }] } }
-                    },
-                    {
-                        type: "venue",
-                        content: { "id": 2805, "owner_id": 0, "name": { "rendered": "Alcatraz", "plain": "Alcatraz" }, "slug": "alcatraz", "phone": "+39 0269016352", "website": "http://www.alcatrazmilano.com", "country": "IT", "town": "Milano", "subdivision_1": "25", "subdivision_2": "MI", "address": "Via Valtellina", "civic_number": "25", "coordinates": { "lat": "45.49468900", "lng": "9.18265800" } }
-                    },
-                    {
-                        type: "artist",
-                        content: {
-                            "id": 79331,
-                            "date": "2017-11-23T11:19:52",
-                            "date_gmt": "2017-11-23T11:19:52",
-                            "modified": "2017-11-23T11:19:52",
-                            "modified_gmt": "2017-11-23T11:19:52",
-                            "slug": "david-guetta",
-                            "status": "publish",
-                            "type": "artista",
-                            "link": "http://192.168.60.113/?artista=david-guetta",
-                            "name": {
-                                "rendered": "David Guetta",
-                                "plain": "David Guetta"
-                            },
-                            "content": {
-                                "rendered": "",
-                                "protected": false
-                            },
-                            "excerpt": {
-                                "rendered": "",
-                                "protected": false
-                            },
-                            "featured_image": {
-                                "large": "http://www.piterpan.it/p/wp-content/uploads/2017/09/14633879.jpg"
-                            },
-                            "template": "",
-                            "category": ['top artist', 'techno'],
-                            "preview_url": "https://p.scdn.co/mp3-preview/3d7ceaf99d866a8a3fdf0b66cb2763006c970650?cid=5d32859f7f30446db02e9aba0b224b89"
-                        }
-                    },
-                    {
-                        type: "article",
-                        content: {
-                            title: 'Da quattro amici al bar all’evento numero 1 in Europa: intervista a Luigi Brusaferri, da 23 anni il boss della Milano Tattoo Convention',
-                            category: 'intervista',
-                            excerpt: 'INTERVISTA A UNO DEI PADRI FONDATORI DELLA MILANO TATTOO CONVENTION',
-                            featured_image: {
-                                "thumb": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                "standard": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg",
-                                "large": "https://zero.eu/content/uploads/2018/01/gigibrusaferri_BN-e1516970146352.jpg"
-                            },
-                            link: 'https://zero.eu/persone/luigi-brusaferri/'
-                        }
-                    }
-                ]));
-            }, 3000);
-            //todo: implement foryou;
+            ZeroPlugin.get(BASE_API_PATH + "events/hints/?format=object").then(function (res) {
+                resolve(EZGenericContent.array(res.data));
+            })["catch"](function (err) {
+                Zero.onError(EZError.fromString(err));
+                reject(EZError.fromString(err));
+            });
         });
     };
     return SearchEngine;
