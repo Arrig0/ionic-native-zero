@@ -205,7 +205,7 @@ export class EZMixin {
     readonly featured_image: EZImage;
 
     constructor(id: number, type: EZType, title: string, excerpt: string, featured_image: EZImage) {
-        if(id && type && title && excerpt && featured_image) {
+        if(id && type && title) {
             this.id = id;
             this.type = type;
             this.title = title;
@@ -1453,7 +1453,7 @@ export class SearchEngine {
     public static search(q: string, f: EZType[] = [EZType.Artist, EZType.Venue, EZType.Event]): Promise<EZMixin[]> {
         return new Promise<EZMixin[]>((resolve, reject) => {
             let c = f.join("|");
-            let s = q.replace(" ", "+").replace("/", "").replace("\\", "");
+            let s = encodeURIComponent(q.replace("/", "").replace("\\", "")).replace("%20", "+");
             ZeroPlugin.get(BASE_API_PATH+"search/"+s+"/?types="+c+"&format=object").then((res) => {
                 resolve(EZMixin.array(res.data))
             }).catch((err) => {

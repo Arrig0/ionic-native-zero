@@ -202,7 +202,7 @@ var EZType;
 })(EZType = exports.EZType || (exports.EZType = {}));
 var EZMixin = /** @class */ (function () {
     function EZMixin(id, type, title, excerpt, featured_image) {
-        if (id && type && title && excerpt && featured_image) {
+        if (id && type && title) {
             this.id = id;
             this.type = type;
             this.title = title;
@@ -1343,7 +1343,7 @@ var SearchEngine = /** @class */ (function () {
         if (f === void 0) { f = [EZType.Artist, EZType.Venue, EZType.Event]; }
         return new Promise(function (resolve, reject) {
             var c = f.join("|");
-            var s = q.replace(" ", "+").replace("/", "").replace("\\", "");
+            var s = encodeURIComponent(q.replace("/", "").replace("\\", "")).replace("%20", "+");
             ZeroPlugin.get(BASE_API_PATH + "search/" + s + "/?types=" + c + "&format=object").then(function (res) {
                 resolve(EZMixin.array(res.data));
             })["catch"](function (err) {
