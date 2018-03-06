@@ -1443,7 +1443,9 @@ export class SearchEngine {
         return new Promise<EZMixin[]>((resolve, reject) => {
             ZeroPlugin.recentResearch().then((res) => {
                 console.log(res);
-                resolve(EZMixin.array(res.map(el => { return JSON.parse(el.replace(/\\"/g, "'")); })));
+                resolve(EZMixin.array(res).filter((el) => {
+                    return el != null && el != {};
+                }));
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
