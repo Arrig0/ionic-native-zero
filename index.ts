@@ -1443,7 +1443,7 @@ export class SearchEngine {
         return new Promise<EZMixin[]>((resolve, reject) => {
             ZeroPlugin.recentResearch().then((res) => {
                 console.log(res);
-                resolve(EZMixin.array(res).filter((el) => {
+                resolve(EZMixin.array(JSON.parse(res)).filter((el) => {
                     return el != null && el != {};
                 }));
             }).catch((err) => {

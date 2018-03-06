@@ -1333,7 +1333,7 @@ var SearchEngine = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.recentResearch().then(function (res) {
                 console.log(res);
-                resolve(EZMixin.array(res).filter(function (el) {
+                resolve(EZMixin.array(JSON.parse(res)).filter(function (el) {
                     return el != null && el != {};
                 }));
             })["catch"](function (err) {
