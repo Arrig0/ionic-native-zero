@@ -1332,6 +1332,7 @@ var SearchEngine = /** @class */ (function () {
     SearchEngine.recent = function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.recentResearch().then(function (res) {
+                console.log(JSON.stringify(res));
                 resolve(EZMixin.array(res.map(function (el) { return JSON.parse(el); })));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
