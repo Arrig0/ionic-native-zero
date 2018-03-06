@@ -1444,7 +1444,7 @@ export class SearchEngine {
             ZeroPlugin.recentResearch().then((res) => {
                 console.log(res);
                 resolve(EZMixin.array(res.map(el => {
-                    JSON.parse(el);
+                    return JSON.parse(el);
                 })).filter((el) => {
                     return el != null && el != {};
                 }));
