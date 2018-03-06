@@ -1453,7 +1453,7 @@ export class SearchEngine {
     public static search(q: string, f: EZType[] = [EZType.Artist, EZType.Venue, EZType.Event]): Promise<EZMixin[]> {
         return new Promise<EZMixin[]>((resolve, reject) => {
             let c = f.join("|");
-            let s = encodeURIComponent(q);
+            let s = q.replace(" ", "+").replace("/", "").replace("\\", "");
             ZeroPlugin.get(BASE_API_PATH+"search/"+s+"/?types="+c+"&format=object").then((res) => {
                 resolve(EZMixin.array(res.data))
             }).catch((err) => {

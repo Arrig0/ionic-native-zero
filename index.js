@@ -1343,7 +1343,7 @@ var SearchEngine = /** @class */ (function () {
         if (f === void 0) { f = [EZType.Artist, EZType.Venue, EZType.Event]; }
         return new Promise(function (resolve, reject) {
             var c = f.join("|");
-            var s = encodeURIComponent(q);
+            var s = q.replace(" ", "+").replace("/", "").replace("\\", "");
             ZeroPlugin.get(BASE_API_PATH + "search/" + s + "/?types=" + c + "&format=object").then(function (res) {
                 resolve(EZMixin.array(res.data));
             })["catch"](function (err) {
