@@ -224,8 +224,8 @@ export class EZMixin {
 
         let id = json.id;
         let type = EZMixin.parseType(json.type);
-        let title = json.title ? json.title.plain : null;
-        let excerpt = json.excerpt ? json.excerpt.plain : null;
+        let title = json.title ? (typeof json.title == "string" ? json.title : json.title.plain) : null;
+        let excerpt = json.excerpt ? (typeof json.excerpt == "string" ? json.excerpt : json.excerpt.plain) : null;
         let image = EZImage.json(json.featured_image);
 
         return new EZMixin(id, type, title, excerpt, image);
