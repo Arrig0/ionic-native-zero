@@ -220,8 +220,8 @@ var EZMixin = /** @class */ (function () {
             return null;
         var id = json.id;
         var type = EZMixin.parseType(json.type);
-        var title = json.title ? (typeof json.title == "string" ? json.title : json.title.plain) : null;
-        var excerpt = json.excerpt ? (typeof json.excerpt == "string" ? json.excerpt : json.excerpt.plain) : null;
+        var title = json.title ? (json.title.plain ? json.title.plain : json.title) : null;
+        var excerpt = json.excerpt ? (json.excerpt.plain ? json.excerpt.plain : json.excerpt) : null;
         var image = EZImage.json(json.featured_image);
         return new EZMixin(id, type, title, excerpt, image);
     };
@@ -242,7 +242,7 @@ var EZMixin = /** @class */ (function () {
                 return EZType.Event;
             case "venue":
                 return EZType.Venue;
-            case " ":
+            case "artist":
                 return EZType.Artist;
             default:
                 return EZType.Article;
