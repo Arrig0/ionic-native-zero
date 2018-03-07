@@ -121,6 +121,7 @@ var EZError = /** @class */ (function (_super) {
     }
     EZError.fromString = function (reason, separator) {
         if (separator === void 0) { separator = ':'; }
+        console.log("ezerror:::" + JSON.stringify(reason));
         if (!reason || !(typeof reason == 'string'))
             return new EZError(500, "Generic Error");
         var err = reason.split(separator);

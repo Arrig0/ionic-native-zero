@@ -115,6 +115,7 @@ export class EZError extends Error {
     }
 
     public static fromString(reason: string, separator: string = ':'): EZError {
+        console.log("ezerror:::"+JSON.stringify(reason))
         if(!reason || !(typeof reason == 'string')) return new EZError(500, "Generic Error");
         let err = reason.split(separator);
         if(err.length == 2){
