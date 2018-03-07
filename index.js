@@ -214,6 +214,8 @@ var EZMixin = /** @class */ (function () {
         }
     }
     EZMixin.json = function (json) {
+        console.log("STRINGIFY::::" + JSON.stringify(json));
+        console.log("NO_STRINGIFY::::" + json);
         if (!json)
             return null;
         var id = json.id;
@@ -1334,7 +1336,7 @@ var SearchEngine = /** @class */ (function () {
             ZeroPlugin.recentResearch().then(function (res) {
                 console.log(res);
                 resolve(EZMixin.array(res.map(function (el) {
-                    JSON.parse(el);
+                    return JSON.parse(el);
                 })).filter(function (el) {
                     return el != null && el != {};
                 }));

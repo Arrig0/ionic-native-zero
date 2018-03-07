@@ -217,7 +217,8 @@ export class EZMixin {
     }
 
     static json( json: any ): EZMixin | null {
-
+        console.log("STRINGIFY::::"+JSON.stringify(json));
+        console.log("NO_STRINGIFY::::"+json);
         if(!json)
             return null;
 
