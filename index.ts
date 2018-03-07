@@ -1472,7 +1472,7 @@ export class SearchEngine {
 
     public static branded(): Promise<EZBrand[]> {
         return new Promise<EZBrand[]>((resolve, reject) => {
-            ZeroPlugin.get(BASE_API_PATH+"sponsored/?target=app&format=object").then((res) => {
+            ZeroPlugin.get(BASE_API_PATH+"app/sponsored/?target=app&format=object").then((res) => {
                 resolve(EZBrand.array(res.data))
             }).catch((err) => {
                 Zero.onError(EZError.fromString(err));

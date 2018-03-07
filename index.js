@@ -1362,7 +1362,7 @@ var SearchEngine = /** @class */ (function () {
     };
     SearchEngine.branded = function () {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.get(BASE_API_PATH + "sponsored/?target=app&format=object").then(function (res) {
+            ZeroPlugin.get(BASE_API_PATH + "app/sponsored/?target=app&format=object").then(function (res) {
                 resolve(EZBrand.array(res.data));
             })["catch"](function (err) {
                 Zero.onError(EZError.fromString(err));
