@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var media_1 = require("@ionic-native/media");
 var isArray_1 = require("rxjs/util/isArray");
 var API_KEY = 'Amichetti_come_Kim_Jong-un';
@@ -112,7 +112,7 @@ export interface Artist extends ZeroEntity {
     image: string;
     topTrack: Track;
 }*/
-var EZError = /** @class */ (function (_super) {
+var EZError = (function (_super) {
     __extends(EZError, _super);
     function EZError(code, message) {
         var _this = _super.call(this, message) || this;
@@ -147,7 +147,7 @@ var EZError = /** @class */ (function (_super) {
     return EZError;
 }(Error));
 exports.EZError = EZError;
-var EZUser = /** @class */ (function () {
+var EZUser = (function () {
     function EZUser(id, first_name, last_name, email, profile_image, enable_push_notifications, enable_email_notifications, enable_newsletter, is_connected_to_facebook) {
         if (enable_push_notifications === void 0) { enable_push_notifications = false; }
         if (enable_email_notifications === void 0) { enable_email_notifications = false; }
@@ -188,7 +188,7 @@ var EZUser = /** @class */ (function () {
             enable_push_notifications: this.enable_push_notifications,
             enable_email_notifications: this.enable_email_notifications,
             enable_newsletter: this.enable_newsletter,
-            is_connected_to_facebook: this.is_connected_to_facebook
+            is_connected_to_facebook: this.is_connected_to_facebook,
         };
     };
     return EZUser;
@@ -201,7 +201,7 @@ var EZType;
     EZType["Artist"] = "artist";
     EZType["Article"] = "article";
 })(EZType = exports.EZType || (exports.EZType = {}));
-var EZMixin = /** @class */ (function () {
+var EZMixin = (function () {
     function EZMixin(id, type, title, excerpt, featured_image) {
         if (id && type && title) {
             this.id = id;
@@ -262,7 +262,7 @@ var EZMixin = /** @class */ (function () {
     return EZMixin;
 }());
 exports.EZMixin = EZMixin;
-var EZDate = /** @class */ (function () {
+var EZDate = (function () {
     function EZDate(date) {
         this.date = date;
     }
@@ -287,7 +287,7 @@ var EZDate = /** @class */ (function () {
     return EZDate;
 }());
 exports.EZDate = EZDate;
-var EZDay = /** @class */ (function () {
+var EZDay = (function () {
     function EZDay(date, events) {
         this.date = date;
         this.events = events;
@@ -312,7 +312,7 @@ var EZDay = /** @class */ (function () {
     return EZDay;
 }());
 exports.EZDay = EZDay;
-var EZEvent = /** @class */ (function () {
+var EZEvent = (function () {
     function EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists) {
         if (category === void 0) { category = []; }
         if (gallery === void 0) { gallery = []; }
@@ -370,7 +370,7 @@ var EZEvent = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'events/' + _this.id + "/related?format=object").then(function (data) {
                 resolve(EZEvent.array(data.data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -381,7 +381,7 @@ var EZEvent = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'events/' + _this.id).then(function (json) {
                 resolve(EZEvent.json(json));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -396,7 +396,7 @@ var EZEvent = /** @class */ (function () {
                     currency: json.currency,
                     rates: EZRate.array(json.rates)
                 });
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -440,7 +440,7 @@ var EZEvent = /** @class */ (function () {
                                     else {
                                         reject(new EZError(500, "Il pagamento non è andato a buon fine."));
                                     }
-                                })["catch"](function (err) {
+                                }).catch(function (err) {
                                     reject(new EZError(500, "Il pagamento non è andato a buon fine."));
                                 });
                             }
@@ -450,7 +450,7 @@ var EZEvent = /** @class */ (function () {
                 else {
                     reject(new EZError(500, "Impossibile ottenere un token per il pagamento."));
                 }
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 reject(new EZError(500, "Impossibile ottenere un token per il pagamento."));
             });
         });
@@ -458,7 +458,7 @@ var EZEvent = /** @class */ (function () {
     return EZEvent;
 }());
 exports.EZEvent = EZEvent;
-var EZVenue = /** @class */ (function () {
+var EZVenue = (function () {
     function EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel) {
         if (gallery === void 0) { gallery = []; }
         if (category === void 0) { category = []; }
@@ -517,7 +517,7 @@ var EZVenue = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'locations/' + _this.id + "/related?format=object").then(function (data) {
                 resolve(EZVenue.array(data.data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -528,7 +528,7 @@ var EZVenue = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'locations/' + _this.id + "/calendar?format=object").then(function (data) {
                 resolve(EZEvent.array(data.data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -539,7 +539,7 @@ var EZVenue = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'locations/' + _this.id).then(function (json) {
                 resolve(EZVenue.json(json));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -548,7 +548,7 @@ var EZVenue = /** @class */ (function () {
     return EZVenue;
 }());
 exports.EZVenue = EZVenue;
-var EZImage = /** @class */ (function () {
+var EZImage = (function () {
     function EZImage(thumb, standard, large) {
         if (thumb || standard || large) {
             this.thumb = thumb;
@@ -616,7 +616,7 @@ var EZImage = /** @class */ (function () {
     return EZImage;
 }());
 exports.EZImage = EZImage;
-var EZArtist = /** @class */ (function () {
+var EZArtist = (function () {
     function EZArtist(id, name, featured_image, gallery, preview, category, excerpt) {
         if (gallery === void 0) { gallery = []; }
         if (category === void 0) { category = []; }
@@ -656,7 +656,7 @@ var EZArtist = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'artists/' + _this.id + "/calendar?format=object").then(function (data) {
                 resolve(EZEvent.array(data.data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -667,7 +667,7 @@ var EZArtist = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + 'artists/' + _this.id).then(function (json) {
                 resolve(EZArtist.json(json));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -676,7 +676,7 @@ var EZArtist = /** @class */ (function () {
     return EZArtist;
 }());
 exports.EZArtist = EZArtist;
-var EZTicket = /** @class */ (function () {
+var EZTicket = (function () {
     function EZTicket(id, event, price, validFrom, validTo, code) {
         if (!id || !event || !price || !code)
             return null;
@@ -704,7 +704,7 @@ var EZTicket = /** @class */ (function () {
     return EZTicket;
 }());
 exports.EZTicket = EZTicket;
-var EZSoundTrack = /** @class */ (function () {
+var EZSoundTrack = (function () {
     function EZSoundTrack(url) {
         this.isPlaying = false;
         this.media = null;
@@ -755,7 +755,7 @@ var EZSoundTrack = /** @class */ (function () {
     return EZSoundTrack;
 }());
 exports.EZSoundTrack = EZSoundTrack;
-var EZPrice = /** @class */ (function () {
+var EZPrice = (function () {
     function EZPrice(display, price, charges, presale) {
         this.display = display;
         this.price = price;
@@ -795,7 +795,7 @@ var EZPrice = /** @class */ (function () {
     return EZPrice;
 }());
 exports.EZPrice = EZPrice;
-var EZRate = /** @class */ (function () {
+var EZRate = (function () {
     function EZRate(id, name, description, price) {
         if (id && name && price) {
             this.id = id;
@@ -832,7 +832,7 @@ var EZRate = /** @class */ (function () {
     return EZRate;
 }());
 exports.EZRate = EZRate;
-var EZTable = /** @class */ (function () {
+var EZTable = (function () {
     function EZTable(dict) {
         this.dict = dict;
     }
@@ -855,7 +855,7 @@ var EZTable = /** @class */ (function () {
     return EZTable;
 }());
 exports.EZTable = EZTable;
-var EZBrand = /** @class */ (function () {
+var EZBrand = (function () {
     function EZBrand(id, name, title, description, logo, link, background, textPrimaryColor, textContrastColor, content) {
         if (background === void 0) { background = "#ffffff"; }
         if (textPrimaryColor === void 0) { textPrimaryColor = "#000000"; }
@@ -901,7 +901,7 @@ var EZBrand = /** @class */ (function () {
     return EZBrand;
 }());
 exports.EZBrand = EZBrand;
-var EZGenericContent = /** @class */ (function () {
+var EZGenericContent = (function () {
     function EZGenericContent(type, content) {
         if (type == null || content == null)
             return null;
@@ -943,7 +943,7 @@ var EZGenericContent = /** @class */ (function () {
     return EZGenericContent;
 }());
 exports.EZGenericContent = EZGenericContent;
-var EZBrandedContent = /** @class */ (function (_super) {
+var EZBrandedContent = (function (_super) {
     __extends(EZBrandedContent, _super);
     function EZBrandedContent() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -951,7 +951,7 @@ var EZBrandedContent = /** @class */ (function (_super) {
     return EZBrandedContent;
 }(EZGenericContent));
 exports.EZBrandedContent = EZBrandedContent;
-var EZArticle = /** @class */ (function () {
+var EZArticle = (function () {
     function EZArticle(title, category, excerpt, link, featured_image) {
         if (title != null && link != null && featured_image != null) {
             this.title = title;
@@ -975,7 +975,7 @@ var EZArticle = /** @class */ (function () {
     return EZArticle;
 }());
 exports.EZArticle = EZArticle;
-var EZTrigger = /** @class */ (function () {
+var EZTrigger = (function () {
     function EZTrigger(id, action) {
         this.id = id;
         this.trigger = action;
@@ -983,7 +983,7 @@ var EZTrigger = /** @class */ (function () {
     return EZTrigger;
 }());
 exports.EZTrigger = EZTrigger;
-var EventManager = /** @class */ (function () {
+var EventManager = (function () {
     function EventManager(perPage, city, date, coords, category) {
         if (perPage === void 0) { perPage = 1; }
         if (city === void 0) { city = "null"; }
@@ -1006,7 +1006,7 @@ var EventManager = /** @class */ (function () {
             ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&_embed=1&page=" + _this.page + "&days=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
                 resolve(EZDay.array(data.days));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1020,7 +1020,7 @@ var EventManager = /** @class */ (function () {
             ZeroPlugin.get(BASE_API_PATH + "events/" + id + "?_embed=1")
                 .then(function (data) {
                 resolve(EZEvent.json(data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1029,7 +1029,7 @@ var EventManager = /** @class */ (function () {
     return EventManager;
 }());
 exports.EventManager = EventManager;
-var VenueManager = /** @class */ (function () {
+var VenueManager = (function () {
     function VenueManager(perPage, city, date, coords, category) {
         if (perPage === void 0) { perPage = 30; }
         if (city === void 0) { city = "null"; }
@@ -1052,7 +1052,7 @@ var VenueManager = /** @class */ (function () {
             ZeroPlugin.get(BASE_API_PATH + "locations?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
                 resolve(EZVenue.array(data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1066,7 +1066,7 @@ var VenueManager = /** @class */ (function () {
             ZeroPlugin.get(BASE_API_PATH + "locations/" + id + "?_embed=1")
                 .then(function (data) {
                 resolve(EZVenue.json(data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1075,7 +1075,7 @@ var VenueManager = /** @class */ (function () {
     return VenueManager;
 }());
 exports.VenueManager = VenueManager;
-var ArtistManager = /** @class */ (function () {
+var ArtistManager = (function () {
     function ArtistManager(perPage, category) {
         if (perPage === void 0) { perPage = 30; }
         this.page = 0;
@@ -1090,7 +1090,7 @@ var ArtistManager = /** @class */ (function () {
             ZeroPlugin.get(BASE_API_PATH + "artists?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&order=asc" + categories)
                 .then(function (data) {
                 resolve(EZArtist.array(data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1104,7 +1104,7 @@ var ArtistManager = /** @class */ (function () {
             ZeroPlugin.get(BASE_API_PATH + "artists/" + id + "&_embed=1")
                 .then(function (data) {
                 resolve(EZArtist.json(data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1113,7 +1113,7 @@ var ArtistManager = /** @class */ (function () {
     return ArtistManager;
 }());
 exports.ArtistManager = ArtistManager;
-var AccountManager = /** @class */ (function () {
+var AccountManager = (function () {
     function AccountManager(user) {
         this.user = user;
     }
@@ -1132,7 +1132,7 @@ var AccountManager = /** @class */ (function () {
                     else {
                         reject(new EZError(500, "Not users found."));
                     }
-                })["catch"](function (err) {
+                }).catch(function (err) {
                     Zero.onError(EZError.fromString(err));
                     reject(EZError.fromString(err));
                 });
@@ -1146,7 +1146,7 @@ var AccountManager = /** @class */ (function () {
                     AccountManager.current().then(function (am) {
                         Zero.onLogin(am);
                         resolve(am);
-                    })["catch"](function (err) {
+                    }).catch(function (err) {
                         Zero.onError(EZError.fromString(err));
                         reject(EZError.fromString(err));
                     });
@@ -1154,7 +1154,7 @@ var AccountManager = /** @class */ (function () {
                 else {
                     reject(new EZError(401, "Login Failed."));
                 }
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1162,7 +1162,7 @@ var AccountManager = /** @class */ (function () {
     };
     AccountManager.signup = function (first_name, last_name, email) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.signup(first_name, last_name, email).then(resolve)["catch"](function (err) {
+            ZeroPlugin.signup(first_name, last_name, email).then(resolve).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1170,7 +1170,7 @@ var AccountManager = /** @class */ (function () {
     };
     AccountManager.setPassword = function (key, login, password) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.setPassword(key, login, password).then(resolve)["catch"](function (err) {
+            ZeroPlugin.setPassword(key, login, password).then(resolve).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1186,7 +1186,7 @@ var AccountManager = /** @class */ (function () {
     AccountManager.prototype.commit = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.updateUser(_this.user.prepare()).then(resolve)["catch"](function (err) {
+            ZeroPlugin.updateUser(_this.user.prepare()).then(resolve).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1194,7 +1194,7 @@ var AccountManager = /** @class */ (function () {
     };
     AccountManager.prototype.isLogged = function () {
         return new Promise(function (resolve, reject) {
-            return ZeroPlugin.checkLogin().then(resolve)["catch"](function (err) {
+            return ZeroPlugin.checkLogin().then(resolve).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1209,7 +1209,7 @@ var AccountManager = /** @class */ (function () {
                     reject(new EZError(500, "Unexpected Response."));
                 that.user.profile_image = img;
                 resolve(img);
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1221,7 +1221,7 @@ var AccountManager = /** @class */ (function () {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook', { token: token }).then(function (data) {
                 that.user.is_connected_to_facebook = true;
                 resolve();
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1233,7 +1233,7 @@ var AccountManager = /** @class */ (function () {
             ZeroPlugin.post(BASE_API_PATH + 'users/me/facebook?_method=DELETE', {}).then(function (data) {
                 that.user.is_connected_to_facebook = false;
                 resolve();
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1247,7 +1247,7 @@ var AccountManager = /** @class */ (function () {
                 that.user = null;
                 TriggerManager.current().performLogout();
                 resolve();
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(err);
                 reject(err);
             });
@@ -1256,7 +1256,7 @@ var AccountManager = /** @class */ (function () {
     return AccountManager;
 }());
 exports.AccountManager = AccountManager;
-var TriggerManager = /** @class */ (function () {
+var TriggerManager = (function () {
     function TriggerManager() {
         this.errorTrigger = [];
         this.loginTrigger = [];
@@ -1311,14 +1311,14 @@ var TriggerManager = /** @class */ (function () {
     return TriggerManager;
 }());
 exports.TriggerManager = TriggerManager;
-var TicketManager = /** @class */ (function () {
+var TicketManager = (function () {
     function TicketManager() {
     }
     TicketManager.prototype.all = function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + "users/me/tickets/").then(function (data) {
                 resolve(EZTicket.array(data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1328,14 +1328,14 @@ var TicketManager = /** @class */ (function () {
     return TicketManager;
 }());
 exports.TicketManager = TicketManager;
-var SearchEngine = /** @class */ (function () {
+var SearchEngine = (function () {
     function SearchEngine() {
     }
     SearchEngine.save = function (search) {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.saveRecentResearch(search).then(function () {
                 resolve();
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1350,7 +1350,7 @@ var SearchEngine = /** @class */ (function () {
                 })).filter(function (el) {
                     return el != null && el != {};
                 }));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1363,7 +1363,7 @@ var SearchEngine = /** @class */ (function () {
             var s = encodeURIComponent(q.replace("/", "").replace("\\", "")).replace("%20", "+");
             ZeroPlugin.get(BASE_API_PATH + "search/" + s + "/?types=" + c + "&format=object").then(function (res) {
                 resolve(EZMixin.array(res.data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1373,7 +1373,7 @@ var SearchEngine = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + "app/sponsored/?target=app&format=object").then(function (res) {
                 resolve(EZBrand.array(res.data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1383,7 +1383,7 @@ var SearchEngine = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + "events/hints/?format=object").then(function (res) {
                 resolve(EZGenericContent.array(res.data));
-            })["catch"](function (err) {
+            }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1392,7 +1392,7 @@ var SearchEngine = /** @class */ (function () {
     return SearchEngine;
 }());
 exports.SearchEngine = SearchEngine;
-var EZCity = /** @class */ (function () {
+var EZCity = (function () {
     function EZCity(name, slug, center, filters) {
         this.name = name;
         this.slug = slug;
@@ -1418,7 +1418,7 @@ var EZCity = /** @class */ (function () {
     return EZCity;
 }());
 exports.EZCity = EZCity;
-var EZFilter = /** @class */ (function () {
+var EZFilter = (function () {
     function EZFilter(filter, slug, selected) {
         if (selected === void 0) { selected = false; }
         this.selected = false;
@@ -1445,7 +1445,7 @@ var EZFilter = /** @class */ (function () {
     return EZFilter;
 }());
 exports.EZFilter = EZFilter;
-var EZConfiguration = /** @class */ (function () {
+var EZConfiguration = (function () {
     function EZConfiguration(mantenanceMode, needsUpdate, cities) {
         if (mantenanceMode === void 0) { mantenanceMode = false; }
         if (needsUpdate === void 0) { needsUpdate = false; }
@@ -1520,7 +1520,7 @@ export class Track {
     }
 }
 */
-var Zero = /** @class */ (function () {
+var Zero = (function () {
     function Zero() {
     }
     //TRIGGER
@@ -1550,7 +1550,7 @@ var Zero = /** @class */ (function () {
                     }
                 };
                 xhr.send();
-            })["catch"](reject);
+            }).catch(reject);
         });
     };
     Zero.registerLoginAction = function (action) {
@@ -1573,7 +1573,7 @@ var Zero = /** @class */ (function () {
     };
     Zero.openSupportTicket = function (subject, message) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.post(BASE_API_PATH + "support/issue", { subject: subject, message: message }).then(resolve)["catch"](function (err) {
+            ZeroPlugin.post(BASE_API_PATH + "support/issue", { subject: subject, message: message }).then(resolve).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
