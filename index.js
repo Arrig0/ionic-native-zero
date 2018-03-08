@@ -1101,7 +1101,7 @@ var ArtistManager = (function () {
     };
     ArtistManager.get = function (id) {
         return new Promise(function (resolve, reject) {
-            ZeroPlugin.get(BASE_API_PATH + "artists/" + id + "&_embed=1")
+            ZeroPlugin.get(BASE_API_PATH + "artists/" + id + "?_embed=1")
                 .then(function (data) {
                     resolve(EZArtist.json(data));
                 }).catch(function (err) {
