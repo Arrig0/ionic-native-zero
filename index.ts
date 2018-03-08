@@ -1186,7 +1186,7 @@ export class ArtistManager {
 
     static get(id: number): Promise<EZArtist> {
         return new Promise<EZArtist>((resolve, reject) =>{
-            ZeroPlugin.get(BASE_API_PATH + "artists/"+id+"&_embed=1")
+            ZeroPlugin.get(BASE_API_PATH + "artists/"+id+"?_embed=1")
             .then((data)=>{
                 resolve(EZArtist.json(data));
             }).catch((err) => {
