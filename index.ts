@@ -365,8 +365,6 @@ export class EZEvent {
         let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
         let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({id: jsonEvent.venue_id, name: { plain: jsonEvent.venue_name }, coordinates: jsonEvent.venue_coords}) : null);
 
-        console.log("EZEVENT:::::ID:"+id+":::NAME:"+name+":::START_DATE:"+startDate+":::VENUE:"+JSON.stringify(venue));
-
         if( !id || !name || !startDate || !venue ) return null;
 
         return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists);
@@ -936,7 +934,6 @@ export class EZBrand {
     }
 
     static json(j: any): EZBrand {
-        console.log("JSON_BRAND:::"+JSON.stringify(j));
         let id = j.id;
         let name = j.name;
         let title = j.title;
@@ -974,7 +971,6 @@ export class EZGenericContent {
     }
 
     static json(j: any): EZGenericContent {
-        console.log("JSON_GENERIC_CONTENT::::"+JSON.stringify(j));
         let type = EZMixin.parseType(j.type);
         let ret = null;
         switch(type) {
@@ -1000,7 +996,6 @@ export class EZGenericContent {
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
             let mix = EZGenericContent.json(arr[i]);
-            console.log("GENERIC_CONTENT_RESULT:::["+arr[i].type+"]"+JSON.stringify(mix));
             if(mix && mix != {}) ret.push(mix);
         }
         return ret;
