@@ -362,7 +362,7 @@ export class EZEvent {
         let category = jsonEvent.category && isArray(jsonEvent.category) ? jsonEvent.category : [];
         let featured_image = jsonEvent.featured_image ? EZImage.json(jsonEvent.featured_image) : null;
         let gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
-        let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
+        let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent._embedded.artists) : [];
         let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({id: jsonEvent.venue_id, name: { plain: jsonEvent.venue_name }, coordinates: jsonEvent.venue_coords}) : null);
 
         if( !id || !name || !startDate || !venue ) return null;
