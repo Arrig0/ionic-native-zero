@@ -945,6 +945,7 @@ export class EZBrand {
         let link = j.link;
         let content = EZBrandedContent.array(j.contents);
         if(id != null && title != null && logo != null) return new EZBrand(id, name, title, descr, logo, link, background, primary, contrast, content);
+        return null;
     }
 
     static array(arr: any[]): EZBrand[] {
@@ -952,7 +953,7 @@ export class EZBrand {
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
             let mix = EZBrand.json(arr[i]);
-            if(mix) ret.push(mix);
+            if(mix && mix != {}) ret.push(mix);
         }
         return ret;
     }
@@ -988,7 +989,7 @@ export class EZGenericContent {
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
             let mix = EZGenericContent.json(arr[i]);
-            if(mix) ret.push(mix);
+            if(mix && mix != {}) ret.push(mix);
         }
         return ret;
     }

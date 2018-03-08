@@ -885,6 +885,7 @@ var EZBrand = /** @class */ (function () {
         var content = EZBrandedContent.array(j.contents);
         if (id != null && title != null && logo != null)
             return new EZBrand(id, name, title, descr, logo, link, background, primary, contrast, content);
+        return null;
     };
     EZBrand.array = function (arr) {
         var ret = [];
@@ -892,7 +893,7 @@ var EZBrand = /** @class */ (function () {
             return ret;
         for (var i = 0; i < arr.length; i++) {
             var mix = EZBrand.json(arr[i]);
-            if (mix)
+            if (mix && mix != {})
                 ret.push(mix);
         }
         return ret;
@@ -926,7 +927,7 @@ var EZGenericContent = /** @class */ (function () {
             return ret;
         for (var i = 0; i < arr.length; i++) {
             var mix = EZGenericContent.json(arr[i]);
-            if (mix)
+            if (mix && mix != {})
                 ret.push(mix);
         }
         return ret;
