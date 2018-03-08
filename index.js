@@ -343,7 +343,7 @@ var EZEvent = (function () {
         var category = jsonEvent.category && isArray_1.isArray(jsonEvent.category) ? jsonEvent.category : [];
         var featured_image = jsonEvent.featured_image ? EZImage.json(jsonEvent.featured_image) : null;
         var gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
-        var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent.artists) : [];
+        var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent._embedded.artists) : [];
         var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({ id: jsonEvent.venue_id, name: { plain: jsonEvent.venue_name }, coordinates: jsonEvent.venue_coords }) : null);
         if (!id || !name || !startDate || !venue)
             return null;
@@ -1005,8 +1005,8 @@ var EventManager = (function () {
             _this.page++;
             ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&_embed=1&page=" + _this.page + "&days=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
-                resolve(EZDay.array(data.days));
-            }).catch(function (err) {
+                    resolve(EZDay.array(data.days));
+                }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1019,8 +1019,8 @@ var EventManager = (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + "events/" + id + "?_embed=1")
                 .then(function (data) {
-                resolve(EZEvent.json(data));
-            }).catch(function (err) {
+                    resolve(EZEvent.json(data));
+                }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1051,8 +1051,8 @@ var VenueManager = (function () {
             _this.page++;
             ZeroPlugin.get(BASE_API_PATH + "locations?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
-                resolve(EZVenue.array(data));
-            }).catch(function (err) {
+                    resolve(EZVenue.array(data));
+                }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1065,8 +1065,8 @@ var VenueManager = (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + "locations/" + id + "?_embed=1")
                 .then(function (data) {
-                resolve(EZVenue.json(data));
-            }).catch(function (err) {
+                    resolve(EZVenue.json(data));
+                }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1089,8 +1089,8 @@ var ArtistManager = (function () {
             _this.page++;
             ZeroPlugin.get(BASE_API_PATH + "artists?context=view&page=" + _this.page + "&per_page=" + _this.perPage + "&order=asc" + categories)
                 .then(function (data) {
-                resolve(EZArtist.array(data));
-            }).catch(function (err) {
+                    resolve(EZArtist.array(data));
+                }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
@@ -1103,8 +1103,8 @@ var ArtistManager = (function () {
         return new Promise(function (resolve, reject) {
             ZeroPlugin.get(BASE_API_PATH + "artists/" + id + "&_embed=1")
                 .then(function (data) {
-                resolve(EZArtist.json(data));
-            }).catch(function (err) {
+                    resolve(EZArtist.json(data));
+                }).catch(function (err) {
                 Zero.onError(EZError.fromString(err));
                 reject(EZError.fromString(err));
             });
