@@ -873,6 +873,7 @@ var EZBrand = /** @class */ (function () {
         this.content = content;
     }
     EZBrand.json = function (j) {
+        console.log("JSON_BRAND:::" + JSON.stringify(j));
         var id = j.id;
         var name = j.name;
         var title = j.title;
@@ -909,6 +910,7 @@ var EZGenericContent = /** @class */ (function () {
         this.type = type;
     }
     EZGenericContent.json = function (j) {
+        console.log("JSON_GENERIC_CONTENT::::" + JSON.stringify(j));
         var type = EZMixin.parseType(j.type);
         switch (type) {
             case EZType.Event:

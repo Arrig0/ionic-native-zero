@@ -934,6 +934,7 @@ export class EZBrand {
     }
 
     static json(j: any): EZBrand {
+        console.log("JSON_BRAND:::"+JSON.stringify(j));
         let id = j.id;
         let name = j.name;
         let title = j.title;
@@ -971,6 +972,7 @@ export class EZGenericContent {
     }
 
     static json(j: any): EZGenericContent {
+        console.log("JSON_GENERIC_CONTENT::::"+JSON.stringify(j));
         let type = EZMixin.parseType(j.type);
         switch(type) {
             case EZType.Event:
