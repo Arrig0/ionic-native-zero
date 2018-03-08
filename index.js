@@ -929,6 +929,7 @@ var EZGenericContent = /** @class */ (function () {
             return ret;
         for (var i = 0; i < arr.length; i++) {
             var mix = EZGenericContent.json(arr[i]);
+            console.log("GENERIC_CONTENT_RESULT:::" + JSON.stringify(mix));
             if (mix && mix != {})
                 ret.push(mix);
         }
