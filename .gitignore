@@ -3,7 +3,6 @@
 *.log
 *.tmp
 *.tmp.*
-*.ts
 log.txt
 *.sublime-project
 *.sublime-workspace
@@ -27,6 +26,8 @@ plugins/ios.json
 www/
 $RECYCLE.BIN/
 
+index.js
+index.js.map
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
