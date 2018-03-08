@@ -991,7 +991,7 @@ export class EZGenericContent {
         if(!isArray(arr) || arr.length == 0) return ret;
         for(let i = 0; i < arr.length; i++) {
             let mix = EZGenericContent.json(arr[i]);
-            console.log("GENERIC_CONTENT_RESULT:::"+JSON.stringify(mix));
+            console.log("GENERIC_CONTENT_RESULT:::["+arr[i].type+"]"+JSON.stringify(mix));
             if(mix && mix != {}) ret.push(mix);
         }
         return ret;
