@@ -1056,7 +1056,7 @@ export class EZTrigger<T> {
 }
 
 export class EventManager {
-    private page: number;
+    public page: number;
     readonly perPage: number;
     readonly city: string;
     readonly category: string[];
