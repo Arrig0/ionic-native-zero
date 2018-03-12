@@ -313,10 +313,11 @@ var EZDay = (function () {
 }());
 exports.EZDay = EZDay;
 var EZEvent = (function () {
-    function EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists) {
+    function EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists, saleable) {
         if (category === void 0) { category = []; }
         if (gallery === void 0) { gallery = []; }
         if (artists === void 0) { artists = []; }
+        if (saleable === void 0) { saleable = false; }
         this.id = id;
         this.name = name;
         this.startDate = startDate;
@@ -330,6 +331,7 @@ var EZEvent = (function () {
         this.gallery = gallery;
         this.artists = artists;
         this.venue = venue;
+        this.saleable = saleable;
     }
     EZEvent.json = function (jsonEvent) {
         var id = jsonEvent.id;
@@ -345,9 +347,10 @@ var EZEvent = (function () {
         var gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         var artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent._embedded.artists) : [];
         var venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]) : (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({ id: jsonEvent.venue_id, name: { plain: jsonEvent.venue_name }, coordinates: jsonEvent.venue_coords }) : null);
+        var saleable = jsonEvent.saleable ? jsonEvent.saleable : false;
         if (!id || !name || !startDate || !venue)
             return null;
-        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists);
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists, saleable);
     };
     EZEvent.array = function (arr) {
         var ret = [];
