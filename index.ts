@@ -1564,11 +1564,13 @@ export class EZConfiguration {
 
     readonly maintenanceMode: boolean;
     readonly needsUpdate: boolean;
+    readonly ticketsEnabled: boolean;
     readonly cities: EZCity[];
 
-    private constructor(mantenanceMode: boolean = false, needsUpdate: boolean = false, cities: EZCity[] = []) {
+    private constructor(mantenanceMode: boolean = false, needsUpdate: boolean = false, ticketsEnabled: boolean = false, cities: EZCity[] = []) {
         this.maintenanceMode = mantenanceMode;
         this.needsUpdate = needsUpdate;
+        this.ticketsEnabled = ticketsEnabled;
         this.cities = cities;
     }
 
@@ -1577,8 +1579,9 @@ export class EZConfiguration {
     public static init(json: any): boolean {
         let maintenanceMode = json.maintenance_mode;
         let needsUpdate = json.needs_update;
+        let ticketsEnabled = json.tickets_enabled;
         let cities = EZCity.array(json.metro_areas);
-        EZConfiguration.instance = new EZConfiguration(maintenanceMode, needsUpdate, cities);
+        EZConfiguration.instance = new EZConfiguration(maintenanceMode, needsUpdate, ticketsEnabled, cities);
         return EZConfiguration.instance != null;
     }
 
