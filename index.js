@@ -1446,19 +1446,22 @@ var EZFilter = (function () {
 }());
 exports.EZFilter = EZFilter;
 var EZConfiguration = (function () {
-    function EZConfiguration(mantenanceMode, needsUpdate, cities) {
+    function EZConfiguration(mantenanceMode, needsUpdate, ticketsEnabled, cities) {
         if (mantenanceMode === void 0) { mantenanceMode = false; }
         if (needsUpdate === void 0) { needsUpdate = false; }
+        if (ticketsEnabled === void 0) { ticketsEnabled = false; }
         if (cities === void 0) { cities = []; }
         this.maintenanceMode = mantenanceMode;
         this.needsUpdate = needsUpdate;
+        this.ticketsEnabled = ticketsEnabled;
         this.cities = cities;
     }
     EZConfiguration.init = function (json) {
         var maintenanceMode = json.maintenance_mode;
         var needsUpdate = json.needs_update;
+        var ticketsEnabled = json.tickets_enabled;
         var cities = EZCity.array(json.metro_areas);
-        EZConfiguration.instance = new EZConfiguration(maintenanceMode, needsUpdate, cities);
+        EZConfiguration.instance = new EZConfiguration(maintenanceMode, needsUpdate, ticketsEnabled, cities);
         return EZConfiguration.instance != null;
     };
     EZConfiguration.current = function () {
