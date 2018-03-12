@@ -333,8 +333,9 @@ export class EZEvent {
     readonly gallery: EZImage[];
     readonly artists: EZArtist[];
     readonly venue: EZVenue | null;
+    readonly saleable: boolean;
 
-    constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, price: EZPrice | null, excerpt: string, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = []) {
+    constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, price: EZPrice | null, excerpt: string, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = [], saleable: boolean = false) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
@@ -348,6 +349,7 @@ export class EZEvent {
         this.gallery = gallery;
         this.artists = artists;
         this.venue = venue;
+        this.saleable = saleable
     }
 
     static json(jsonEvent: any): EZEvent | null {
@@ -364,10 +366,11 @@ export class EZEvent {
         let gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
         let artists = jsonEvent._embedded && jsonEvent._embedded.artists && jsonEvent._embedded.artists.length > 0 ? EZArtist.array(jsonEvent._embedded.artists) : [];
         let venue = (jsonEvent._embedded && jsonEvent._embedded.venue && jsonEvent._embedded.venue.length > 0) ? EZVenue.json(jsonEvent._embedded.venue[0]): (jsonEvent.venue_id && jsonEvent.venue_name && jsonEvent.venue_coords ? EZVenue.json({id: jsonEvent.venue_id, name: { plain: jsonEvent.venue_name }, coordinates: jsonEvent.venue_coords}) : null);
+        let saleable = jsonEvent.saleable ? jsonEvent.saleable : false;
 
         if( !id || !name || !startDate || !venue ) return null;
 
-        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists);
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists, saleable);
     }
 
     static array(arr: any[]): EZEvent[] {
