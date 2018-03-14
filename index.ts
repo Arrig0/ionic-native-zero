@@ -5,7 +5,7 @@ declare var ZeroPlugin: any;
 declare var BraintreePlugin;
 
 const API_KEY: string = 'Amichetti_come_Kim_Jong-un';
-const BASE_API_PATH: string = "http://192.168.60.113/api/v2/";
+const BASE_API_PATH: string = "https://dev.zero.eu/api/v2/";
 const APP_VERSION: string = "v1.0.0";
 //const BASE_API_PATH: string = "https://dev.zero.eu/API/v1/";
 
