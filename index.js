@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var media_1 = require("@ionic-native/media");
 var isArray_1 = require("rxjs/util/isArray");
 var API_KEY = 'Amichetti_come_Kim_Jong-un';
-var BASE_API_PATH = "http://dev.zero.eu/api/v2/";
+var BASE_API_PATH = "https://dev.zero.eu/api/v2/";
 var APP_VERSION = "v1.0.0";
 //const BASE_API_PATH: string = "https://dev.zero.eu/API/v1/";
 /*export interface ZeroEntity {}
