@@ -1555,6 +1555,9 @@ var Zero = (function () {
                         return reject(new EZError(xhr.status, "FATAL_ERROR"));
                     }
                 };
+                xhr.addEventListener("error", function (err) {
+                    return reject(new EZError(xhr.status, "FATAL_ERROR"));
+                });
                 xhr.send();
             }).catch(reject);
         });
