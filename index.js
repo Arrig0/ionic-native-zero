@@ -148,7 +148,8 @@ var EZError = (function (_super) {
 }(Error));
 exports.EZError = EZError;
 var EZUser = (function () {
-    function EZUser(id, first_name, last_name, email, profile_image, enable_push_notifications, enable_email_notifications, enable_newsletter, is_connected_to_facebook) {
+    function EZUser(id, first_name, last_name, email, profile_image, target_city, enable_push_notifications, enable_email_notifications, enable_newsletter, is_connected_to_facebook) {
+        if (target_city === void 0) { target_city = 'milano'; }
         if (enable_push_notifications === void 0) { enable_push_notifications = false; }
         if (enable_email_notifications === void 0) { enable_email_notifications = false; }
         if (enable_newsletter === void 0) { enable_newsletter = false; }
@@ -164,19 +165,20 @@ var EZUser = (function () {
         this.last_name = last_name;
         this.email = email;
         this.profile_image = profile_image;
+        this.target_city = target_city;
         this.enable_push_notifications = enable_push_notifications;
         this.enable_email_notifications = enable_email_notifications;
         this.enable_newsletter = enable_newsletter;
         this.is_connected_to_facebook = is_connected_to_facebook;
     }
     EZUser.json = function (json) {
-        return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
+        return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.tracked_metro_area, json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
     };
     EZUser.prototype.preferences = function () {
         return { enable_push_notifications: this.enable_push_notifications, enable_email_notifications: this.enable_email_notifications, enable_newsletter: this.enable_newsletter, is_connected_to_facebook: this.is_connected_to_facebook };
     };
     EZUser.prototype.info = function () {
-        return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
+        return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email, target_city: this.target_city };
     };
     EZUser.prototype.prepare = function () {
         return {
@@ -185,6 +187,7 @@ var EZUser = (function () {
             last_name: this.last_name,
             email: this.email,
             profile_image: this.profile_image ? this.profile_image.getLarge() : null,
+            target_city: this.target_city ? this.target_city : 'milano',
             enable_push_notifications: this.enable_push_notifications,
             enable_email_notifications: this.enable_email_notifications,
             enable_newsletter: this.enable_newsletter,
