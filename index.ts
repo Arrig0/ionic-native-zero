@@ -143,12 +143,13 @@ export class EZUser {
     public last_name: string;
     public email: string;
     public profile_image: EZImage | null;
+    public target_city: string;
     public enable_push_notifications: boolean = false;
     public enable_email_notifications: boolean = false;
     public enable_newsletter: boolean = false;
     public is_connected_to_facebook: boolean = false;
 
-    constructor(id: number, first_name: string, last_name: string, email: string, profile_image: EZImage | null, enable_push_notifications: boolean = false, enable_email_notifications: boolean = false, enable_newsletter: boolean = false, is_connected_to_facebook: boolean = false) {
+    constructor(id: number, first_name: string, last_name: string, email: string, profile_image: EZImage | null, target_city: string = 'milano', enable_push_notifications: boolean = false, enable_email_notifications: boolean = false, enable_newsletter: boolean = false, is_connected_to_facebook: boolean = false) {
 
         if( !id || !first_name || !last_name || !email )
             return null;
@@ -158,6 +159,7 @@ export class EZUser {
         this.last_name = last_name;
         this.email = email;
         this.profile_image = profile_image;
+        this.target_city = target_city;
         this.enable_push_notifications = enable_push_notifications;
         this.enable_email_notifications = enable_email_notifications;
         this.enable_newsletter = enable_newsletter;
@@ -165,15 +167,15 @@ export class EZUser {
     }
 
     public static json(json: any): EZUser | null {
-        return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
+        return new EZUser(json.id, json.first_name, json.last_name, json.email, EZImage.json(json.profile_image), json.tracked_metro_area, json.enable_push_notifications, json.enable_email_notifications, json.enable_newsletter, json.is_connected_to_facebook);
     }
 
     public preferences() : { enable_push_notifications: boolean, enable_email_notifications: boolean, enable_newsletter: boolean, is_connected_to_facebook: boolean } {
         return { enable_push_notifications: this.enable_push_notifications, enable_email_notifications: this.enable_email_notifications, enable_newsletter: this.enable_newsletter, is_connected_to_facebook: this.is_connected_to_facebook };
     }
 
-    public info(): { id: number, first_name: string, last_name: string, email: string } {
-        return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email };
+    public info(): { id: number, first_name: string, last_name: string, email: string, target_city: string } {
+        return { id: this.id, first_name: this.first_name, last_name: this.last_name, email: this.email, target_city: this.target_city };
     }
 
     public prepare() {
@@ -183,6 +185,7 @@ export class EZUser {
             last_name: this.last_name,
             email: this.email,
             profile_image: this.profile_image ? this.profile_image.getLarge() : null,
+            target_city: this.target_city ? this.target_city : 'milano',
             enable_push_notifications: this.enable_push_notifications,
             enable_email_notifications: this.enable_email_notifications,
             enable_newsletter: this.enable_newsletter,
