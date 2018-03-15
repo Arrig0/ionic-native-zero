@@ -1081,7 +1081,7 @@ export class EventManager {
             let categories = this.category && this.category.length > 0 ? "&category=" + this.category.join("|") : "";
             let coords = this.coords ? "&coords[lat]="+this.coords.lat+"&coords[lng]="+this.coords.lng : "";
             this.page ++;
-            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&_embed=1&page="+this.page+"&days="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc"+coords+categories)
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page="+this.page+"&days="+this.perPage+"&start_date="+dates+"&metro_area="+this.city+"&order=asc"+coords+categories)
             .then((data)=>{
                 resolve(EZDay.array(data.days));
             }).catch((err) => {
