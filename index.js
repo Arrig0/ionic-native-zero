@@ -1006,7 +1006,7 @@ var EventManager = (function () {
             var categories = _this.category && _this.category.length > 0 ? "&category=" + _this.category.join("|") : "";
             var coords = _this.coords ? "&coords[lat]=" + _this.coords.lat + "&coords[lng]=" + _this.coords.lng : "";
             _this.page++;
-            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&_embed=1&page=" + _this.page + "&days=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
+            ZeroPlugin.get(BASE_API_PATH + "events/tree?context=view&page=" + _this.page + "&days=" + _this.perPage + "&start_date=" + dates + "&metro_area=" + _this.city + "&order=asc" + coords + categories)
                 .then(function (data) {
                     resolve(EZDay.array(data.days));
                 }).catch(function (err) {
@@ -1556,7 +1556,7 @@ var Zero = (function () {
                     }
                 };
                 xhr.addEventListener("error", function (err) {
-                    return reject(new EZError(xhr.status, "FATAL_ERROR:::::"+err.message));
+                    return reject(new EZError(xhr.status, "FATAL_ERROR"));
                 });
                 xhr.send();
             }).catch(reject);
