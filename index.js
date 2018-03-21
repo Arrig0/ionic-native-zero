@@ -467,7 +467,7 @@ var EZEvent = (function () {
 }());
 exports.EZEvent = EZEvent;
 var EZVenue = (function () {
-    function EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel) {
+    function EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, content, openingHours, priceLevel) {
         if (gallery === void 0) { gallery = []; }
         if (category === void 0) { category = []; }
         this.gallery = [];
@@ -482,6 +482,7 @@ var EZVenue = (function () {
         this.address = address;
         this.coords = coords;
         this.excerpt = excerpt;
+        this.content = content;
         this.category = category;
         this.openingHours = openingHours;
         this.priceLevel = priceLevel;
@@ -499,10 +500,11 @@ var EZVenue = (function () {
         var address = json.full_address ? json.full_address : null;
         var coords = json.coordinates && json.coordinates.hasOwnProperty('lat') && json.coordinates.hasOwnProperty('lng') ? json.coordinates : null;
         var excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
+        var content = json.content && json.content.hasOwnProperty("plain") ? json.content.plain : null;
         var category = json.category ? json.category : null;
         var openingHours = json.opening_hours ? EZTable.json(json.opening_hours) : null;
         var priceLevel = json.price_level && (typeof json.price_level == 'number') ? json.price_level : null;
-        return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);
+        return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, content, openingHours, priceLevel);
     };
     EZVenue.array = function (arr) {
         var ret = [];
@@ -625,7 +627,7 @@ var EZImage = (function () {
 }());
 exports.EZImage = EZImage;
 var EZArtist = (function () {
-    function EZArtist(id, name, featured_image, gallery, preview, category, excerpt) {
+    function EZArtist(id, name, featured_image, gallery, preview, category, excerpt, content) {
         if (gallery === void 0) { gallery = []; }
         if (category === void 0) { category = []; }
         this.id = id;
@@ -635,6 +637,7 @@ var EZArtist = (function () {
         this.preview = preview;
         this.category = category;
         this.excerpt = excerpt;
+        this.content = content;
     }
     EZArtist.json = function (jsonArtist) {
         var id = jsonArtist.id;
@@ -644,9 +647,10 @@ var EZArtist = (function () {
         var preview = new EZSoundTrack(jsonArtist.preview_url);
         var category = isArray_1.isArray(jsonArtist.category) ? jsonArtist.category : [];
         var excerpt = jsonArtist.excerpt && jsonArtist.excerpt.hasOwnProperty("plain") ? jsonArtist.excerpt.plain : null;
+        var content = jsonArtist.content && jsonArtist.content.hasOwnProperty("plain") ? jsonArtist.content.plain : null;
         if (!id || !name)
             return null;
-        return new EZArtist(id, name, featured_image, gallery, preview, category, excerpt);
+        return new EZArtist(id, name, featured_image, gallery, preview, category, excerpt, content);
     };
     EZArtist.array = function (jsonArray) {
         var ret = [];
