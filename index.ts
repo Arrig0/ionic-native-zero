@@ -501,10 +501,11 @@ export class EZVenue {
     readonly coords: { lat: number, lng: number } | null;
     readonly category: string[] = [];
     readonly excerpt: string | null;
+    readonly content: string | null;
     readonly openingHours: EZTable | null;
     readonly priceLevel: number | null;
 
-    constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], phone: string | null, website: string | null, rate: number | null, address: string | null, coords: { lat: number, lng: number } | null, category: string[] = [], excerpt: string | null, openingHours: EZTable | null, priceLevel: number | null) {
+    constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], phone: string | null, website: string | null, rate: number | null, address: string | null, coords: { lat: number, lng: number } | null, category: string[] = [], excerpt: string | null, content: string | null, openingHours: EZTable | null, priceLevel: number | null) {
         this.id = id;
         this.name = name;
         this.featured_image = featured_image;
@@ -515,6 +516,7 @@ export class EZVenue {
         this.address = address;
         this.coords = coords;
         this.excerpt = excerpt;
+        this.content = content;
         this.category = category;
         this.openingHours = openingHours;
         this.priceLevel = priceLevel;
@@ -533,11 +535,12 @@ export class EZVenue {
         let address = json.full_address ? json.full_address: null;
         let coords = json.coordinates && json.coordinates.hasOwnProperty('lat') && json.coordinates.hasOwnProperty('lng') ? json.coordinates : null;
         let excerpt = json.excerpt && json.excerpt.hasOwnProperty("plain") ? json.excerpt.plain : null;
+        let content = json.content && json.content.hasOwnProperty("plain") ? json.content.plain : null;
         let category = json.category ? json.category : null;
         let openingHours = json.opening_hours ? EZTable.json(json.opening_hours) : null;
         let priceLevel = json.price_level && (typeof json.price_level == 'number') ? json.price_level : null;
 
-        return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, openingHours, priceLevel);
+        return new EZVenue(id, name, featured_image, gallery, phone, website, rate, address, coords, category, excerpt, content, openingHours, priceLevel);
     }
 
     static array(arr: any[]): EZVenue[] {
@@ -668,8 +671,9 @@ export class EZArtist {
     readonly preview: EZSoundTrack | null;
     readonly category: string[];
     readonly excerpt: string | null;
+    readonly content: string | null;
 
-    constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], preview: EZSoundTrack | null, category: string[] = [], excerpt: string | null) {
+    constructor(id: number, name: string, featured_image: EZImage | null, gallery: EZImage[] = [], preview: EZSoundTrack | null, category: string[] = [], excerpt: string | null, content: string | null) {
         this.id = id;
         this.name = name;
         this.featured_image = featured_image;
@@ -677,6 +681,7 @@ export class EZArtist {
         this.preview = preview;
         this.category = category;
         this.excerpt = excerpt;
+        this.content = content;
     }
 
     static json(jsonArtist: any): EZArtist | null {
@@ -687,9 +692,10 @@ export class EZArtist {
         let preview = new EZSoundTrack(jsonArtist.preview_url);
         let category = isArray(jsonArtist.category) ? jsonArtist.category: [];
         let excerpt = jsonArtist.excerpt && jsonArtist.excerpt.hasOwnProperty("plain") ? jsonArtist.excerpt.plain : null;
+        let content = jsonArtist.content && jsonArtist.content.hasOwnProperty("plain") ? jsonArtist.content.plain : null;
 
         if( !id || !name ) return null;
-        return new EZArtist(id, name, featured_image, gallery, preview, category, excerpt);
+        return new EZArtist(id, name, featured_image, gallery, preview, category, excerpt, content);
     }
 
     static array(jsonArray: any[]): EZArtist[] {

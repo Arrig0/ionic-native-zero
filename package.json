@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scope": "@ionic-native",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "git add . && git commit -m \"\" --allow-empty-message && git push origin develop"
   },
   "repository": {
     "type": "git",
