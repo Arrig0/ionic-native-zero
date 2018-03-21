@@ -316,7 +316,7 @@ var EZDay = (function () {
 }());
 exports.EZDay = EZDay;
 var EZEvent = (function () {
-    function EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists, saleable) {
+    function EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, content, category, featured_image, gallery, venue, artists, saleable) {
         if (category === void 0) { category = []; }
         if (gallery === void 0) { gallery = []; }
         if (artists === void 0) { artists = []; }
@@ -329,6 +329,7 @@ var EZEvent = (function () {
         this.endTime = endTime;
         this.price = price;
         this.excerpt = excerpt;
+        this.content = content;
         this.category = category;
         this.featured_image = featured_image;
         this.gallery = gallery;
@@ -345,6 +346,7 @@ var EZEvent = (function () {
         var endTime = jsonEvent.end_time ? new Date((new Date()).toDateString() + " " + jsonEvent.end_time) : null;
         var price = jsonEvent.price ? EZPrice.json(jsonEvent.price) : null;
         var excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
+        var content = jsonEvent.content && jsonEvent.content.hasOwnProperty("plain") ? jsonEvent.content.plain : null;
         var category = jsonEvent.category && isArray_1.isArray(jsonEvent.category) ? jsonEvent.category : [];
         var featured_image = jsonEvent.featured_image ? EZImage.json(jsonEvent.featured_image) : null;
         var gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
@@ -353,7 +355,7 @@ var EZEvent = (function () {
         var saleable = jsonEvent.saleable ? jsonEvent.saleable : false;
         if (!id || !name || !startDate || !venue)
             return null;
-        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists, saleable);
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, content, category, featured_image, gallery, venue, artists, saleable);
     };
     EZEvent.array = function (arr) {
         var ret = [];
