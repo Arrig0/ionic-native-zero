@@ -331,6 +331,7 @@ export class EZEvent {
     readonly endTime: Date | null;
     readonly price: EZPrice | null;
     readonly excerpt: string | null;
+    readonly content: string | null;
     readonly category: string[];
     readonly featured_image: EZImage | null;
     readonly gallery: EZImage[];
@@ -338,7 +339,7 @@ export class EZEvent {
     readonly venue: EZVenue | null;
     readonly saleable: boolean;
 
-    constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, price: EZPrice | null, excerpt: string, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = [], saleable: boolean = false) {
+    constructor(id: number, name: string, startDate: Date, endDate: Date, startTime: Date | null, endTime: Date | null, price: EZPrice | null, excerpt: string, content: string | null, category: string[] = [], featured_image: EZImage | null, gallery: EZImage[] = [], venue: EZVenue | null, artists: EZArtist[] = [], saleable: boolean = false) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
@@ -347,6 +348,7 @@ export class EZEvent {
         this.endTime = endTime;
         this.price = price;
         this.excerpt = excerpt;
+        this.content = content;
         this.category = category;
         this.featured_image = featured_image;
         this.gallery = gallery;
@@ -364,6 +366,7 @@ export class EZEvent {
         let endTime = jsonEvent.end_time ? new Date((new Date()).toDateString() + " " + jsonEvent.end_time) : null;
         let price = jsonEvent.price ? EZPrice.json(jsonEvent.price) : null;
         let excerpt = jsonEvent.excerpt && jsonEvent.excerpt.hasOwnProperty("plain") ? jsonEvent.excerpt.plain : null;
+        let content = jsonEvent.content && jsonEvent.content.hasOwnProperty("plain") ? jsonEvent.content.plain : null;
         let category = jsonEvent.category && isArray(jsonEvent.category) ? jsonEvent.category : [];
         let featured_image = jsonEvent.featured_image ? EZImage.json(jsonEvent.featured_image) : null;
         let gallery = jsonEvent.gallery ? EZImage.array(jsonEvent.gallery) : null;
@@ -373,7 +376,7 @@ export class EZEvent {
 
         if( !id || !name || !startDate || !venue ) return null;
 
-        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, category, featured_image, gallery, venue, artists, saleable);
+        return new EZEvent(id, name, startDate, endDate, startTime, endTime, price, excerpt, content, category, featured_image, gallery, venue, artists, saleable);
     }
 
     static array(arr: any[]): EZEvent[] {
